@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prácticas del Grupo 502 · Tercer parcial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef3fa;--card:#ffffff;--ink:#14213d;--muted:#5a6478;--g1:#5D3FD3;--g2:#0A7584;--ring:#14213d}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1626;--card:#18223a;--ink:#eef2fb;--muted:#a9b3c9;--g1:#A493FF;--g2:#4BC2D1;--ring:#eef2fb}}
+:root[data-theme="dark"]{--bg:#0f1626;--card:#18223a;--ink:#eef2fb;--muted:#a9b3c9;--g1:#A493FF;--g2:#4BC2D1;--ring:#eef2fb}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{min-height:100vh;background:var(--bg);color:var(--ink);font-family:Montserrat,"Segoe UI",Arial,sans-serif;display:flex;align-items:center;justify-content:center;padding:32px 16px;
+  background-image:radial-gradient(circle at 1px 1px,rgba(120,140,180,.18) 1px,transparent 0);background-size:22px 22px}
+main{width:100%;max-width:820px;text-align:center}
+.tag{display:inline-block;font-weight:700;font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+h1{font-weight:900;font-size:clamp(30px,6vw,52px);letter-spacing:.01em;margin:0 0 8px;line-height:1.1;text-wrap:balance}
+.sub{font-weight:500;font-size:17px;color:var(--muted);margin:0 auto 34px;max-width:56ch}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}
+a.mat{--c:var(--g1);display:flex;flex-direction:column;align-items:center;gap:10px;padding:30px 20px 26px;border-radius:22px;
+  background:var(--card);color:var(--ink);text-decoration:none;border:3px solid var(--c);
+  box-shadow:0 6px 0 var(--c);transition:transform .15s,box-shadow .15s}
+a.mat:hover{transform:translateY(-4px);box-shadow:0 10px 0 var(--c)}
+a.mat:active{transform:translateY(3px);box-shadow:0 2px 0 var(--c)}
+a.mat:focus-visible{outline:3px solid var(--ring);outline-offset:4px}
+a.m2{--c:var(--g2)}
+.num{width:84px;height:84px;border-radius:50%;background:var(--c);color:var(--card);display:grid;place-items:center;font-weight:900;font-size:40px}
+.nom{font-weight:900;font-size:24px;letter-spacing:.04em;color:var(--c);text-transform:uppercase;line-height:1.15}
+.det{font-weight:600;font-size:15px;color:var(--muted);line-height:1.45}
+.det b{color:var(--ink)}
+.go{font-weight:700;font-size:15px;color:var(--c)}
+footer{margin-top:34px;font-size:14px;color:var(--muted);line-height:1.6}
+@media (max-width:640px){.grid{grid-template-columns:1fr}a.mat{padding:22px 18px}.num{width:64px;height:64px;font-size:30px}.nom{font-size:20px}}
+@media (prefers-reduced-motion:reduce){a.mat{transition:none}}
+</style>
+</head>
+<body>
+<main>
+  <p class="tag">CECyTEM · Plantel Metepec II · Técnico en Programación</p>
+  <h1>Prácticas del tercer parcial</h1>
+  <p class="sub">Grupo 502 · Semanas 12 a 16. Elige tu materia, escribe tu nombre y grupo, y resuelve los retos desde la computadora o el celular, sin instalar nada.</p>
+  <div class="grid">
+    <a class="mat m1" href="Construye.html">
+      <span class="num" aria-hidden="true">C</span>
+      <span class="nom">Construye<br>aplicaciones web</span>
+      <span class="det">Submódulo 1 · <b>7 h por semana</b><br>CRUD completo, despliegue en la nube y presentación</span>
+      <span class="go">Entrar →</span>
+    </a>
+    <a class="mat m2" href="Implementa.html">
+      <span class="num" aria-hidden="true">I</span>
+      <span class="nom">Implementa<br>aplicaciones web</span>
+      <span class="det">Submódulo 2 · <b>5 h por semana</b><br>Pruebas, corrección de errores, mejora y manuales</span>
+      <span class="go">Entrar →</span>
+    </a>
+  </div>
+  <footer>Docente: Dra. María Guadalupe Guerrero Ordoñez<br>Al terminar todas las prácticas obtienes tu constancia con tu calificación final.</footer>
+</main>
+</body>
+</html>
