@@ -2099,7 +2099,7 @@ window.BANK = {
   const rowFor = (x, calif, tipo) => { const tm = x.tema; const pr = store.prog[x.pid] || {}; const d = new Date(); const pad = (n) => String(n).padStart(2, '0');
     return { fecha: `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`, grado: G.short, grupo: store.grupo, alumno: store.name.trim().replace(/\s+/g, ' '),
       tema: `${LET[tm.mi]}${tm.ti + 1}`, temaNombre: tm.t.t, ejercicio: `${LET[tm.mi]}${tm.ti + 1}.${x.ei + 1}`, titulo: x.p.title || x.label, calif: calif == null ? '' : Math.round(calif * 100), intento: pr.att || 0,
-      mejor: Math.round((pr.best || 0) * 100), promTema: temaAvg(tm), temasComp: doneCount(), totalTemas: temas.length, tipo, dev: store.dev, texto: textoFor(x).slice(0, 1500) }; };
+      mejor: Math.round((pr.best || 0) * 100), promTema: temaAvg(tm), temasComp: doneCount(), totalTemas: temas.length, tipo, dev: store.dev, texto: textoFor(x).slice(0, 1500), exTema: tm.ex.length, exHechos: tm.ex.filter(exFin).length, parcial: tm.m.parcial }; };
   let sending = false;
   const flush = () => new Promise((res) => {
     if (!REPORT_URL || sending || !store.outbox.length) { res(!store.outbox.length); return; }
