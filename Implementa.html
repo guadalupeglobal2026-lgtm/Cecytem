@@ -556,6 +556,16 @@ body.show-cert #print{display:block; position:fixed; inset:0; background:var(--b
 .stp-ctx table{border-collapse:collapse;font-size:.92rem}.stp-ctx td,.stp-ctx th{border:1px solid var(--line,#D5DEE8);padding:.25rem .5rem;text-align:left}
 .serie-note{margin:-.2rem 0 .6rem;font-size:.95rem;color:var(--muted,#55606E)}
 .side-m em.s2{font-style:normal;font-size:.72rem;font-weight:700;color:var(--azul,#1D5FD1);background:color-mix(in srgb,var(--azul,#1D5FD1) 10%,transparent);padding:0 .3rem;border-radius:4px}
+/* práctica de código y terminal */
+.cx{border:1px solid var(--line,#D5DEE8);border-radius:var(--r-sm,10px);overflow:hidden;background:#0F172A}
+.cx-bar{display:flex;gap:.5rem;align-items:center;padding:.45rem .6rem;background:#1E293B;color:#E2E8F0;font-size:.9rem}
+.cx-bar span{flex:1}
+.cx-ed{display:block;width:100%;box-sizing:border-box;border:0;outline:0;resize:vertical;padding:.8rem 1rem;background:#0F172A;color:#E2E8F0;font:14px/1.5 ui-monospace,Consolas,'Courier New',monospace;tab-size:4}
+.cx-out{padding:.6rem 1rem;background:#111827;color:#CBD5E1;border-top:1px solid #334155}
+.cx-out pre{margin:0;white-space:pre-wrap;font:13px/1.45 ui-monospace,Consolas,monospace}
+.cx-out.err pre{color:#FCA5A5}.cx-out.okk pre{color:#86EFAC}.cx-out p{margin:.4rem 0 0;color:#CBD5E1}
+.tm-out.tm-err{color:#FCA5A5}
+.lead-card table{border-collapse:collapse;margin:.5rem 0;font-size:.95em}.lead-card th,.lead-card td{border:1px solid #CBD5E1;padding:.3rem .7rem;text-align:left}.lead-card th{background:#E2E8F0}
 </style>
 </head>
 <body>
@@ -1153,186 +1163,155 @@ pm.test("Responde en menos de 3 s", () => {
 ];
 })();
 
-/* Implementa · segundo parcial, SEGUNDA SERIE (sistema de control escolar). */
+/* Implementa · segundo parcial, SEGUNDA SERIE (sistema de control escolar): práctica real con herramientas simuladas
+   (panel Network, consola, Postman, flake8, plantillas, reportes) y datos distintos para cada alumno. */
 (() => {
 const e = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-const pre = (t) => `<pre class="code">${e(t)}</pre>`;
-const uniq = (ok, arr) => arr.filter((w, i) => w !== ok && arr.indexOf(w) === i);
-const G = (q, ok, wrong, rok, rno, fb, html) => ({ q, opts: [ok, ...uniq(ok, wrong)], a: 0, r: { ok: rok, no: uniq(rok, rno) }, fb, html });
-const S = (ctx, q, ok, wrong, rok, rno, hint, fb) => ({ ctx, q, opts: [ok, ...uniq(ok, wrong)], r: rok ? { ok: rok, no: rno } : null, hint, fb });
-const RZ = (t, intro, gen) => ({ t, serie2: true, ps: [{ type: 'quiz', label: 'Razona', title: t, intro, qs: [], gen }] });
-const RETO = (t, x, intro, gen) => ({ t: 'Reto paso a paso: ' + t, serie2: true, reto: true, caso: { t, x }, ps: [{ type: 'steps', label: 'Reto', title: t, intro, steps: [], gen }] });
+const rx = (t) => String(t).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const tabla = (head, rows) => `<table><tr>${head.map((h) => `<th>${e(h)}</th>`).join('')}</tr>${rows.map((r) => `<tr>${r.map((c) => `<td>${e(c)}</td>`).join('')}</tr>`).join('')}</table>`;
-const PAG = ['/alumnos/', '/alumnos/1/', '/alumnos/nuevo/', '/login/', '/grupos/'];
-const SEV = ['Crítico', 'Medio', 'Bajo'];
+const PR = (t, ex) => ({ t, serie2: true, ps: [Object.assign({ label: 'Práctica', title: t }, ex)] });
+const RT = (t, x, ex) => ({ t: 'Reto: ' + t, serie2: true, reto: true, caso: { t, x }, ps: [Object.assign({ label: 'Reto', title: t }, ex)] });
+const NOM = ['Ana', 'Luis', 'Sofía', 'Diego', 'Valeria', 'Mateo', 'Camila', 'Iker', 'Regina', 'Emiliano', 'Ximena', 'Santiago'];
+const APE = ['López', 'Hernández', 'Martínez', 'García', 'Pérez', 'Ramírez', 'Torres', 'Flores', 'Cruz', 'Morales'];
+const persona = (K) => `${K.pick(NOM)} ${K.pick(APE)}`;
+const r1 = (x) => Math.round(x * 10) / 10;
+const num = (x) => { const a = [String(x), x.toFixed(1), x.toFixed(2)]; return [...new Set(a.concat(a.map((v) => v.replace('.', ','))))].join('|'); };
 const TURNO = { 'Crítico|Alta': 1, 'Crítico|Media': 2, 'Crítico|Baja': 4, 'Medio|Alta': 3, 'Medio|Media': 5, 'Medio|Baja': 7, 'Bajo|Alta': 6, 'Bajo|Media': 8, 'Bajo|Baja': 9 };
+const MATRIZ = tabla(['Severidad \\ Prioridad', 'Alta', 'Media', 'Baja'], [['Crítico', '1', '2', '4'], ['Medio', '3', '5', '7'], ['Bajo', '6', '8', '9']]);
 
 window.P2S2 = {
   /* ===== A. Herramientas de desarrollador ===== */
   'Herramientas de desarrollador': [
-    RZ('Razona: lee tus mediciones', 'Las mediciones son distintas para ti en cada intento. Decide y explica por qué.', (K) => {
-      const pag = K.pick(PAG), req = K.int(8, 30), kb = K.int(200, 2400), ttfb = K.int(80, 1600), load = K.int(900, 5200) / 1000;
-      const servidor = ttfb > 900, cumple = load < 3;
-      return { qs: K.mix([
-        G(`Network de ${pag}: ${req} requests · ${kb} kB · Load ${load.toFixed(2)} s. ¿Cumple el requisito de cargar en menos de 3 s?`, cumple ? 'Sí cumple' : 'No cumple', [cumple ? 'No cumple' : 'Sí cumple', 'No se puede saber sin Postman'],
-          `El valor que se compara es Load: ${load.toFixed(2)} s ${cumple ? '<' : '≥'} 3 s`, ['Se compara el número de peticiones', 'Se comparan los kB'], 'Load es el tiempo total.'),
-        G(`En Timing, «Waiting for server response» (TTFB) es ${ttfb} ms y la página pesa ${kb} kB. ¿Dónde buscas primero el problema de lentitud?`, servidor ? 'En el servidor: la vista o la consulta a MySQL' : 'En los archivos pesados: imágenes, CSS o scripts', [servidor ? 'En los archivos pesados: imágenes, CSS o scripts' : 'En el servidor: la vista o la consulta a MySQL', 'En el navegador del usuario', 'En el teclado'],
-          servidor ? `Un TTFB de ${ttfb} ms es alto: el servidor tarda en empezar a responder` : `El TTFB de ${ttfb} ms es bajo: el servidor responde rápido, lo pesado es la descarga`, ['El TTFB mide el tamaño de las imágenes', 'Los kB miden la velocidad del servidor'], 'TTFB = servidor; kB = descarga.'),
-        G(`Mediste ${pag} y salió 0.${K.int(1, 3)} s; en Size dice «(disk cache)». ¿Qué haces?`, 'Marcar Disable cache y recargar con Ctrl + F5', ['Anotarlo así: es muy rápido', 'Cerrar el navegador', 'Medir con 3G'],
-          'Los archivos se leyeron de la caché y no reflejan una primera visita', ['La caché refleja la velocidad real del servidor', 'Ctrl + F5 borra la base'], 'Mide como visitante nuevo.'),
-      ]) };
-    }),
-    RETO('Bitácora de tiempos en serio', 'Mides la lista de alumnos con distintas conexiones. Los números son distintos para ti.', 'Cada paso usa lo que mediste en el anterior.', (K) => {
-      const v = [K.int(800, 1500), K.int(1600, 2600), K.int(3100, 4400), K.int(5000, 7200)].map((x) => (x / 1000).toFixed(1));
-      const tbl = tabla(['Conexión', 'Load de /alumnos/'], [['No throttling', v[0] + ' s'], ['Fast 4G', v[1] + ' s'], ['Slow 4G', v[2] + ' s'], ['3G', v[3] + ' s']]);
-      return { steps: [
-        S('<p>Vas a empezar a medir /alumnos/.</p>', '¿En qué orden lo haces?', 'Abrir F12 → Network → Disable cache → recargar con Ctrl + F5', ['Recargar → abrir F12 → anotar', 'Anotar → recargar → abrir F12', 'Abrir Postman → recargar'],
-          'Network solo registra lo que pasa con las herramientas abiertas y sin caché', ['El orden no importa', 'Postman mide el Load del navegador'], 'Primero abre las herramientas.', 'Medición confiable.'),
-        S(tbl, '¿Con qué conexiones NO se cumple el requisito de 3 s?', 'Slow 4G y 3G', ['Solo 3G', 'Todas', 'Ninguna'],
-          `Slow 4G tarda ${v[2]} s y 3G ${v[3]} s: ambas superan 3 s`, ['Solo cuenta la conexión más lenta', 'Fast 4G es lenta'], 'Compara cada fila con 3 s.', 'Marca en rojo lo que no cumple.'),
-        S(tbl, '¿Qué conclusión escribes?', `Con conexiones lentas (Slow 4G ${v[2]} s y 3G ${v[3]} s) no cumple; hay que reducir peso de la página`, ['La página es lenta', 'Funciona bien siempre', 'Hay que cambiar de navegador'],
-          'Una conclusión útil dice con qué conexión, cuánto tardó y qué hacer', ['Basta con una opinión', 'Los datos no se incluyen en la conclusión'], 'Usa los números.', 'Conclusión fundamentada.'),
-        S('<p>Revisas /alumnos/ a 375 px: la tabla obliga a desplazar toda la página hacia los lados.</p>', '¿Qué anotas?', 'No cumple: hay desplazamiento horizontal en celular', ['Cumple: se puede ver deslizando', 'No aplica en celular', 'Es un error del celular'],
-          'A 375 px nada debe obligar a mover la página completa de lado', ['Deslizar es normal', 'El celular debe hacer zoom'], 'Criterio de 375 px.', 'Registrar como defecto visual.'),
-      ] };
-    }),
+    PR('Práctica: llena la bitácora con el panel Network', { type: 'fill', intro: 'Abriste F12 → Network y recargaste la lista de alumnos. Lee el panel (los datos son solo tuyos) y llena la bitácora.', code: '', gen: (K) => {
+      const falta = K.pick(['logo_cecytem.png', 'fondo.jpg', 'icono_menu.svg']);
+      const rows = [['alumnos/', '200', 'document', K.int(9, 18), K.int(120, 380)], ['bootstrap.min.css', '200', 'stylesheet', K.int(150, 230), K.int(60, 240)], ['app.js', '200', 'script', K.int(20, 60), K.int(30, 120)],
+        [K.pick(['foto_grupo.jpg', 'banner_inicio.jpg', 'portada.png']), '200', 'img', K.int(600, 1900), K.int(300, 1500)], [falta, '404', 'img', 0, K.int(10, 40)], ['favicon.ico', '200', 'img', K.int(2, 9), K.int(5, 30)]];
+      const tot = rows.reduce((s, r) => s + r[3], 0), dcl = K.int(450, 900), load = dcl + K.int(400, 1600);
+      const big = rows.slice().sort((a, b) => b[3] - a[3])[0];
+      return { file: 'bitacora_network.txt', lead: `<p><b>Panel Network</b> · http://127.0.0.1:8000/alumnos/</p>${tabla(['Name', 'Status', 'Type', 'Size (kB)', 'Time (ms)'], rows)}<p class="small"><code>${rows.length} requests · ${tot} kB transferred · DOMContentLoaded: ${dcl} ms · Load: ${load} ms</code></p>`,
+        code: `Página medida:             /alumnos/\nNúmero de peticiones:      ⟪${rows.length}⟫\nPeso total (kB):           ⟪${tot}⟫\nTiempo de carga Load (ms): ⟪${load}⟫\nRecurso más pesado:        ⟪${big[0]}⟫  (⟪${big[3]}⟫ kB)\nRecurso que falla:         ⟪${falta}⟫  código ⟪404⟫\nDefecto detectado: la imagen ${falta} no se encuentra en el servidor.` }; } }),
+    RT('Throttling: ¿cumple la meta?', 'La meta del control escolar es que la lista de alumnos cargue en menos de 3 s con Fast 4G. Mediste tres veces cada conexión.', { type: 'fill', intro: 'Calcula el promedio de cada conexión (un decimal) y decide si cumple la meta de menos de 3.0 s. Los números son solo tuyos.', code: '', gen: (K) => {
+      const base = K.int(8, 14) / 10, f4 = K.int(22, 36) / 10, s4 = K.int(55, 95) / 10;
+      const tri = (m) => { const a = K.int(-3, 3) / 10, b = K.int(-3, 3) / 10; return [r1(m + a), r1(m + b), r1(m - a - b)]; };
+      const C = [['Sin limitación', tri(base)], ['Fast 4G', tri(f4)], ['Slow 4G', tri(s4)]];
+      const prom = C.map((c) => r1((c[1][0] + c[1][1] + c[1][2]) / 3));
+      const si = (x) => (x < 3 ? 'Sí|si' : 'No');
+      return { file: 'bitacora_throttling.txt', lead: tabla(['Conexión', 'Medición 1 (s)', 'Medición 2 (s)', 'Medición 3 (s)'], C.map((c) => [c[0], ...c[1].map(String)])),
+        code: `Conexión         Promedio (s)   ¿Menos de 3.0 s?\nSin limitación   ⟪${num(prom[0])}⟫          ⟪${si(prom[0])}⟫\nFast 4G          ⟪${num(prom[1])}⟫          ⟪${si(prom[1])}⟫\nSlow 4G          ⟪${num(prom[2])}⟫          ⟪${si(prom[2])}⟫\n\n¿Se cumple la meta (Fast 4G)?   ⟪${si(prom[1])}⟫\nConexión más lenta:              ⟪Slow 4G|slow4g⟫` }; } }),
   ],
-  /* ===== B. Carga y estrés ===== */
+  /* ===== B. Pruebas de carga y estrés ===== */
   'Pruebas de carga y estrés': [
-    RZ('Razona: interpreta Apache Bench', 'Los resultados cambian para ti en cada intento.', (K) => {
-      const n = K.pick([100, 200, 300]), c = K.pick([10, 25, 50]), rps = K.int(12, 45), tpr = Math.round(c / rps * 1000), fail = K.pick([0, 0, K.int(3, 20)]);
-      const code = K.pick([['GET a /alumnos/ sin iniciar sesión', '302 Found', 'Sin sesión, Django redirige al login'], ['GET a /alumnos/99999/', '404 Not Found', 'No existe ese alumno'], ['POST del formulario sin token CSRF', '403 Forbidden', 'Django rechaza el POST sin token'], ['Una excepción no controlada en la vista', '500 Server Error', 'Es un error del servidor'], ['GET a /login/', '200 OK', 'La página se entrega correctamente']]);
-      return { qs: K.mix([
-        G(`Ejecutaste ab -n ${n} -c ${c}. ¿Qué significa?`, `${n} peticiones en total, ${c} al mismo tiempo`, [`${n} usuarios durante ${c} segundos`, `${c} peticiones en total, ${n} al mismo tiempo`, `${n} segundos y ${c} errores`],
-          '-n es el total de peticiones y -c la concurrencia', ['-n son segundos', '-c son errores permitidos'], 'Lee las letras.'),
-        G(`Resultado: Time per request ${tpr} ms (mean) · Failed requests: ${fail}. ¿Qué concluyes?`, fail ? 'Llegó a su límite: hay peticiones fallidas aunque el promedio sea aceptable' : (tpr < 3000 ? 'Responde bien a esta concurrencia: promedio bajo y sin fallas' : 'Es lento: el promedio supera 3 s'),
-          ['Todo está perfecto siempre', 'No se puede interpretar', fail ? 'Responde bien: el promedio es bajo' : 'Llegó a su límite: hay fallas'],
-          fail ? 'Cualquier petición fallida es una señal de alerta' : 'Sin fallas, se compara el promedio con 3 000 ms', ['Solo importa el promedio', 'Las fallas son normales y no se anotan'], 'Revisa fallas y promedio.'),
-        G(`Caso: ${code[0]}. ¿Qué código devuelve el servidor?`, code[1], ['200 OK', '302 Found', '403 Forbidden', '404 Not Found', '500 Server Error'].filter((x) => x !== code[1]).slice(0, 3), code[2], ['Siempre responde 200', 'El código lo elige el navegador'], 'Familias: 2xx, 3xx, 4xx, 5xx.'),
-      ]) };
-    }),
-    RETO('Reporte de estrés', 'Haces la prueba de estrés del control escolar. Los números son distintos para ti.', 'Cada paso usa los resultados anteriores.', (K) => {
-      const r = [[10, K.int(260, 420), 0], [25, K.int(700, 1300), 0], [50, K.int(2100, 2900), K.int(4, 18)]];
-      const tbl = tabla(['-c', 'Promedio (ms)', 'Fallidas'], r.map((x) => [x[0], x[1], x[2]]));
-      return { steps: [
-        S(pre("'ab' no se reconoce como un comando interno o externo"), '¿Qué haces?', 'cd C:\\xampp\\apache\\bin y volver a ejecutar', ['Instalar Postman', 'pip install ab', 'Reiniciar Django'],
-          'ab.exe viene con XAMPP en la carpeta bin de Apache', ['ab se instala con pip', 'ab es parte de Django'], 'Ubica el programa.', 'No hay que instalar nada.'),
-        S(tbl, '¿En qué nivel aparece la señal de alerta?', `Con -c 50: ${r[2][2]} peticiones fallidas`, ['Con -c 10', 'Con -c 25', 'En ninguno'],
-          'Las fallas indican que el servidor llegó a su límite', ['El promedio bajo significa que no hay problema', 'Las fallas no importan'], 'Mira la columna de fallidas.', 'Se registra como hallazgo.'),
-        S(tbl, '¿Cumple el sistema el requisito de 3 s?', 'No por completo: el promedio está bajo 3 s, pero las fallas con -c 50 indican su límite', ['Sí, porque todos los promedios son menores a 3 s', 'No se puede saber', 'Sí, porque respondió algo'],
-          'Un buen reporte combina promedio y fallas', ['Solo cuenta el promedio', 'Las fallas son errores de Apache Bench'], 'Dos datos, una conclusión.', 'Conclusión honesta.'),
-        S('<p>Vas a graficar los resultados en Excel.</p>', '¿Qué va en cada eje?', 'X: concurrencia (-c) · Y: tiempo promedio (ms)', ['X: nombres de alumnos · Y: grupos', 'X: fallidas · Y: fecha', 'Una gráfica de pastel con colores'],
-          'La curva muestra cómo crece el tiempo al aumentar la carga', ['El pastel muestra la tendencia', 'Los ejes no importan'], 'Lo que aumenta va en X.', 'La forma de la curva es la conclusión.'),
-      ] };
-    }),
+    PR('Práctica: corre Apache Bench', { type: 'term', intro: 'Escribe cada comando y presiona Enter para ejecutarlo. Las cantidades de tu prueba son distintas a las de tus compañeros.', tasks: [], shell: 'Símbolo del sistema', prompt: 'C:\\Users\\alumno>', gen: (K) => {
+      const n = K.pick([100, 200, 300, 500]), c = K.pick([5, 10, 20]), cs = c * K.pick([5, 8, 10]), ns = n * 2;
+      const rps = K.int(40, 160), fail = K.int(3, Math.round(ns * 0.15));
+      const url = 'http://127.0.0.1:8000/' + K.pick(['alumnos/', 'grupos/', 'login/']);
+      const re = (N, C) => new RegExp(`^ab(\\.exe)? (-n ${N} -c ${C}|-c ${C} -n ${N}) ${rx(url)}$`, 'i');
+      const noab = (x) => `"${x.split(' ')[0]}" no se reconoce como un comando interno o externo.`;
+      return { lead: `<p>Tu prueba: <b>carga</b> con <b>${n}</b> peticiones y <b>${c}</b> usuarios a la vez; <b>estrés</b> con <b>${ns}</b> peticiones y <b>${cs}</b> usuarios a la vez. Página: <code>${url}</code> (el servidor de Django ya está corriendo).</p>`, tasks: [
+        { t: 'Entra a la carpeta donde está Apache Bench (C:\\xampp\\apache\\bin).', sol: 'cd C:\\xampp\\apache\\bin', ok: [/^cd (\/d )?c:\\xampp\\apache\\bin\\?$/i], out: 'C:\\xampp\\apache\\bin>', hint: 'cd C:\\xampp\\apache\\bin', err: () => 'El sistema no puede encontrar la ruta especificada.' },
+        { t: 'Prueba de carga.', sol: `ab -n ${n} -c ${c} ${url}`, ok: [re(n, c)], prompt: 'C:\\xampp\\apache\\bin>', hint: 'ab -n peticiones -c concurrencia URL', out: `Concurrency Level:      ${c}\nComplete requests:      ${n}\nFailed requests:        0\nRequests per second:    ${rps} [#/sec] (mean)\nTime per request:       ${r1(c / rps * 1000)} [ms] (mean)`,
+          err: (x) => /^ab/i.test(x) ? `ab: revisa tus valores. Tu prueba de carga pide -n ${n} y -c ${c}, y la URL completa con / al final.` : noab(x) },
+        { t: 'Prueba de estrés.', sol: `ab -n ${ns} -c ${cs} ${url}`, ok: [re(ns, cs)], prompt: 'C:\\xampp\\apache\\bin>', hint: 'El mismo comando con los valores de estrés', out: `Concurrency Level:      ${cs}\nComplete requests:      ${ns}\nFailed requests:        ${fail}\nRequests per second:    ${Math.round(rps * 0.6)} [#/sec] (mean)\nTime per request:       ${r1(cs / (rps * 0.6) * 1000)} [ms] (mean)\n→ Anota en tu bitácora: con ${cs} usuarios a la vez aparecen ${fail} fallas.`,
+          err: (x) => /^ab/i.test(x) ? `ab: revisa tus valores. Tu prueba de estrés pide -n ${ns} y -c ${cs}.` : noab(x) },
+      ] }; } }),
+    RT('Pruebas automáticas en Postman', 'Escribe las pruebas de la petición GET al detalle de un alumno. Deben pasar con la respuesta real del servidor.', { type: 'code', intro: 'Escribe las pruebas en la pestaña Tests de Postman y presiona ▶ Ejecutar (equivale a Send). Corrige hasta que pasen todas.', starter: '', rules: [], gen: (K) => {
+      const id = K.int(2, 60), nom = persona(K), ms = K.pick([300, 400, 500, 800]), real = K.int(80, ms - 40);
+      const starter = `pm.test("Responde 200", function () {\n    pm.response.to.have.status(201);\n});\n\npm.test("Tarda menos de ${ms} ms", function () {\n    // escribe aquí la prueba del tiempo\n});\n\npm.test("Muestra al alumno", function () {\n    // escribe aquí la prueba del nombre\n});\n`;
+      return { file: `Tests · GET /alumnos/${id}/`, lead: `<p>La respuesta del servidor fue <b>200 OK</b> en <b>${real} ms</b> y el HTML contiene el nombre <b>${nom}</b>. Tu meta es menos de <b>${ms} ms</b>.</p>`, starter,
+        ok: `GET http://127.0.0.1:8000/alumnos/${id}/  200 OK  ${real} ms\nPASS  Responde 200\nPASS  Tarda menos de ${ms} ms\nPASS  Muestra al alumno\n3/3 pruebas pasaron.`,
+        sol: `pm.response.to.have.status(200);\npm.expect(pm.response.responseTime).to.be.below(${ms});\npm.expect(pm.response.text()).to.include("${nom}");`,
+        rules: [
+          { t: 'Comprueba el estado 200', re: /pm\.response\.to\.have\.status\(\s*200\s*\)/, err: 'FAIL  Responde 200\nAssertionError: expected response to have status code 201 but got 200' },
+          { t: `Comprueba que tarda menos de ${ms} ms`, re: new RegExp(`pm\\.expect\\(\\s*pm\\.response\\.responseTime\\s*\\)\\.to\\.be\\.below\\(\\s*${ms}\\s*\\)`), err: `FAIL  Tarda menos de ${ms} ms\nLa prueba está vacía o no compara pm.response.responseTime con ${ms}.\n(pista: pm.expect(…).to.be.below(…))` },
+          { t: `Comprueba que aparece ${nom}`, re: new RegExp(`pm\\.expect\\(\\s*pm\\.response\\.text\\(\\)\\s*\\)\\.to\\.include\\(\\s*["']${rx(nom)}["']\\s*\\)`), err: `FAIL  Muestra al alumno\nLa prueba está vacía o no busca el texto "${nom}" en pm.response.text().\n(pista: pm.expect(…).to.include(…))` },
+        ] }; } }),
   ],
   /* ===== C. Registro de defectos ===== */
   'Registro de defectos': [
-    RZ('Razona: reportes y ciclo de vida', 'Los casos cambian en cada intento.', (K) => {
-      const est = ['Nuevo', 'Asignado', 'En corrección', 'Corregido', 'Verificado', 'Cerrado'], i = K.int(0, 3);
-      const dato = K.pick([['fecha de nacimiento 01/01/2030', 'acepta fecha de nacimiento futura'], ['matrícula repetida 2026' + K.int(100, 999), 'acepta matrículas repetidas'], ['apellido «Muñoz»', 'la búsqueda no encuentra apellidos con ñ'], ['campo nombre vacío', 'guarda alumnos sin nombre']]);
-      return { qs: K.mix([
-        G(`La incidencia está en «${est[i]}». ¿Cuál es el siguiente estado?`, est[i + 1], est.filter((_, k) => k !== i + 1 && k !== i).slice(0, 3), 'El ciclo de vida avanza en orden para no perder el seguimiento', ['Se puede saltar a Cerrado', 'El orden lo decide cada quien'], 'Sigue el ciclo.'),
-        G(`Probaste el formulario «Nuevo alumno» con ${dato[0]}. ¿Cuál es el mejor título?`, `Nuevo alumno ${dato[1]}`, ['No sirve el formulario', 'Error!!!', 'Problema con alumnos'],
-          'El título dice qué falla y dónde, sin adjetivos', ['Un título corto es suficiente', 'Los signos llaman la atención'], 'Qué y dónde.'),
-        G('La verificación de la corrección falló. ¿A qué estado regresa?', 'En corrección', ['Nuevo', 'Cerrado', 'Se borra'], 'Hay que volver a corregir lo que no quedó', ['Se empieza todo de cero', 'Se cierra para no atrasarse'], 'Regresa a corregir.'),
-      ]) };
-    }),
-    RETO('Del defecto al tablero', 'Encontraste un defecto en el control escolar y lo llevas por todo el ciclo.', 'Decide cada paso del registro.', (K) => {
-      const fecha = `${K.int(10, 28)}/0${K.int(1, 9)}/20${K.int(30, 45)}`;
-      return { steps: [
-        S(`<p>En «Nuevo alumno» capturaste fecha de nacimiento <b>${fecha}</b> y el sistema guardó al alumno.</p>`, '¿Qué escribes como resultado esperado?', 'Mensaje de error: la fecha no puede ser futura, y el alumno no se guarda', ['El alumno se guarda', 'Nada', 'Que el sistema se cierre'],
-          'El esperado describe lo que el sistema DEBERÍA hacer', ['El esperado es lo que pasó', 'No hace falta escribirlo'], 'Debería…', 'Esperado ≠ obtenido.'),
-        S('<p>Escribes los pasos.</p>', '¿Cuáles son reproducibles?', `1. Iniciar sesión 2. Alumnos → Nuevo 3. Fecha ${fecha} 4. Guardar`, ['Hacer cosas en el formulario', 'Probar y ya', 'Ver si falla'],
-          'Cualquier persona puede repetir el defecto siguiendo pasos concretos', ['Los pasos generales bastan', 'Solo quien lo encontró lo entiende'], 'Concretos y en orden.', 'Reproducible.'),
-        S('<p>Vas a adjuntar evidencia.</p>', '¿Qué adjuntas?', 'Una captura con datos de prueba que muestre al alumno guardado', ['La contraseña del profesor', 'El código completo', 'Nada'],
-          'La evidencia demuestra el defecto sin exponer datos reales', ['Más archivos es mejor', 'La contraseña ayuda a reproducirlo'], 'Evidencia segura.', 'Captura o video corto.'),
-        S('<p>Tu compañero corrigió el código y movió la tarjeta a «Corregido».</p>', '¿Quién la pasa a «Verificado»?', 'Otro integrante, después de repetir los pasos', ['Quien la corrigió', 'Nadie', 'El navegador'],
-          'Quien corrige tiende a probar solo lo que tenía en mente', ['Quien corrige conoce mejor el código', 'Verificar no es necesario'], 'Otra persona.', 'Roles separados.'),
-      ] };
-    }),
+    PR('Práctica: registra el defecto que encontraste', { type: 'form', intro: 'Reprodujiste un defecto en el control escolar (es distinto para cada alumno). Escribe el reporte completo para que otra persona pueda repetirlo.', fields: [], gen: (K) => {
+      const nom = persona(K), id = K.int(3, 90);
+      const D = K.pick([
+        { url: '/alumnos/nuevo/', acc: `capturar a ${nom} con una CURP de 19 caracteres y presionar Guardar`, esp: 'mensaje «La CURP debe tener 18 caracteres» y no se guarda', obt: 'pantalla amarilla DataError (1406) Data too long for column curp', cod: '1406', sev: 'Medio', clave: 'CURP' },
+        { url: `/alumnos/${id}/editar/`, acc: `cambiar el grupo de ${nom} a 502 y presionar Guardar`, esp: 'se guarda y regresa al detalle del alumno', obt: 'error 500 Server Error y el cambio no se guarda', cod: '500', sev: 'Crítico', clave: 'grupo' },
+        { url: '/login/', acc: 'escribir un usuario válido con la contraseña incorrecta', esp: 'mensaje «Usuario o contraseña incorrectos»', obt: 'la página se recarga en blanco sin ningún mensaje (código 200)', cod: '200', sev: 'Bajo', clave: 'contraseña' },
+        { url: `/alumnos/${id}/`, acc: `abrir el detalle de ${nom} sin iniciar sesión`, esp: 'redirige a /login/ (302)', obt: 'muestra todos los datos personales del alumno (200)', cod: '200', sev: 'Crítico', clave: 'sesión' },
+      ]);
+      return { lead: `<p><b>Lo que hiciste:</b> en <code>${D.url}</code>, ${D.acc}.<br><b>Lo que debía pasar:</b> ${D.esp}.<br><b>Lo que pasó:</b> ${D.obt}.</p>`, fields: [
+        { label: 'Título (qué falla y dónde)', rows: 1, min: 15, need: [D.clave], ph: 'Ej. Error al … en …' },
+        { label: 'Pasos para reproducir (numerados)', rows: 4, min: 50, need: [D.url] },
+        { label: 'Resultado esperado', rows: 2, min: 20 },
+        { label: 'Resultado obtenido (con el código o mensaje que viste)', rows: 2, min: 20, need: [D.cod] },
+        { label: 'Severidad propuesta y por qué', rows: 2, min: 25, need: [D.sev] },
+      ], sol: `Severidad esperada: ${D.sev}. El reporte debe mencionar ${D.url}, los pasos numerados y el código ${D.cod}.` }; } }),
+    RT('Verifica la corrección', 'El desarrollador marcó tu defecto como «Corregido». Repetiste las pruebas; decide si se cierra o se reabre y deja el comentario en el tablero.', { type: 'form', intro: 'Lee los resultados de tus pruebas de verificación (son solo tuyos) y actualiza el defecto en el tablero.', fields: [], gen: (K) => {
+      const n = K.int(10, 60), nom = persona(K), falla = K.r() < 0.6;
+      const casos = [['Guardar con CURP de 18 caracteres', 'Se guarda ✓'], ['Guardar con CURP de 19 caracteres', 'Muestra el mensaje de validación ✓'], ['Guardar con CURP vacía', falla ? 'Pantalla amarilla IntegrityError (1048) ✗' : 'Muestra «Este campo es obligatorio» ✓']];
+      const est = falla ? 'Reabierto' : 'Cerrado';
+      return { lead: `<p><b>Defecto #${n}</b> · «Error al guardar alumno con CURP inválida» · reportado por ti · corregido por ${nom}.</p>${tabla(['Prueba de verificación', 'Resultado'], casos)}`, fields: [
+        { label: 'Nuevo estado del defecto', rows: 1, min: 6, need: [est], ph: 'Cerrado o Reabierto' },
+        { label: 'Evidencia: qué probaste y qué pasó', rows: 3, min: 50, need: falla ? ['vacía', '1048'] : ['18', '19', 'vacía'] },
+        { label: `Comentario para ${nom.split(' ')[0]} (claro y respetuoso)`, rows: 3, min: 40 },
+      ], sol: falla ? 'Se reabre: la CURP vacía todavía provoca IntegrityError (1048).' : 'Se cierra: las tres pruebas pasaron.' }; } }),
   ],
-  /* ===== D. Clasificación ===== */
+  /* ===== D. Clasificación de defectos ===== */
   'Clasificación de defectos': [
-    RZ('Razona: matriz severidad × prioridad', 'Los defectos y su urgencia cambian en cada intento. Usa la matriz: Crítico 1·2·4 · Medio 3·5·7 · Bajo 6·8·9 (Alta·Media·Baja).', (K) => {
-      const sev = K.pick(SEV), pri = K.pick(['Alta', 'Media', 'Baja']), t = TURNO[sev + '|' + pri];
-      const def = K.pick([['Nadie puede iniciar sesión', 'Crítico', 'Bloquea todo el sistema'], ['Eliminar un alumno borra a otro', 'Crítico', 'Pierde datos'], ['Se ven alumnos sin iniciar sesión', 'Crítico', 'Expone información'], ['Acepta fecha de nacimiento futura', 'Medio', 'Una función falla pero se sigue trabajando'], ['La búsqueda no encuentra apellidos con acento', 'Medio', 'Una función falla pero se sigue trabajando'], ['Botón desalineado a 375 px', 'Bajo', 'Es un detalle visual'], ['Error de ortografía en un título', 'Bajo', 'Es un detalle de texto']]);
-      const s2 = K.pick(SEV), p2 = K.pick(['Alta', 'Media', 'Baja']);
-      return { qs: K.mix([
-        G(`Severidad ${sev.toLowerCase()} y prioridad ${pri.toLowerCase()}. ¿Qué turno de corrección tiene?`, String(t), Object.values(TURNO).map(String).filter((x) => x !== String(t)).slice(0, 3).concat([]), `En la matriz, fila ${sev} y columna ${pri} dan el ${t}`, ['El turno es el orden en que se encontró', 'Siempre va primero lo más fácil'], 'Fila = severidad, columna = prioridad.'),
-        G(`Defecto: «${def[0]}». ¿Qué severidad tiene?`, def[1], SEV.filter((x) => x !== def[1]), def[2], ['Depende de quién lo encontró', 'Todo defecto es crítico'], 'Usa la tabla de niveles.'),
-        G(`Defecto A: ${s2.toLowerCase()} con prioridad ${p2.toLowerCase()} (turno ${TURNO[s2 + '|' + p2]}). Defecto B: medio con prioridad media (turno 5). ¿Cuál se corrige primero?`, TURNO[s2 + '|' + p2] < 5 ? 'El A' : TURNO[s2 + '|' + p2] > 5 ? 'El B' : 'Cualquiera: tienen el mismo turno', ['El A', 'El B', 'Cualquiera: tienen el mismo turno'],
-          'Se corrige primero el número de turno más bajo', ['Siempre el crítico, sin importar la prioridad', 'El que se reportó primero'], 'Número menor = antes.'),
-      ]) };
-    }),
-    RETO('Ordena la semana de correcciones', 'Tu equipo tiene tres defectos y poco tiempo. Decide con la matriz.', 'Cada paso usa la clasificación anterior.', (K) => {
-      const ent = K.pick(['mañana', 'el viernes', 'en dos días']);
-      return { steps: [
-        S('<p>Defecto 1: «Se ven datos de alumnos sin iniciar sesión».</p>', '¿Severidad?', 'Crítico', ['Medio', 'Bajo'], 'Expone información personal', ['No bloquea el sistema', 'Solo lo ven algunos'], 'Revisa la tabla.', 'Exponer datos = crítico.'),
-        S(`<p>Defecto 2: «Error de ortografía en el título de inicio». La dirección revisará el sistema <b>${ent}</b>.</p>`, '¿Severidad y prioridad?', 'Severidad baja, prioridad alta', ['Severidad alta, prioridad baja', 'Severidad crítica, prioridad alta', 'Severidad baja, prioridad baja'],
-          'No daña el sistema, pero lo verá la dirección pronto', ['La ortografía es crítica', 'La prioridad no depende de fechas'], 'Daño vs. urgencia.', 'Severidad ≠ prioridad.'),
-        S('<p>Defecto 3: «La búsqueda no encuentra apellidos con acento», prioridad media.</p>', '¿Qué turno tiene?', '5', ['3', '7', '1'], 'Medio con prioridad media es el 5', ['Medio siempre es 3', 'La búsqueda es crítica'], 'Fila medio, columna media.', 'Matriz.'),
-        S(tabla(['Defecto', 'Turno'], [['1 · datos sin sesión', '1 o 2'], ['2 · ortografía (dirección ' + ent + ')', '6'], ['3 · búsqueda con acentos', '5']]), '¿En qué orden se corrigen?', '1 → 3 → 2', ['2 → 3 → 1', '3 → 1 → 2', '1 → 2 → 3'],
-          'Se sigue el número de turno de menor a mayor', ['Lo más fácil primero', 'Lo más reciente primero'], 'Menor turno primero.', 'Orden justificado.'),
-      ] };
-    }),
+    PR('Práctica: asigna la severidad', { type: 'classify', intro: 'Estos defectos los encontró tu equipo (son distintos para cada alumno). Asigna la severidad según el daño que causan.', cats: ['Crítico', 'Medio', 'Bajo'], items: [], gen: (K) => {
+      const id = K.int(2, 99), g = K.pick(['501', '502', '503']);
+      const C = [{ t: `Cualquiera sin sesión ve los datos de /alumnos/${id}/`, c: 0, why: 'Expone datos personales: es crítico.' }, { t: 'Al guardar calificaciones aparece error 500 y se pierden', c: 0, why: 'Se pierde información y bloquea la función principal.' }, { t: `El grupo ${g} no aparece en la lista y no se pueden registrar sus alumnos`, c: 0, why: 'Impide usar el sistema a todo un grupo.' }];
+      const M = [{ t: 'El buscador de alumnos ignora los acentos (no encuentra «Ramírez»)', c: 1, why: 'Funciona, pero con una falla que tiene solución alterna.' }, { t: 'La lista de alumnos tarda 6 s con Fast 4G', c: 1, why: 'Afecta la experiencia, pero el sistema sigue sirviendo.' }, { t: 'El formulario no avisa qué campo falta y hay que adivinar', c: 1, why: 'Se puede completar, pero causa errores.' }];
+      const B = [{ t: 'Una falta de ortografía en el pie de página', c: 2, why: 'Solo es estético.' }, { t: 'El logo se ve un poco pixeleado', c: 2, why: 'No afecta el funcionamiento.' }, { t: 'El botón Guardar está 2 px más abajo que Cancelar', c: 2, why: 'Detalle visual menor.' }];
+      return { items: K.mix([...K.some(C, 2), ...K.some(M, 2), ...K.some(B, 2)]) }; } }),
+    RT('Ordena las correcciones con la matriz', 'Tu equipo tiene tres defectos clasificados y poco tiempo. Calcula el turno de cada uno con la matriz y decide el orden.', { type: 'fill', intro: 'Usa la matriz severidad × prioridad para escribir el turno (1 = primero) de cada defecto y el orden en que se atienden.', code: '', gen: (K) => {
+      const SV = ['Crítico', 'Medio', 'Bajo'], PRI = ['Alta', 'Media', 'Baja'];
+      let L; do { L = ['A', 'B', 'C'].map((x) => ({ x, s: K.pick(SV), p: K.pick(PRI) })); L.forEach((d) => { d.n = TURNO[d.s + '|' + d.p]; }); } while (new Set(L.map((d) => d.n)).size < 3);
+      const desc = K.mix(['El login no responde con usuarios de 501', 'El PDF de la boleta sale sin calificaciones', 'Falta el acento en «Inscripción»', 'La lista de grupos tarda 5 s', 'El botón Exportar no hace nada', 'Se pueden duplicar alumnos con la misma CURP']).slice(0, 3);
+      const ord = L.slice().sort((a, b) => a.n - b.n).map((d) => d.x);
+      return { lead: `${MATRIZ}${tabla(['Defecto', 'Descripción', 'Severidad', 'Prioridad'], L.map((d, i) => [d.x, desc[i], d.s, d.p]))}`, file: 'tablero.txt',
+        code: `Turno del defecto A:  ⟪${L[0].n}⟫\nTurno del defecto B:  ⟪${L[1].n}⟫\nTurno del defecto C:  ⟪${L[2].n}⟫\n\nOrden de atención:  1.° ⟪${ord[0]}⟫   2.° ⟪${ord[1]}⟫   3.° ⟪${ord[2]}⟫` }; } }),
   ],
-  /* ===== E. Corrección ===== */
+  /* ===== E. Corrección de código y convenciones ===== */
   'Corrección de código y convenciones': [
-    RZ('Razona: traceback y flake8', 'Archivos, líneas y nombres cambian en cada intento.', (K) => {
-      const lin = K.int(9, 48), col = K.int(1, 9), nombre = K.pick(['detalle', 'lista', 'nuevo']), real = nombre + '_alumno' + (nombre === 'lista' ? 's' : '');
-      const fl = K.pick([['F401', "'os' imported but unused", 'Borrar la importación que no se usa'], ['E111', 'indentation is not a multiple of 4', 'Usar sangría de 4 espacios'], ['E501', `line too long (${K.int(80, 110)} > 79 characters)`, 'Partir la línea en varias'], ['E302', 'expected 2 blank lines, found 1', 'Dejar dos líneas en blanco antes de la función'], ['W291', 'trailing whitespace', 'Quitar los espacios al final de la línea']]);
-      return { qs: K.mix([
-        G('¿Dónde está el error que debes corregir?', `En alumnos/lista.html, línea ${lin}`, ['En django/core/handlers/base.py, línea 197', 'En settings.py', 'En models.py, línea 1'],
-          'La pista útil es tu propio archivo, no los de django/', ['El primer archivo del traceback es el culpable', 'Siempre es settings.py'], 'Busca tus archivos.',
-          pre(`NoReverseMatch at /alumnos/\nReverse for '${nombre}' not found.\n  File ".../django/core/handlers/base.py", line 197\n  File "alumnos/views.py", line 21, in lista_alumnos\nIn template alumnos/lista.html, error at line ${lin}`)),
-        G(`La ruta en urls.py se llama ${real}. ¿Cómo corriges la plantilla?`, `{% url '${real}' a.pk %}`, [`{% url '${nombre}' a.pk %}`, 'Borrar el enlace', 'Poner DEBUG = False'],
-          'El nombre en {% url %} debe ser idéntico al name= de la ruta', ['DEBUG = False corrige rutas', 'Django busca nombres parecidos'], 'Nombre exacto.'),
-        G(`flake8 dice: alumnos/views.py:${lin}:${col}: ${fl[0]} ${fl[1]}. ¿Qué haces?`, fl[2], ['Ignorarlo: el programa corre', 'Borrar el archivo', 'Desinstalar flake8'],
-          `${fl[0]} indica exactamente qué regla de PEP 8 no se cumple y en qué línea`, ['flake8 solo revisa errores de lógica', 'Las observaciones no se corrigen'], 'Lee el código de la regla.'),
-      ]) };
-    }),
-    RETO('Corrige sin romper nada', 'Corriges un defecto del control escolar y demuestras que nada más se rompió.', 'Cada paso es parte del flujo de corrección.', (K) => {
-      const lin = K.int(9, 40);
-      return { steps: [
-        S(pre(`TemplateSyntaxError at /alumnos/\nInvalid block tag on line ${lin}: 'endfor'.`), '¿Qué revisas?', `Que el {% for %} esté bien abierto antes de la línea ${lin}`, ['La contraseña de MySQL', 'El puerto 8000', 'requirements.txt'],
-          'Un endfor sin su for de apertura rompe la plantilla', ['Es un error de base de datos', 'Es un error de red'], 'Bloques de plantilla.', 'Abre y cierra cada bloque.'),
-        S('<p>Ya corregiste la plantilla y la lista abre.</p>', '¿Qué más pruebas?', 'El alta y la búsqueda de alumnos (prueba de regresión)', ['Nada más', 'Solo la lista otra vez', 'Otro sistema'],
-          'Una corrección puede romper partes que ya funcionaban', ['Si una página abre, todo funciona', 'La regresión es opcional'], 'Lo que ya funcionaba.', 'Regresión.'),
-        S(pre("alumnos/views.py:1:1: F401 'os' imported but unused\nalumnos/views.py:12:80: E501 line too long (92 > 79 characters)"), '¿Qué haces antes de entregar?', 'Borrar la importación de os y partir la línea 12', ['Nada: funciona', 'Borrar la línea 12', 'Desactivar flake8'],
-          'El código entregado debe cumplir PEP 8 sin observaciones', ['flake8 es solo una sugerencia', 'Borrar código es más rápido'], 'Dos observaciones.', 'flake8 sin observaciones.'),
-        S('<p>Todo pasó.</p>', '¿Qué mensaje de commit escribes?', 'Fixes #4: corrige endfor en la lista de alumnos', ['cambios', 'ya', 'arreglos varios'],
-          'Dice qué se corrigió y cierra la incidencia', ['Los mensajes cortos son mejores', 'El mensaje no importa'], 'Específico.', 'Rastreable.'),
-      ] };
-    }),
+    PR('Práctica: deja el archivo limpio para flake8', { type: 'code', intro: 'Corrige el archivo y presiona ▶ Ejecutar para correr flake8. Repite hasta que no marque nada.', starter: '', rules: [], gen: (K) => {
+      const F = K.pick([['calcularPromedio', 'calcular_promedio', 'calificaciones'], ['contarAprobados', 'contar_aprobados', 'alumnos'], ['sumarFaltas', 'sumar_faltas', 'faltas']]);
+      const lim = K.pick([6, 7]), arch = K.pick(['utilidades.py', 'reportes.py', 'calculos.py']);
+      const starter = `import os, sys\n\n\ndef ${F[0]}(${F[2]}):\n    total=0\n    for x in ${F[2]}:\n        if x>=${lim} :\n            total = total + x\n    return total\n`;
+      return { file: `escolar/${arch}`, starter, ok: `(venv) > flake8 escolar/${arch}\n(sin mensajes)\n✓ El archivo cumple PEP 8.`,
+        sol: `import os\nimport sys\n\n\ndef ${F[1]}(${F[2]}):\n    total = 0\n    for x in ${F[2]}:\n        if x >= ${lim}:\n            total = total + x\n    return total`,
+        rules: [
+          { t: 'Un import por línea', not: /import\s+\w+\s*,/, err: `escolar/${arch}:1:10: E401 multiple imports on one line` },
+          { t: 'Nombre de función en snake_case', re: new RegExp(`def\\s+${F[1]}\\(`), not: new RegExp(F[0]), err: `escolar/${arch}:4:5: N802 function name '${F[0]}' should be lowercase\n(usa minúsculas con guion bajo: ${F[0].replace(/[A-Z]/g, (m) => '_' + m.toLowerCase())})` },
+          { t: 'Espacios alrededor de =', not: /total=0/, err: `escolar/${arch}:5:10: E225 missing whitespace around operator` },
+          { t: 'Espacios alrededor de >=', not: /x>=|>=\d/, err: `escolar/${arch}:7:13: E225 missing whitespace around operator` },
+          { t: 'Sin espacio antes de :', not: /[ \t]+:[ \t]*$/m, err: `escolar/${arch}:7:17: E203 whitespace before ':'` },
+        ] }; } }),
+    RT('Corrige la plantilla desde el traceback', 'La lista de alumnos muestra una pantalla amarilla. Corrige la plantilla hasta que la página cargue y muestre bien los datos.', { type: 'code', intro: 'Presiona ▶ Ejecutar para recargar la página. Lee el error, corrige la plantilla y vuelve a ejecutar.', starter: '', rules: [], gen: (K) => {
+      const g = K.pick(['501', '502', '503']), nom = persona(K), ruta = K.pick(['detalle_alumno', 'alumno_detalle']), mal = K.pick(['detalle', 'ver_alumno']);
+      const starter = `<h1>Alumnos del grupo ${g}</h1>\n<ul>\n{% for alumno in alumnos %}\n    <li>\n        <a href="{% url '${mal}' alumno.pk %}">{{ alumno.nombr }}</a>\n        {% if alumno.promedio < 6 %}\n            <span class="riesgo">En riesgo</span>\n    </li>\n{% endfor %}\n</ul>\n`;
+      return { file: 'escolar/templates/escolar/lista.html', lead: `<p>En <code>urls.py</code> la ruta del detalle se llama <b><code>${ruta}</code></b> y el modelo Alumno tiene el campo <b><code>nombre</code></b>.</p>`, starter,
+        ok: `GET /alumnos/  200 OK\nAlumnos del grupo ${g}\n• ${nom}  En riesgo\n• …\n✓ La página carga y los enlaces llevan al detalle.`,
+        sol: `<a href="{% url '${ruta}' alumno.pk %}">{{ alumno.nombre }}</a>\n{% if alumno.promedio < 6 %}\n    <span class="riesgo">En riesgo</span>\n{% endif %}`,
+        rules: [
+          { t: 'Cada {% if %} se cierra con {% endif %}', re: /{%\s*endif\s*%}/, err: "TemplateSyntaxError at /alumnos/\nInvalid block tag on line 9: 'endfor', expected 'elif', 'else' or 'endif'. Did you forget to register or load this tag?" },
+          { t: `El enlace usa la ruta ${ruta}`, re: new RegExp(`{%\\s*url\\s+'${ruta}'\\s+alumno\\.pk\\s*%}`), err: `NoReverseMatch at /alumnos/\nReverse for '${mal}' not found. '${mal}' is not a valid view function or pattern name.` },
+          { t: 'Se muestra alumno.nombre', re: /{{\s*alumno\.nombre\s*}}/, err: `GET /alumnos/  200 OK\nAlumnos del grupo ${g}\n•   En riesgo\n•\n✗ La página carga, pero los nombres salen vacíos (Django no marca error con un campo mal escrito).` },
+        ] }; } }),
   ],
-  /* ===== F. Reflexión ===== */
+  /* ===== F. Reflexión socioemocional ===== */
   'Reflexión socioemocional': [
-    RZ('Razona: comunicación asertiva', 'Las frases cambian en cada intento. Decide y explica por qué.', (K) => {
-      const n = K.int(50, 200), ms = (K.int(31, 58) / 10).toFixed(1), ap = K.pick(['Muñoz', 'Peña', 'Núñez']);
-      const pool = [
-        ['«Tu código está mal hecho.»', false, 'Ataca a la persona y no dice qué falla'],
-        [`«En la prueba con ${n} peticiones el promedio fue de ${ms} s; anexo la tabla.»`, true, 'Describe el hecho con datos y evidencia'],
-        ['«Esto nunca funcionó.»', false, 'Generaliza sin datos'],
-        [`«La búsqueda no encuentra «${ap}»; los pasos están en la incidencia #${K.int(2, 9)}.»`, true, 'Señala qué falla y dónde están los pasos'],
-        ['«¿Quién fue el que rompió todo?»', false, 'Busca culpables en lugar de soluciones'],
-        ['«¿Podemos revisar juntos el error 500 del alta?»', true, 'Propone colaborar con respeto'],
-      ];
-      return { qs: K.some(pool, 3).map(([f, ok, why]) => G(`${f} ¿Es asertiva?`, ok ? 'Asertiva' : 'No asertiva', [ok ? 'No asertiva' : 'Asertiva'], why, [ok ? 'Le falta energía para que la tomen en serio' : 'Es directa, y eso basta para ser asertiva', 'La asertividad no aplica en programación'], ok ? 'Asertiva.' : 'No asertiva.')) };
-    }),
-    RETO('Un desacuerdo en el equipo', 'Otro equipo clasificó distinto un defecto y el tiempo se acaba. Decide cómo actuar.', 'No hay atajos: piensa en lo que sentirías y en lo que funciona.', (K) => {
-      const def = K.pick(['«Se ven datos sin sesión»', '«Eliminar un alumno borra a otro»']);
-      return { steps: [
-        S(`<p>El otro equipo clasificó ${def} como <b>bajo</b>; ustedes creen que es crítico.</p>`, '¿Qué hacen primero?', 'Escuchar sus razones sin interrumpir', ['Imponer su opinión', 'Dejarlo sin clasificar', 'Quejarse con el docente'],
-          'Entender su criterio permite llegar a un acuerdo argumentado', ['Ganar la discusión es lo importante', 'Escuchar retrasa el trabajo'], 'Escucha activa.', 'Comunicación asertiva.'),
-        S('<p>Ya escucharon. Siguen sin estar de acuerdo.</p>', '¿Con qué deciden?', 'Con la tabla de niveles acordada por el grupo', ['Con quien hable más fuerte', 'A la suerte', 'Con lo que diga el más rápido'],
-          'Un criterio compartido evita que cada quien use su propia vara', ['La tabla es solo una sugerencia', 'Votar siempre es mejor que los criterios'], 'Criterio común.', 'Decisiones fundamentadas.'),
-        S('<p>Te sientes frustrado porque perdieron tiempo.</p>', '¿Qué estrategia usas?', 'Nombrar la emoción, respirar y proponer un acuerdo para la próxima vez', ['Abandonar la actividad', 'Culpar al otro equipo', 'Fingir que no pasa nada'],
-          'Reconocer la emoción ayuda a responder con calma y aprender', ['Las emociones no influyen en el trabajo', 'Ocultarlas es lo profesional'], 'Tolerancia a la frustración.', 'Emoción → estrategia → resultado.'),
-        S('<p>Llenas la tabla reto – emoción – estrategia – resultado.</p>', '¿Qué resultado escribes?', 'Acordamos dejarlo como crítico usando la tabla, y revisar los criterios antes de clasificar', ['Ganamos la discusión', 'No pasó nada', 'El otro equipo estaba mal'],
-          'El resultado dice qué funcionó y qué harán distinto', ['El resultado es quién ganó', 'No hace falta escribirlo'], 'Aprendizaje.', 'Así el conflicto se vuelve mejora.'),
-      ] };
-    }),
+    PR('Práctica: reescribe con asertividad', { type: 'form', intro: 'Estas frases se dijeron en tu equipo (son distintas para cada alumno). Reescríbelas de forma asertiva: describe el hecho, di cómo te afecta y propón algo concreto.', fields: [], gen: (K) => {
+      const P = K.some([
+        ['«Tu código siempre está mal, por eso nada funciona.»', 'código'], ['«Haz tú las pruebas de carga, yo no sé.»', 'pruebas'], ['«Ese defecto no es crítico, no exageres.»', 'defecto'],
+        ['«Ya ni modo, lo entregamos así aunque falle el login.»', 'login'], ['«Nadie me avisó que cambiaron la base de datos.»', 'base'], ['«Siempre llegas tarde y no avanzamos.»', 'avance'],
+      ], 3);
+      return { lead: '<p>Una frase asertiva habla del <b>hecho</b> (no de la persona), dice <b>cómo te afecta</b> y termina con una <b>propuesta</b> concreta.</p>', fields: P.map((p) => ({ label: `Reescribe: ${p[0]}`, rows: 3, min: 50, need: [p[1]] })) }; } }),
+    RT('Tu reto, tu emoción, tu estrategia', 'Durante las pruebas del control escolar pasó algo que te hizo sentir presión. Analízalo para aprender de ello.', { type: 'form', intro: 'Escribe sobre la situación que te tocó (es distinta para cada alumno), como si te hubiera pasado a ti.', fields: [], gen: (K) => {
+      const S = K.pick([['La prueba de estrés tiró el servidor 10 minutos antes de entregar.', 'servidor'], ['Otro equipo reabrió tres defectos que ya habías cerrado.', 'defectos'], ['Tu compañero borró sin querer la base de datos de pruebas.', 'base'], ['El maestro pidió el reporte de defectos un día antes de lo planeado.', 'reporte']]);
+      return { lead: `<p><b>Situación:</b> ${S[0]}</p>`, fields: [
+        { label: 'Reto: describe lo que pasó con tus palabras', rows: 2, min: 30, need: [S[1]] },
+        { label: 'Emoción: qué sentiste y cómo lo notaste en tu cuerpo o conducta', rows: 2, min: 30 },
+        { label: 'Estrategia: qué hiciste (o harías) para regularte y resolver', rows: 3, min: 50 },
+        { label: 'Resultado: qué pasó y qué harías distinto la próxima vez', rows: 3, min: 50 },
+      ] }; } }),
   ],
 };
 })();
@@ -3451,7 +3430,11 @@ window.P3RETO = {
     const nc = (x) => String(x ?? '').trim().replace(/\s+/g, ' ');
     host.innerHTML = `${d.lead ? `<div class="lead-card">${d.lead}</div>` : ''}<div class="term" role="group" aria-label="Terminal simulada"><div class="term-bar"><i></i><i></i><i></i><span>${esc(d.shell || 'Terminal')}</span></div>${d.tasks.map((t, i) => `<div class="tm-row" data-i="${i}"><p class="tk-t">${i + 1}. ${t.t}</p><div class="tm-line"><span class="tm-p">${esc(t.prompt || d.prompt || '$')}</span><input type="text" value="${esc(st.ans[i])}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Comando ${i + 1}"></div><pre class="tm-out" hidden></pre><p class="q-fb" aria-live="polite"></p></div>`).join('')}</div>`;
     host.addEventListener('input', (e) => { const r = e.target.closest('.tm-row'); if (!r) return; st.ans[+r.dataset.i] = e.target.value; r.classList.remove('ok', 'bad'); $('.q-fb', r).textContent = ''; $('.tm-out', r).hidden = true; api.save(st); });
-    host.addEventListener('keydown', (e) => { if (e.key !== 'Enter') return; const r = e.target.closest('.tm-row'); if (!r) return; e.preventDefault(); const nx = $(`.tm-row[data-i="${+r.dataset.i + 1}"] input`, host); if (nx) nx.focus(); });
+    /* Enter ejecuta el comando como en una terminal real: si es correcto muestra la salida y pasa al siguiente; si no, muestra el error (no gasta intentos) */
+    host.addEventListener('keydown', (e) => { if (e.key !== 'Enter') return; const r = e.target.closest('.tm-row'); if (!r) return; e.preventDefault(); const i = +r.dataset.i; const t = d.tasks[i]; const c = nc(st.ans[i]); if (!c) return;
+      const out = $('.tm-out', r); r.classList.remove('ok', 'bad');
+      if (t.ok.some((re) => re.test(c))) { out.textContent = t.out || '(listo)'; out.classList.remove('tm-err'); out.hidden = false; const nx = $(`.tm-row[data-i="${i + 1}"] input`, host); if (nx) nx.focus(); }
+      else { out.textContent = t.err ? t.err(c) : `${c.split(' ')[0]}: el comando no hizo lo que se pedía. Revisa el nombre, las opciones y los espacios.`; out.classList.add('tm-err'); out.hidden = false; } });
     api.save(st);
     return {
       check() {
@@ -3574,10 +3557,36 @@ window.P3RETO = {
       }
     };
   };
+
+  /* --- práctica de código: el alumno edita el código y presiona «Ejecutar» para ver lo que pasaría (error o resultado). Ejecutar no gasta intentos. --- */
+  E.code = (host, d, api) => {
+    const st = api.load() || { code: d.starter };
+    const pass = (r) => { try { const c = st.code; return (r.re ? r.re.test(c) : true) && (r.not ? !r.not.test(c) : true) && (r.fn ? !!r.fn(c) : true); } catch (e) { return false; } };
+    host.innerHTML = `${d.lead ? `<div class="lead-card">${d.lead}</div>` : ''}<div class="cx"><div class="cx-bar"><span>📄 ${esc(d.file || 'código')}</span><button type="button" class="btn sm primary cx-run">▶ Ejecutar</button><button type="button" class="btn sm ghost cx-reset">Restaurar código</button></div><textarea class="cx-ed" spellcheck="false" autocapitalize="off" autocorrect="off" rows="${Math.min(24, Math.max(8, st.code.split('\n').length + 2))}">${esc(st.code)}</textarea><div class="cx-out" aria-live="polite"><span class="muted">Presiona <b>▶ Ejecutar</b> para ver qué pasa con tu código. Puedes ejecutar todas las veces que quieras.</span></div></div><ul class="ed-rules" hidden>${d.rules.map((r, i) => `<li data-i="${i}">${esc(r.t)}</li>`).join('')}</ul>`;
+    const ed = $('.cx-ed', host), out = $('.cx-out', host);
+    ed.addEventListener('input', () => { st.code = ed.value; api.save(st); });
+    ed.addEventListener('keydown', (e) => { if (e.key !== 'Tab') return; e.preventDefault(); const a = ed.selectionStart, b = ed.selectionEnd; ed.value = ed.value.slice(0, a) + '    ' + ed.value.slice(b); ed.selectionStart = ed.selectionEnd = a + 4; st.code = ed.value; api.save(st); });
+    const run = () => { const bad = d.rules.find((r) => !pass(r)); const n = d.rules.filter(pass).length;
+      out.className = 'cx-out ' + (bad ? 'err' : 'okk');
+      out.innerHTML = `<pre>${esc(bad ? bad.err : (d.ok || '✓ Todo funciona como se esperaba.'))}</pre><p class="small">${bad ? `Vas bien en ${n} de ${d.rules.length} puntos. Lee el mensaje, corrige y vuelve a ejecutar.` : 'Ahora presiona <b>Revisar</b> para que cuente tu calificación.'}</p>`; };
+    $('.cx-run', host).addEventListener('click', run);
+    $('.cx-reset', host).addEventListener('click', () => { ed.value = d.starter; st.code = d.starter; api.save(st); out.className = 'cx-out'; out.innerHTML = '<span class="muted">Se restauró el código original.</span>'; });
+    api.save(st);
+    return {
+      check() {
+        if (st.code.trim() === d.starter.trim()) return { score: 0, incomplete: true, msg: 'Todavía no cambias nada del código.' };
+        const ul = $('.ed-rules', host); ul.hidden = false; let ok = 0;
+        d.rules.forEach((r, i) => { const li = $(`li[data-i="${i}"]`, ul); const g = pass(r); li.classList.toggle('on', g); if (g) ok++; });
+        run();
+        return { score: ok / d.rules.length, msg: `${ok} de ${d.rules.length} puntos del código correctos.` };
+      }
+    };
+  };
   /* ================= INTERFAZ ================= */
   const HELP = {
     fill: 'Lee todo el código. Escribe en cada recuadro numerado solo la palabra o expresión que falta (respeta mayúsculas cuando sea código). Con <b>Enter</b> pasas al siguiente espacio. Al terminar presiona <b>Revisar</b>.',
-    term: 'Lee cada instrucción y escribe el comando completo después del indicador (prompt), como lo harías en la terminal real. Con <b>Enter</b> pasas a la siguiente línea. Al presionar <b>Revisar</b> verás la salida de los comandos correctos.',
+    term: 'Lee cada instrucción y escribe el comando completo después del indicador (prompt), como lo harías en la terminal real. Presiona <b>Enter</b> para ejecutarlo: verás lo que responde la terminal o el error si algo está mal (ejecutar no gasta intentos). Cuando todos funcionen, presiona <b>Revisar</b>.',
+    code: 'Es código real del proyecto con errores o partes por escribir. <b>Edítalo</b> y presiona <b>▶ Ejecutar</b> para ver qué pasaría (el error o el resultado). Ejecutar no gasta intentos: corrige según el mensaje y vuelve a ejecutar las veces que necesites. Cuando funcione, presiona <b>Revisar</b>. Los nombres y datos son distintos para cada alumno.',
     steps: 'Es un reto <b>paso a paso</b>: lee el contexto de cada paso (código, mensaje o tabla), elige qué harías y por qué, y presiona <b>Comprobar este paso</b>. Solo cuentan los pasos que resuelves al primer intento; si fallas dos veces, se muestra la respuesta y sigues. Cada paso tiene tiempo límite. Al terminar todos, presiona <b>Revisar</b>.',
     classify: 'Lee cada tarjeta y toca la categoría que le corresponde. Cuando hayas clasificado todas, presiona <b>Revisar</b>. Las tarjetas en rojo tienen una pista. Si no llegas al 100%, da clic en <b>🔄 Nuevo intento</b>: cada intento trae tarjetas nuevas.',
     quiz: 'Lee cada pregunta y elige una respuesta. Cuando contestes todas, presiona <b>Revisar</b>. Si no llegas al 100%, lee las pistas y da clic en <b>🔄 Nuevo intento</b>: cada intento trae preguntas nuevas y las opciones en otro orden.',
@@ -3656,11 +3665,12 @@ window.P3RETO = {
       }
       case 'binary': return li(p.items.map((it) => (it.mode === 'read' ? `${esc(it.q)} → <b>${parseInt(it.bits, 2)}</b>` : `${esc(it.q)} → <code>${(it.target >>> 0).toString(2).padStart(p.bits || 8, '0')}</code>`) + why(it.fb)));
       case 'html': case 'python': return (s.code ? `<p>Una solución correcta:</p><pre class="code">${esc(s.code)}</pre>` : p.tip && /\n/.test(p.tip) ? `<p>Una solución correcta:</p><pre class="code">${esc(p.tip)}</pre>` : '') + `<p><b>Lo que debía cumplir:</b></p>${li(p.checks.map((c) => esc(c.t)))}`;
-      case 'form': return `<p>Aquí no hay una sola respuesta correcta: cuenta que cada respuesta tenga la extensión mínima${p.fields.some((f) => f.need) ? ' y las palabras que se piden' : ''}.</p>${li(p.fields.map((f) => `${esc(f.label)}: al menos <b>${f.min || 1}</b> caracteres${f.need ? `; debe incluir: <b>${f.need.map(esc).join(', ')}</b>` : ''}`))}`;
+      case 'form': return (p.sol ? `<p><b>${esc(p.sol)}</b></p>` : '') + `<p>Aquí no hay una sola respuesta correcta: cuenta que cada respuesta tenga la extensión mínima${p.fields.some((f) => f.need) ? ' y las palabras que se piden' : ''}.</p>${li(p.fields.map((f) => `${esc(f.label)}: al menos <b>${f.min || 1}</b> caracteres${f.need ? `; debe incluir: <b>${f.need.map(esc).join(', ')}</b>` : ''}`))}`;
       case 'sheet': return s.sheet ? `<p>Pasos para resolverla:</p>${li(s.sheet)}` : li(p.tasks.map((t) => `${t.text}${t.hint ? `<br>✓ ${esc(t.hint)}` : ''}`));
       case 'steps': return li(p.steps.map((st, k) => `Paso ${k + 1}: ${esc(st.q)}<br>✓ <b>${esc(st.opts[0])}</b>${st.r ? `<br>Razón: ${esc(st.r.ok)}` : ''}${why(st.fb)}`));
       case 'fill': { const out = p.code.replace(/⟪([^⟫]*)⟫/g, (m, a) => '\u0001' + a.split('|')[0] + '\u0002'); return `<p>Código completo (lo que iba en cada espacio está resaltado):</p><pre class="code">${esc(out).replace(/\u0001/g, '<mark>').replace(/\u0002/g, '</mark>')}</pre>`; }
       case 'term': return li(p.tasks.map((t) => `${t.t}<br><code>${esc(t.sol || '')}</code>${t.sol ? '' : why(t.hint)}`));
+      case 'code': return (p.sol ? `<p>Una solución correcta (lo importante):</p><pre class="code">${esc(p.sol)}</pre>` : '') + `<p><b>Lo que debía cumplir tu código:</b></p>${li(p.rules.map((r) => esc(r.t)))}`;
       default: return '';
     }
   };

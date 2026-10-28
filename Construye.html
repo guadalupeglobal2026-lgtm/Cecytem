@@ -556,6 +556,16 @@ body.show-cert #print{display:block; position:fixed; inset:0; background:var(--b
 .stp-ctx table{border-collapse:collapse;font-size:.92rem}.stp-ctx td,.stp-ctx th{border:1px solid var(--line,#D5DEE8);padding:.25rem .5rem;text-align:left}
 .serie-note{margin:-.2rem 0 .6rem;font-size:.95rem;color:var(--muted,#55606E)}
 .side-m em.s2{font-style:normal;font-size:.72rem;font-weight:700;color:var(--azul,#1D5FD1);background:color-mix(in srgb,var(--azul,#1D5FD1) 10%,transparent);padding:0 .3rem;border-radius:4px}
+/* práctica de código y terminal */
+.cx{border:1px solid var(--line,#D5DEE8);border-radius:var(--r-sm,10px);overflow:hidden;background:#0F172A}
+.cx-bar{display:flex;gap:.5rem;align-items:center;padding:.45rem .6rem;background:#1E293B;color:#E2E8F0;font-size:.9rem}
+.cx-bar span{flex:1}
+.cx-ed{display:block;width:100%;box-sizing:border-box;border:0;outline:0;resize:vertical;padding:.8rem 1rem;background:#0F172A;color:#E2E8F0;font:14px/1.5 ui-monospace,Consolas,'Courier New',monospace;tab-size:4}
+.cx-out{padding:.6rem 1rem;background:#111827;color:#CBD5E1;border-top:1px solid #334155}
+.cx-out pre{margin:0;white-space:pre-wrap;font:13px/1.45 ui-monospace,Consolas,monospace}
+.cx-out.err pre{color:#FCA5A5}.cx-out.okk pre{color:#86EFAC}.cx-out p{margin:.4rem 0 0;color:#CBD5E1}
+.tm-out.tm-err{color:#FCA5A5}
+.lead-card table{border-collapse:collapse;margin:.5rem 0;font-size:.95em}.lead-card th,.lead-card td{border:1px solid #CBD5E1;padding:.3rem .7rem;text-align:left}.lead-card th{background:#E2E8F0}
 </style>
 </head>
 <body>
@@ -1144,169 +1154,133 @@ def panel(request, pk):
 ];
 })();
 
-/* Construye · segundo parcial, SEGUNDA SERIE: por cada tema del parcial, un «Razona» (datos distintos por alumno,
-   con razón y tiempo) y un reto paso a paso. Se agregan al final de cada tema sin cambiar la primera serie. */
+/* Construye · segundo parcial, SEGUNDA SERIE: práctica real (escribir, ejecutar y corregir código y comandos)
+   con datos distintos para cada alumno. Se agrega al final de cada tema sin cambiar la primera serie. */
 (() => {
 const e = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-const pre = (t) => `<pre class="code">${e(t)}</pre>`;
-const uniq = (ok, arr) => arr.filter((w, i) => w !== ok && arr.indexOf(w) === i);
-const G = (q, ok, wrong, rok, rno, fb, html) => ({ q, opts: [ok, ...uniq(ok, wrong)], a: 0, r: { ok: rok, no: uniq(rok, rno) }, fb, html });
-const S = (ctx, q, ok, wrong, rok, rno, hint, fb) => ({ ctx, q, opts: [ok, ...uniq(ok, wrong)], r: rok ? { ok: rok, no: rno } : null, hint, fb });
-const RZ = (t, intro, gen) => ({ t, serie2: true, ps: [{ type: 'quiz', label: 'Razona', title: t.replace('Razona: ', 'Razona: '), intro, qs: [], gen }] });
-const RETO = (t, x, intro, gen) => ({ t: 'Reto paso a paso: ' + t, serie2: true, reto: true, caso: { t, x }, ps: [{ type: 'steps', label: 'Reto', title: t, intro, steps: [], gen }] });
+const rx = (t) => String(t).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const W = (t) => new RegExp(rx(t).replace(/\s+/g, '\\s*'), 'i');           /* busca un texto ignorando espacios */
+const PR = (t, x, ex) => ({ t, serie2: true, ps: [Object.assign({ label: 'Práctica', title: t }, ex)] });
+const RT = (t, x, ex) => ({ t: 'Reto: ' + t, serie2: true, reto: true, caso: { t, x }, ps: [Object.assign({ label: 'Reto', title: t }, ex)] });
 const NOM = ['Ana', 'Luis', 'Sofía', 'Diego', 'Valeria', 'Mateo', 'Camila', 'Iker', 'Regina', 'Emiliano', 'Ximena', 'Santiago'];
 const APE = ['López', 'Hernández', 'Martínez', 'García', 'Pérez', 'Ramírez', 'Torres', 'Flores', 'Cruz', 'Morales'];
 const persona = (K) => `${K.pick(NOM)} ${K.pick(APE)}`;
-const tabla = (head, rows) => `<table><tr>${head.map((h) => `<th>${e(h)}</th>`).join('')}</tr>${rows.map((r) => `<tr>${r.map((c) => `<td>${e(c)}</td>`).join('')}</tr>`).join('')}</table>`;
 const r1 = (x) => Math.round(x * 10) / 10;
-const DIAS = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes'];
+const num = (x) => { const a = [String(x), x.toFixed(1), x.toFixed(2)]; return [...new Set(a.concat(a.map((v) => v.replace('.', ','))))].join('|'); };
+const ENT = [['torneo', 'torneos', 'nombre', 'sede'], ['clase', 'clases', 'nombre', 'salon'], ['competencia', 'competencias', 'nombre', 'distancia']];
 
 window.P2S2 = {
   /* ===== A. Base de datos y entorno ===== */
   'Base de datos y entorno Django': [
-    RZ('Razona: relaciones y llaves', 'Cada caso es distinto para ti y cambia en cada intento. Elige la respuesta y la razón.', (K) => {
-      const casos = [
-        ['Un instructor da varias clases y cada clase la da un solo instructor', '1:N', 'clase', 'instructor_id'],
-        ['Un nadador tiene muchos registros de tiempo y cada registro es de un nadador', '1:N', 'tiempo', 'nadador_id'],
-        ['Cada nadador tiene un solo pasaporte y cada pasaporte es de un nadador', '1:1', 'pasaporte', 'nadador_id (única)'],
-        ['Un nadador entra a varios torneos y en cada torneo participan muchos nadadores', 'N:M', 'una tabla intermedia', 'nadador_id y torneo_id'],
-        ['Un horario se repite en muchas asistencias y cada asistencia es de un horario', '1:N', 'asistencia', 'horario_id'],
-      ];
-      const [txt, card, dond, fk] = K.pick(casos); const id = K.int(40, 99), n = K.int(5, 30);
-      const tipo = K.pick([['tiempo en 100 m, por ejemplo 1:12.45 → 72.45 s', 'DECIMAL(6,2)', 'Necesita decimales exactos'], ['número de carril del 1 al 8', 'INT', 'Es un número entero'], ['fecha del torneo', 'DATE', 'Permite ordenar y comparar fechas'], ['nombre del instructor', 'VARCHAR(100)', 'Es texto de longitud variable']]);
-      return { qs: K.mix([
-        G(`«${txt}». ¿Qué relación es y dónde va la llave foránea?`, card === 'N:M' ? `N:M: ${dond} con ${fk}` : `${card}: en ${dond}, como ${fk}`,
-          card === 'N:M' ? ['1:N: en nadador, como torneo_id', '1:1: en torneo, como nadador_id', 'N:M: en nadador, como un texto con varios id'] : [`${card}: en la tabla del lado «uno»`, 'N:M: con una tabla intermedia', 'No se necesita llave foránea'],
-          card === 'N:M' ? 'Muchos en ambos lados solo se representa con una tabla que une las dos llaves' : 'La FK va del lado de «muchos» (o en la tabla que depende, en 1:1)', ['La FK siempre va en la primera tabla que se nombra', 'Las relaciones se guardan como texto'], 'Primero decide la cardinalidad, luego dónde va la FK.'),
-        G(`Campo: ${tipo[0]}. ¿Qué tipo de dato de MySQL usas?`, tipo[1], ['VARCHAR(100)', 'INT', 'DATE', 'DECIMAL(6,2)', 'BOOLEAN'].filter((x) => x !== tipo[1]).slice(0, 3), tipo[2], ['Todo puede guardarse como texto', 'El tipo no importa para MySQL'], 'Elegir bien el tipo evita errores al ordenar y calcular.'),
-        G(`La tabla nadador tiene ${n} registros (id 1 a ${n}). Ejecutas INSERT INTO asistencia (nadador_id, fecha) VALUES (${id}, '2026-11-0${K.int(1, 9)}'). ¿Qué pasa?`,
-          'MySQL rechaza el registro por la restricción de llave foránea', ['Se guarda sin problema', `Se crea el nadador ${id}`, 'Se borra la tabla asistencia'],
-          `No existe el nadador ${id}, y la FK no permite registros «huérfanos»`, ['MySQL crea los registros que faltan', 'La FK solo revisa el tipo de dato'], 'La FK protege la integridad.'),
-      ]) };
-    }),
-    RETO('Diseña la base desde un requerimiento', 'El encargado describe lo que necesita. Toma cada decisión del diseño en orden.', 'Lee cada paso con atención: la decisión de un paso se usa en el siguiente.', (K) => {
-      const ent = K.pick([['torneo', 'torneos'], ['clase', 'clases'], ['competencia', 'competencias']]);
-      return { steps: [
-        S(`<p>«Cada nadador puede inscribirse en varias <b>${ent[1]}</b>, y en cada ${ent[0]} participan muchos nadadores.»</p>`, '¿Qué relación hay entre nadador y ' + ent[0] + '?',
-          'N:M (muchos a muchos)', ['1:N', '1:1', 'No hay relación'], 'Hay «muchos» en los dos lados', ['Basta con que un lado tenga muchos', 'Los nadadores no se relacionan'], 'Lee la frase en ambos sentidos.', 'N:M requiere una tabla intermedia.'),
-        S('<p>Ya sabes que es N:M.</p>', '¿Cómo lo representas en MySQL?', `Tabla intermedia inscripcion_${ent[0]} con nadador_id y ${ent[0]}_id`, [`Un campo ${ent[1]} de texto en nadador`, 'Repetir al nadador por cada ' + ent[0], `Una FK ${ent[0]}_id en nadador`],
-          'Cada fila de la intermedia une un nadador con un ' + ent[0], ['Un texto con varios id es más fácil de consultar', 'Repetir registros es normal'], 'Dos llaves foráneas.', 'La intermedia evita datos repetidos.'),
-        S(pre(`CREATE TABLE inscripcion_${ent[0]} (...);\nCREATE TABLE nadador (...);\nCREATE TABLE ${ent[0]} (...);`), 'El script falla con «Foreign key constraint is incorrectly formed». ¿Qué corriges?',
-          `Crear primero nadador y ${ent[0]}, y al final la tabla intermedia`, ['Quitar las llaves foráneas', 'Cambiar INT por VARCHAR', 'Usar otra base de datos'],
-          'Una FK solo puede apuntar a una tabla que ya existe', ['MySQL no acepta tablas intermedias', 'El orden de las tablas no importa'], 'Padres primero.', 'Orden: tablas padre → tablas hijas.'),
-        S(pre('PS C:\\aqualink> django-admin startproject aqualink .\ndjango-admin : El término "django-admin" no se reconoce...'), '¿Qué hiciste mal?',
-          'No activé el entorno virtual (venv\\Scripts\\activate) antes de usar Django', ['Django no existe para Windows', 'Faltó el punto', 'Hay que reiniciar la computadora'],
-          'Django está instalado dentro del entorno virtual, no en todo el equipo', ['El punto activa el entorno', 'Windows bloquea Django'], 'Revisa si aparece (venv).', 'Orden: crear venv → activar → instalar → crear proyecto.'),
-      ] };
-    }),
+    PR('Práctica: tabla intermedia N:M', '', { type: 'fill', intro: 'Escribe lo que falta en el script. Tu entidad y tus nombres son distintos a los de tus compañeros.', code: '', file: 'aqualink.sql', gen: (K) => {
+      const [en, ens, c1, c2] = K.pick(ENT), it = `inscripcion_${en}`;
+      return { lead: `<p>Requerimiento: <b>cada nadador puede inscribirse en varias ${ens} y en cada ${en} participan muchos nadadores</b>. Ya existe la tabla <code>nadador</code>.</p>`,
+        code: `CREATE TABLE ⟪${en}⟫ (\n    id INT AUTO_INCREMENT ⟪PRIMARY KEY⟫,\n    ${c1} VARCHAR(100) NOT NULL,\n    ${c2} VARCHAR(60)\n);\n\nCREATE TABLE ⟪${it}⟫ (\n    id INT AUTO_INCREMENT PRIMARY KEY,\n    nadador_id ⟪INT⟫ NOT NULL,\n    ⟪${en}_id⟫ INT NOT NULL,\n    FOREIGN KEY (nadador_id) REFERENCES ⟪nadador⟫(id),\n    FOREIGN KEY (${en}_id) ⟪REFERENCES⟫ ${en}(⟪id⟫)\n);` }; } }),
+    RT('El script que no corre', 'El equipo escribió el script de la base y MySQL marca errores. Ejecútalo, lee cada error y corrígelo hasta que corra completo.', { type: 'code', intro: 'Edita el script y presiona ▶ Ejecutar las veces que necesites. Cuando corra completo, presiona Revisar.', starter: '', rules: [], gen: (K) => {
+      const [en] = K.pick(ENT), it = `inscripcion_${en}`, typo = K.pick(['nadadr', 'nadadores', 'nadaor']);
+      const starter = `CREATE DATABASE aqualink;\nUSE aqualink;\n\nCREATE TABLE ${it} (\n    id INT AUTO_INCREMENT PRIMARY KEY,\n    nadador_id VARCHAR(10) NOT NULL,\n    ${en}_id INT NOT NULL,\n    FOREIGN KEY (nadador_id) REFERENCES ${typo}(id),\n    FOREIGN KEY (${en}_id) REFERENCES ${en}(id)\n);\n\nCREATE TABLE nadador (\n    id INT AUTO_INCREMENT PRIMARY KEY,\n    nombre VARCHAR(100) NOT NULL\n);\n\nCREATE TABLE ${en} (\n    id INT AUTO_INCREMENT,\n    nombre VARCHAR(100) NOT NULL\n);`;
+      const pos = (c, t) => c.search(new RegExp('CREATE\\s+TABLE\\s+' + t + '\\s*\\(', 'i'));
+      return { file: 'aqualink.sql', starter, ok: `Query OK: tablas nadador, ${en} e ${it} creadas.\nSHOW TABLES;\n+---------------------+\n| ${it} |\n| ${en} |\n| nadador |`,
+        sol: `CREATE TABLE nadador (...);\nCREATE TABLE ${en} (\n    id INT AUTO_INCREMENT PRIMARY KEY, ...\n);\nCREATE TABLE ${it} (\n    ...\n    nadador_id INT NOT NULL,\n    FOREIGN KEY (nadador_id) REFERENCES nadador(id), ...\n);`,
+        rules: [
+          { t: `La tabla ${en} tiene llave primaria`, fn: (c) => new RegExp(`CREATE\\s+TABLE\\s+${en}\\s*\\([^;]*PRIMARY\\s+KEY`, 'i').test(c), err: `ERROR 1075 (42000): Incorrect table definition; there can be only one auto column and it must be defined as a key\n(tabla ${en})` },
+          { t: `Las llaves foráneas apuntan a nadador (sin errores de dedo)`, not: new RegExp('REFERENCES\\s+' + typo + '\\b', 'i'), err: `ERROR 1824 (HY000): Failed to open the referenced table '${typo}'` },
+          { t: 'nadador_id es INT, igual que nadador.id', re: /nadador_id\s+INT\b/i, err: `ERROR 3780 (HY000): Referencing column 'nadador_id' and referenced column 'id' in foreign key constraint are incompatible.` },
+          { t: `nadador y ${en} se crean antes que ${it}`, fn: (c) => pos(c, 'nadador') >= 0 && pos(c, en) >= 0 && pos(c, it) > pos(c, 'nadador') && pos(c, it) > pos(c, en), err: `ERROR 1824 (HY000): Failed to open the referenced table 'nadador'\n(La tabla ${it} se crea antes que las tablas a las que apunta.)` },
+        ] }; } }),
   ],
   /* ===== B. Servidor local ===== */
   'Servidor local XAMPP y conexión': [
-    RZ('Razona: lee el mensaje de conexión', 'Los mensajes cambian en cada intento. Elige la causa y por qué.', (K) => {
-      const base = K.pick(['aqualink', 'aqualink_db', 'natacion']), typo = base + K.pick(['k', 's', '1']), user = K.pick(['root', 'admin', 'aqua']);
-      const casos = [
-        G('¿Cuál es la causa?', 'La base no existe con ese nombre', ['MySQL está apagado', 'Falta el conector', 'Usuario o contraseña incorrectos'], `NAME dice «${typo}» y en phpMyAdmin la base se llama «${base}»`, ['El servidor no responde', 'Falta instalar mysqlclient'], 'Compara letra por letra.', pre(`django.db.utils.OperationalError: (1049, "Unknown database '${typo}'")`)),
-        G('¿Cuál es la causa?', 'MySQL está apagado en XAMPP', ['La base no existe', 'Falta el conector', 'El puerto de Django es incorrecto'], 'Django no logra ni siquiera conectarse al servidor MySQL', ['El nombre de la base está mal escrito', 'El conector no está instalado'], 'Revisa el panel de XAMPP.', pre(`django.db.utils.OperationalError: (2003, "Can't connect to MySQL server on 'localhost' (10061)")`)),
-        G('¿Cuál es la causa?', 'Usuario o contraseña incorrectos', ['MySQL está apagado', 'La base no existe', 'Falta el conector'], `MySQL sí respondió, pero rechazó al usuario «${user}»`, ['El servidor no está encendido', 'La base no se importó'], 'En XAMPP: root sin contraseña.', pre(`django.db.utils.OperationalError: (1045, "Access denied for user '${user}'@'localhost' (using password: YES)")`)),
-        G('¿Cuál es la causa?', 'Falta instalar el conector mysqlclient', ['MySQL está apagado', 'La base no existe', 'El usuario es incorrecto'], 'Python no encuentra el módulo para hablar con MySQL', ['MySQL rechazó la contraseña', 'Django no tiene ENGINE'], 'pip install mysqlclient.', pre("django.core.exceptions.ImproperlyConfigured: Error loading MySQLdb module.\nDid you install mysqlclient?")),
-      ];
-      const puerto = K.pick([['Apache', '80'], ['MySQL', '3306'], ['runserver de Django', '8000']]);
-      return { qs: K.some(casos, 2).concat([G(`¿Qué puerto usa ${puerto[0]} por defecto?`, puerto[1], ['80', '3306', '8000', '21'].filter((x) => x !== puerto[1]), `Cada programa escucha en su propio puerto; ${puerto[0]} usa el ${puerto[1]}`, ['Todos los programas comparten el puerto 80', 'El puerto lo elige el navegador'], 'Solo un programa por puerto.')]) };
-    }),
-    RETO('Conecta Django con MySQL', 'Es la primera revisión con tu jefe inmediato. Resuelve cada problema en el orden en que aparece.', 'Cada paso muestra lo que viste en la pantalla.', (K) => {
-      const base = K.pick(['aqualink', 'aqualink_db']), typo = base + K.pick(['k', 's']);
-      return { steps: [
-        S('<p>El Panel de XAMPP muestra Apache en verde y MySQL en rojo: «Port 3306 in use by mysqld.exe».</p>', '¿Qué haces?', 'Detener el otro servicio de MySQL que ocupa el 3306 (o cambiar el puerto)', ['Reinstalar Django', 'Borrar la base', 'Abrir otra pestaña'],
-          'Dos programas no pueden escuchar en el mismo puerto', ['XAMPP necesita internet', 'El error es de Django'], 'Lee el puerto del mensaje.', 'Solo un programa por puerto.'),
-        S(pre(`DATABASES = {'default': {\n  'ENGINE': 'django.db.backends.mysql',\n  'NAME': '${typo}',\n  'USER': 'root', 'PASSWORD': '',\n  'HOST': 'localhost', 'PORT': '3306'}}`), `En phpMyAdmin la base se llama «${base}». ¿Qué corriges?`, `NAME: '${base}'`, ["USER: 'admin'", "PORT: '80'", "ENGINE: 'mysql'"],
-          'Django debe usar el nombre exacto de la base', ['root no tiene permisos', 'MySQL usa el puerto 80'], 'Compara letra por letra.', 'NAME = nombre exacto de la base.'),
-        S(pre('Error loading MySQLdb module.\nDid you install mysqlclient?'), '¿Qué comando ejecutas?', 'pip install mysqlclient (con el venv activo)', ['python manage.py runserver', 'pip install xampp', 'django-admin startproject'],
-          'Falta el conector que permite a Python hablar con MySQL', ['XAMPP se instala con pip', 'runserver instala lo que falta'], 'El mensaje lo dice.', 'El conector se instala en el entorno virtual.'),
-        S('<p>Ya no hay errores.</p>', '¿Cómo compruebas que Django quedó conectado?', 'python manage.py migrate y ver auth_user y django_migrations en phpMyAdmin', ['Ver que XAMPP tenga ícono naranja', 'Abrir VS Code', 'Reiniciar la computadora'],
-          'migrate crea tablas en la base configurada: si aparecen, la conexión funciona', ['El color de XAMPP lo confirma', 'Si VS Code abre, hay conexión'], 'Evidencia en la base.', 'Prueba con evidencia.'),
-      ] };
-    }),
+    PR('Práctica: crea e importa la base desde la consola', '', { type: 'term', intro: 'Usa la consola de MySQL de XAMPP. Presiona Enter para ejecutar cada comando y ver qué responde. Tu base tiene un nombre distinto.', tasks: [], shell: 'Shell de XAMPP', gen: (K) => {
+      const db = K.pick(['aqualink', 'aqualink_db', 'natacion']) + '_' + K.int(10, 99), tablas = K.int(5, 7);
+      return { lead: `<p>Tu base de datos se llamará <b><code>${db}</code></b> y el script es <b><code>${db}.sql</code></b> (está en C:\\xampp\\mysql\\bin).</p>`, prompt: 'C:\\xampp\\mysql\\bin>', tasks: [
+        { t: 'Entra a la consola de MySQL con el usuario root (sin contraseña).', sol: 'mysql -u root', ok: [/^mysql\s+-u\s*root(\s+-p)?$/i], out: 'Welcome to the MariaDB monitor.\nMariaDB [(none)]>', hint: 'mysql -u usuario' },
+        { t: `Crea la base ${db}.`, sol: `CREATE DATABASE ${db};`, ok: [new RegExp(`^create\\s+database\\s+${db};?$`, 'i')], out: 'Query OK, 1 row affected', prompt: 'MariaDB [(none)]>', hint: 'CREATE DATABASE nombre;', err: (c) => /create/i.test(c) ? `ERROR 1064: revisa el nombre: debe ser ${db}` : `ERROR 1064 (42000): You have an error in your SQL syntax near '${c}'` },
+        { t: 'Selecciona esa base.', sol: `USE ${db};`, ok: [new RegExp(`^use\\s+${db};?$`, 'i')], out: 'Database changed', prompt: 'MariaDB [(none)]>', hint: 'USE nombre;' },
+        { t: `Importa el script ${db}.sql.`, sol: `SOURCE ${db}.sql;`, ok: [new RegExp(`^(source|\\\\\\.)\\s+${db}\\.sql;?$`, 'i')], out: `Query OK, 0 rows affected (x${tablas})`, prompt: `MariaDB [${db}]>`, hint: 'SOURCE archivo.sql;' },
+        { t: 'Comprueba qué tablas quedaron.', sol: 'SHOW TABLES;', ok: [/^show\s+tables;?$/i], out: `${tablas} rows in set`, prompt: `MariaDB [${db}]>`, hint: 'SHOW TABLES;' },
+      ] }; } }),
+    RT('Conecta Django con tu base', 'Tu proyecto no se conecta. Corrige settings.py ejecutando hasta que migrate funcione.', { type: 'code', intro: 'Edita DATABASES y presiona ▶ Ejecutar para simular python manage.py migrate.', starter: '', rules: [], gen: (K) => {
+      const db = K.pick(['aqualink', 'aqualink_db', 'natacion']) + '_' + K.int(10, 99), typo = db.replace(/_(\d+)$/, '$1'), user = K.pick(['admin', 'aqua', 'usuario']);
+      const starter = `DATABASES = {\n    'default': {\n        'ENGINE': 'django.db.backends.sqlite3',\n        'NAME': '${typo}',\n        'USER': '${user}',\n        'PASSWORD': '',\n        'HOST': 'localhost',\n        'PORT': '80',\n    }\n}`;
+      return { file: 'aqualink/settings.py', lead: `<p>En phpMyAdmin tu base se llama <b><code>${db}</code></b>. XAMPP usa el usuario <b>root</b> sin contraseña y MySQL escucha en el puerto <b>3306</b>.</p>`, starter,
+        ok: `(venv) > python manage.py migrate\nOperations to perform: Apply all migrations\nApplying contenttypes.0001_initial... OK\nApplying auth.0001_initial... OK\n✓ Las tablas aparecen en ${db} en phpMyAdmin.`,
+        sol: `'ENGINE': 'django.db.backends.mysql',\n'NAME': '${db}',\n'USER': 'root',\n'PASSWORD': '',\n'HOST': 'localhost',\n'PORT': '3306',`,
+        rules: [
+          { t: 'ENGINE usa MySQL', re: /'ENGINE'\s*:\s*'django\.db\.backends\.mysql'/, err: `Django está usando SQLite: creó un archivo ${typo} en tu carpeta en lugar de usar MySQL.\n(Revisa ENGINE.)` },
+          { t: 'PORT es el de MySQL', re: /'PORT'\s*:\s*'3306'/, err: "django.db.utils.OperationalError: (2013, \"Lost connection to MySQL server at 'reading initial communication packet'\")\n(El puerto 80 es de Apache, no de MySQL.)" },
+          { t: 'USER es root', re: /'USER'\s*:\s*'root'/, err: `django.db.utils.OperationalError: (1045, "Access denied for user '${user}'@'localhost' (using password: NO)")` },
+          { t: `NAME es exactamente ${db}`, re: new RegExp(`'NAME'\\s*:\\s*'${rx(db)}'`), err: `django.db.utils.OperationalError: (1049, "Unknown database '${typo}'")` },
+        ] }; } }),
   ],
   /* ===== C. Modelos, administración y login ===== */
   'Modelos, administración y login': [
-    RZ('Razona: modelos y acceso', 'Los datos cambian en cada intento.', (K) => {
-      const at = K.pick([['carril (1 a 8)', 'models.IntegerField()', 'Es un número entero'], ['tiempo en segundos, por ejemplo 44.10', 'models.DecimalField(max_digits=6, decimal_places=2)', 'Necesita decimales exactos'], ['fecha de inscripción', 'models.DateField()', 'Es una fecha'], ['¿está activo?', 'models.BooleanField(default=True)', 'Solo tiene dos valores: sí o no'], ['nombre del tutor', 'models.CharField(max_length=100)', 'Es texto corto']]);
-      const ruta = K.pick(['/perfil/', '/panel/', '/pasaporte/' + K.int(2, 60) + '/']);
-      return { qs: K.mix([
-        G(`Agregas al modelo Nadador el campo «${at[0]}». ¿Qué campo de Django usas?`, at[1], ['models.CharField(max_length=100)', 'models.IntegerField()', 'models.DateField()', 'models.BooleanField(default=True)'].filter((x) => x !== at[1]).slice(0, 3), at[2], ['CharField sirve para todo', 'Django adivina el tipo'], 'Piensa qué valores guardará.'),
-        G('Agregaste ese campo. ¿Qué haces para que exista en MySQL?', 'python manage.py makemigrations y después python manage.py migrate', ['Solo runserver', 'Crearlo a mano en phpMyAdmin', 'Nada, Django lo hace solo'],
-          'makemigrations escribe el plan del cambio y migrate lo aplica en la base', ['runserver aplica los cambios', 'Django no usa la base'], 'Dos comandos, en ese orden.'),
-        G(`Un visitante sin sesión abre ${ruta}, que tiene @login_required. ¿Qué pasa?`, `Lo envía a /login/?next=${ruta}`, ['Ve los datos del primer nadador', 'Error 500', 'Página en blanco'],
-          'El decorador redirige a quien no ha iniciado sesión y recuerda a dónde quería ir', ['@login_required solo funciona en el admin', 'Sin sesión Django muestra todo'], 'Redirección 302.'),
-      ]) };
-    }),
-    RETO('Perfil protegido del nadador', 'Programas el perfil para que cada nadador vea solo sus datos.', 'Cada paso es un momento real del desarrollo.', (K) => {
-      const nom = persona(K), pk = K.int(2, 60);
-      return { steps: [
-        S(pre('class Nadador(models.Model):\n    nombre = models.CharField(max_length=100)'), `${nom} debe iniciar sesión con su propia cuenta. ¿Qué campo agregas?`, 'usuario = models.OneToOneField(User, on_delete=models.CASCADE)', ['usuario = models.CharField(max_length=50)', 'usuario = models.ManyToManyField(User)', 'password = models.CharField(max_length=20)'],
-          'Cada usuario corresponde a un solo nadador (1:1) y Django guarda la contraseña cifrada', ['Guardar la contraseña en el modelo es más fácil', 'Un usuario puede ser muchos nadadores'], 'Relación 1:1 con User.', 'Nunca guardes contraseñas en tus modelos.'),
-        S('<p>En /admin/ la lista muestra «Nadador object (1)», «Nadador object (2)»…</p>', '¿Qué agregas al modelo?', 'def __str__(self): return self.nombre', ['list_filter', 'Un campo id', 'Nada, así debe verse'],
-          '__str__ define el texto que representa cada registro', ['list_filter cambia los nombres', 'El admin no muestra nombres'], 'Texto legible.', 'El panel será usado por el encargado.'),
-        S(pre("def perfil(request):\n    nadador = Nadador.objects.first()\n    return render(request, 'perfil.html', {'nadador': nadador})"), 'Todos ven el mismo perfil. ¿Qué cambias?', 'get_object_or_404(Nadador, usuario=request.user) y @login_required', ['Nadador.objects.last()', 'Pedir el id en la URL a cualquiera', 'Mostrar todos los nadadores'],
-          'request.user es quien inició sesión: así cada quien ve solo lo suyo', ['first() devuelve al usuario actual', 'Mostrar todo es más transparente'], 'Usa al usuario de la petición.', 'Privacidad de datos de menores.'),
-        S(`<p>En phpMyAdmin, auth_user muestra para ${e(nom)}: <code>pbkdf2_sha256$870000$…</code></p>`, '¿Qué significa?', 'La contraseña está cifrada con hash: nadie puede leerla', ['La contraseña es «pbkdf2»', 'Hay un error en la base', 'Hay que borrarla'],
-          'Django nunca guarda contraseñas en texto plano', ['El hash se puede leer al revés', 'Es una contraseña temporal'], 'Es el requisito de seguridad.', 'Contraseñas cifradas = cumple.'),
-      ] };
-    }),
+    PR('Práctica: escribe el modelo', '', { type: 'code', intro: 'Escribe el modelo que pide el encargado. Ejecuta para simular makemigrations y corrige lo que falte.', starter: '', rules: [], gen: (K) => {
+      const M = K.pick([['Competencia', 'competencia'], ['Torneo', 'torneo'], ['Evaluacion', 'evaluación']]);
+      const dec = K.pick(['distancia', 'tiempo_meta', 'puntaje']), fecha = K.pick(['fecha', 'fecha_inicio', 'dia']);
+      return { file: 'nadadores/models.py', lead: `<p>El encargado pide la tabla <b>${M[1]}</b> con: <b>nombre</b> (texto de hasta 100), <b>${fecha}</b> (fecha), <b>${dec}</b> (número con 2 decimales) y el <b>nadador</b> al que pertenece (un nadador puede tener muchas). Debe mostrarse con su nombre en el panel.</p>`,
+        starter: `from django.db import models\nfrom .models_base import Nadador\n\n\nclass ${M[0]}(models.Model):\n    pass\n`,
+        ok: `(venv) > python manage.py makemigrations\nMigrations for 'nadadores':\n  0005_${M[0].toLowerCase()}.py\n    - Create model ${M[0]}\n✓ Listo para migrate.`,
+        sol: `class ${M[0]}(models.Model):\n    nombre = models.CharField(max_length=100)\n    ${fecha} = models.DateField()\n    ${dec} = models.DecimalField(max_digits=6, decimal_places=2)\n    nadador = models.ForeignKey(Nadador, on_delete=models.CASCADE)\n\n    def __str__(self):\n        return self.nombre`,
+        rules: [
+          { t: 'nombre es CharField de 100', re: /nombre\s*=\s*models\.CharField\(\s*max_length\s*=\s*100\s*\)/, err: `nadadores.${M[0]}: falta el campo nombre o no es CharField(max_length=100).` },
+          { t: `${fecha} es DateField`, re: new RegExp(`${fecha}\\s*=\\s*models\\.DateField\\(`), err: `nadadores.${M[0]}: falta el campo ${fecha} (debe guardar una fecha).` },
+          { t: `${dec} es DecimalField con 2 decimales`, re: new RegExp(`${dec}\\s*=\\s*models\\.DecimalField\\([^)]*decimal_places\\s*=\\s*2`), err: `nadadores.${M[0]}.${dec}: (fields.E130) DecimalFields must define a 'decimal_places' attribute (2) y max_digits.` },
+          { t: 'nadador es ForeignKey con on_delete', re: /nadador\s*=\s*models\.ForeignKey\(\s*Nadador\s*,[^)]*on_delete\s*=/, err: `TypeError: ForeignKey.__init__() missing 1 required positional argument: 'on_delete'\n(o falta la relación con Nadador: un nadador tiene muchas)` },
+          { t: '__str__ regresa el nombre', re: /def\s+__str__\s*\(\s*self\s*\)\s*:\s*\n\s+return\s+self\.nombre/, err: `En /admin/ la lista muestra «${M[0]} object (1)», «${M[0]} object (2)»…` },
+        ] }; } }),
+    RT('Perfil protegido', 'Las pruebas automáticas del perfil fallan. Corrige la vista hasta que pasen todas.', { type: 'code', intro: 'Presiona ▶ Ejecutar para correr las pruebas del perfil. Corrige una por una.', starter: '', rules: [], gen: (K) => {
+      const nom = persona(K), otro = persona(K), tpl = K.pick(['perfil', 'mi_perfil']);
+      const starter = `from django.shortcuts import render, get_object_or_404\nfrom .models import Nadador\n\n\ndef perfil(request):\n    nadador = Nadador.objects.first()\n    render(request, 'nadadores/${tpl}.html', {'nadador': nadador})\n`;
+      return { file: 'nadadores/views.py', starter,
+        ok: `test_sin_sesion_redirige ........ ok\ntest_cada_quien_ve_su_perfil ..... ok\ntest_responde_pagina ............. ok\n✓ 3 pruebas pasaron.`,
+        sol: `from django.contrib.auth.decorators import login_required\n\n@login_required\ndef perfil(request):\n    nadador = get_object_or_404(Nadador, usuario=request.user)\n    return render(request, 'nadadores/${tpl}.html', {'nadador': nadador})`,
+        rules: [
+          { t: 'Importa login_required', re: /from\s+django\.contrib\.auth\.decorators\s+import\s+login_required/, err: "NameError: name 'login_required' is not defined\n(o falta proteger la vista)" },
+          { t: 'La vista lleva @login_required', re: /@login_required\s*\n\s*def\s+perfil/, err: 'test_sin_sesion_redirige ... FAIL\nUn visitante sin sesión abrió /perfil/ y vio datos de un nadador (debía ir a /login/).' },
+          { t: 'Busca al nadador del usuario que inició sesión', re: /get_object_or_404\(\s*Nadador\s*,\s*usuario\s*=\s*request\.user\s*\)/, err: `test_cada_quien_ve_su_perfil ... FAIL\n${nom} inició sesión y vio el perfil de ${otro}.` },
+          { t: 'Regresa la respuesta con return', re: /return\s+render\(/, err: "ValueError: The view nadadores.views.perfil didn't return an HttpResponse object. It returned None instead." },
+        ] }; } }),
   ],
   /* ===== D. Pasaporte con QR ===== */
   'Pasaporte con QR y asistencia': [
-    RZ('Razona: escaneos y asistencias', 'Los días, horas y nadadores cambian para ti en cada intento.', (K) => {
-      const nom = persona(K), d1 = K.int(0, 3), h1 = K.int(7, 9), m1 = K.int(10, 40), m2 = m1 + K.int(3, 15), d2 = d1 + 1;
-      const pk = K.int(2, 80), ip = `192.168.${K.int(0, 20)}.${K.int(10, 250)}`;
-      return { qs: K.mix([
-        G(`${nom} escanea su QR el ${DIAS[d1]} a las ${h1}:${m1} (primera vez del día) y otra vez a las ${h1}:${m2}. ¿Qué ve la segunda vez?`, '«La asistencia de hoy ya estaba registrada»', ['«Asistencia registrada» y se crea otro registro', 'Un error 500', 'Se borra la primera asistencia'],
-          'get_or_create encuentra el registro de ese nadador en esa fecha y no crea otro', ['Cada escaneo crea un registro', 'La hora forma parte de la fecha'], 'Mismo nadador, misma fecha.'),
-        G(`${nom} vuelve a escanear el ${DIAS[d2]} a las ${h1}:${m1}. ¿Qué ve?`, '«Asistencia registrada»', ['«La asistencia de hoy ya estaba registrada»', `Se reemplaza la del ${DIAS[d1]}`, 'Un error por fecha'],
-          'Es otra fecha, así que no existe registro para ese día y se crea uno nuevo', ['Solo se permite una asistencia por semana', 'get_or_create nunca crea'], 'Otro día.'),
-        G(`La laptop tiene la IP ${ip} y el nadador es el ${pk}. ¿Qué dirección debe llevar el QR para que el celular la abra?`, `http://${ip}:8000/asistencia/${pk}/`, [`http://127.0.0.1:8000/asistencia/${pk}/`, `/asistencia/${pk}/`, `http://${ip}:8000/asistencia/`],
-          'El celular necesita la dirección completa con la IP de la laptop y el id del nadador', ['127.0.0.1 es la laptop para todos', 'El celular completa la dirección solo'], 'build_absolute_uri + reverse.'),
-      ]) };
-    }),
-    RETO('Registra asistencias en la alberca', 'Pruebas el pasaporte con el encargado. Los nadadores y horas son distintos para ti.', 'Cada paso es lo que pasa en la alberca.', (K) => {
-      const nom = persona(K), pk = K.int(2, 80), n = K.int(15, 40);
-      return { steps: [
-        S(pre("ModuleNotFoundError: No module named 'qrcode'"), 'Al abrir el pasaporte aparece este error. ¿Qué haces?', 'pip install "qrcode[pil]" con el entorno virtual activo', ['Borrar la vista', 'Reiniciar XAMPP', 'Cambiar el nombre del archivo'],
-          'La librería no está instalada en el entorno del proyecto', ['XAMPP incluye qrcode', 'El error es de MySQL'], 'Lee el nombre del módulo.', 'Las librerías se instalan en el venv.'),
-        S(`<p>El QR de ${e(nom)} contiene la dirección de su asistencia.</p>`, '¿Qué NO debe llevar el QR?', 'La contraseña o datos personales del nadador', ['La dirección de la ruta', 'El id del nadador', 'http:// y la IP'],
-          'Cualquiera puede escanear un QR y leer lo que contiene', ['El QR está cifrado', 'Solo el encargado tiene lector'], 'Privacidad.', 'Solo una dirección, nunca datos sensibles.'),
-        S(pre(`asistencia = Asistencia.objects.create(\n    nadador=nadador, fecha=date.today())`), `${e(nom)} escanea dos veces y aparecen dos asistencias el mismo día. ¿Qué cambias?`, 'get_or_create(nadador=nadador, fecha=date.today())', ['delete() antes de create()', 'filter() en lugar de create()', 'Agregar la hora a la fecha'],
-          'get_or_create busca primero y solo crea si no existe', ['delete borra el historial', 'filter no guarda nada'], 'Busca antes de crear.', 'Una asistencia por día.'),
-        S(`<p>Hoy escanearon ${n} nadadores distintos, algunos dos veces.</p>`, '¿Cuántos registros debe haber hoy en la tabla asistencia?', String(n), [String(n * 2), String(n + 1), '1'],
-          'Hay uno por nadador y por día, sin importar cuántas veces escaneen', ['Cada escaneo es un registro', 'Solo se guarda el primero del día'], 'Nadador + fecha.', 'UniqueConstraint lo garantiza en la base.'),
-      ] };
-    }),
+    PR('Práctica: rutas del pasaporte', '', { type: 'fill', intro: 'Completa las rutas y el enlace con tus nombres. Son distintos para cada alumno.', code: '', file: 'nadadores/urls.py', gen: (K) => {
+      const r1n = K.pick(['pasaporte', 'credencial', 'mi_pase']), r2n = K.pick(['registrar_asistencia', 'marcar_asistencia', 'checkin']), pk = K.int(2, 80);
+      return { lead: `<p>Las rutas deben llamarse <b><code>${r1n}</code></b> (muestra el QR) y <b><code>${r2n}</code></b> (registra la asistencia). Ambas reciben el id del nadador. Prueba con el nadador <b>${pk}</b>.</p>`,
+        code: `urlpatterns = [\n    path('${r1n}/<⟪int⟫:⟪pk⟫>/', views.${r1n}, name='⟪${r1n}⟫'),\n    path('asistencia/<int:pk>/', views.${r2n}, name='⟪${r2n}⟫'),\n]\n\n# en la vista ${r1n}: dirección completa que lleva el QR\nurl = request.⟪build_absolute_uri⟫(⟪reverse⟫('${r2n}', args=[nadador.pk]))\n\n# dirección que se genera para el nadador ${pk}\n# http://192.168.1.20:8000/asistencia/⟪${pk}⟫/` }; } }),
+    RT('Asistencia sin duplicados', 'El encargado escaneó varias veces y hay asistencias repetidas. Corrige la vista hasta que las pruebas pasen.', { type: 'code', intro: 'Presiona ▶ Ejecutar para simular los escaneos del día. Corrige y vuelve a ejecutar.', starter: '', rules: [], gen: (K) => {
+      const nom = persona(K), h = K.int(7, 9), m = K.int(10, 40);
+      const starter = `from datetime import date\n\n\ndef registrar_asistencia(request, pk):\n    nadador = Nadador.objects.get(pk=pk)\n    Asistencia.objects.create(nadador=nadador, fecha=date.today())\n    mensaje = 'Asistencia registrada'\n    return render(request, 'nadadores/asistencia.html', {'mensaje': mensaje})\n`;
+      return { file: 'nadadores/views.py', starter,
+        ok: `Escaneo 1 · ${nom} · ${h}:${m} → «Asistencia registrada»\nEscaneo 2 · ${nom} · ${h}:${m + 5} → «La asistencia de hoy ya estaba registrada»\nEscaneo sin sesión → /login/\nEscaneo del nadador 999 → 404\n✓ Un solo registro por día.`,
+        sol: `@login_required\ndef registrar_asistencia(request, pk):\n    nadador = get_object_or_404(Nadador, pk=pk)\n    asistencia, creada = Asistencia.objects.get_or_create(\n        nadador=nadador, fecha=date.today())\n    if creada:\n        mensaje = 'Asistencia registrada'\n    else:\n        mensaje = 'La asistencia de hoy ya estaba registrada'\n    return render(...)`,
+        rules: [
+          { t: 'Usa get_or_create con nadador y fecha', re: /get_or_create\(\s*nadador\s*=\s*nadador\s*,\s*fecha\s*=\s*date\.today\(\)\s*\)/, err: `Escaneo 1 · ${nom} · ${h}:${m} → «Asistencia registrada»\nEscaneo 2 · ${nom} · ${h}:${m + 5} → «Asistencia registrada»  ✗\nphpMyAdmin: 2 asistencias de ${nom} hoy (debe haber 1).` },
+          { t: 'Distingue si se creó o ya existía', re: /if\s+\w+\s*:[\s\S]*ya estaba registrada/, err: `Escaneo 2 · ${nom} → «Asistencia registrada» ✗\nEl mensaje debe decir «La asistencia de hoy ya estaba registrada».` },
+          { t: 'Responde 404 si el nadador no existe', re: /get_object_or_404\(\s*Nadador\s*,\s*pk\s*=\s*pk\s*\)/, err: 'Escaneo del nadador 999 → Nadador.DoesNotExist: Nadador matching query does not exist. (error 500)' },
+          { t: 'Solo con sesión iniciada', re: /@login_required\s*\n\s*def\s+registrar_asistencia/, err: 'Escaneo sin sesión → se registró una asistencia ✗ (debía pedir iniciar sesión).' },
+        ] }; } }),
   ],
   /* ===== E. Panel deportivo ===== */
   'Panel deportivo y verificación': [
-    RZ('Razona: calcula los indicadores', 'Los tiempos son distintos para ti en cada intento. Calcula con cuidado.', (K) => {
+    PR('Práctica: calcula y consulta', '', { type: 'fill', intro: 'Calcula con los tiempos de tu nadador (distintos para cada alumno) y completa la consulta. Escribe los números con un decimal.', code: '', file: 'cálculo del panel', gen: (K) => {
       const nom = persona(K); const t = [K.int(460, 520), K.int(440, 500), K.int(430, 490), K.int(420, 480), K.int(410, 470)].map((x) => x / 10);
-      const mejor = Math.min(...t), pri = t[0], ult = t[4], mej = r1((pri - ult) / pri * 100);
-      return { qs: K.mix([
-        G(`Tiempos de ${nom} en 50 m (del primero al último): ${t.join(', ')} s. ¿Cuál es su mejor tiempo?`, `${mejor} s`, [`${Math.max(...t)} s`, `${pri} s`, `${ult} s`], 'En natación el mejor tiempo es el menor: aggregate(Min)', ['El mejor es el más alto: Max', 'El mejor es siempre el último'], 'Min, no Max.'),
-        G(`Con esos tiempos, ¿cuál es el porcentaje de mejora? (primero − último) ÷ primero × 100`, `${mej} %`, [`${r1(pri - ult)} %`, `${r1((pri - ult) / ult * 100 + 0.3)} %`, `${r1(100 - mej)} %`], `(${pri} − ${ult}) ÷ ${pri} × 100 = ${mej}`, ['Se divide entre el último tiempo', 'La mejora es la resta en segundos'], 'Divide entre el primero.'),
-        G(`¿Qué consulta devuelve el último tiempo de ${nom}?`, "Tiempo.objects.filter(nadador=n).order_by('-fecha').first()", ["Tiempo.objects.filter(nadador=n).order_by('fecha').first()", 'Tiempo.objects.get(nadador=n)', 'Tiempo.objects.count()'],
-          'El signo menos ordena de la fecha más reciente a la más antigua', ['first() siempre da el más reciente', 'get funciona aunque haya varios'], 'Orden descendente.'),
-      ]) };
-    }),
-    RETO('Demostración del panel', 'Demuestras el panel deportivo al encargado. Los datos son distintos para ti.', 'Calcula y decide en cada paso.', (K) => {
-      const nom = persona(K), a = K.int(460, 500) / 10, b = r1(a + K.int(5, 25) / 10);
-      return { steps: [
-        S(pre('Tiempo.objects.get(nadador=ana)'), 'El panel marca «MultipleObjectsReturned». ¿Por qué?', 'get espera un solo registro y Ana tiene varios tiempos', ['Ana no existe', 'Falta migrate', 'MySQL está apagado'],
-          'Para varios registros se usa filter', ['get devuelve listas', 'El error es de la base'], 'Lee el nombre de la excepción.', 'get → uno; filter → varios.'),
-        S(`<p>Un nadador nuevo aún no tiene tiempos.</p>${pre('mejora = (primero.segundos - ultimo.segundos) / primero.segundos * 100')}`, '¿Qué pasa y qué agregas?', 'Falla porque primero es None: agregar if primero and ultimo', ['Nada, funciona igual', 'Mostrar mejora 100 %', 'Borrar al nadador'],
-          'No se puede calcular con un tiempo que no existe', ['None vale 0 en Python', 'Django rellena los datos que faltan'], 'Caso sin datos.', 'Siempre prueba el caso vacío.'),
-        S(`<p>${e(nom)}: primer tiempo ${a} s, último ${b} s.</p>`, '¿Qué debe mostrar el panel?', `Mejora de ${r1((a - b) / a * 100)} %: su tiempo aumentó`, [`Mejora de ${r1((b - a) / a * 100)} %`, 'Un error 500', 'Mejora 0 %'],
-          'Si el último es mayor que el primero, la mejora sale negativa', ['La mejora nunca es negativa', 'El panel solo muestra mejoras positivas'], 'Revisa el signo.', 'Más segundos = más lento.'),
-        S('<p>Antes de la demostración revisas la lista de cotejo.</p>', '¿Cuál de estas observaciones NO cumple?', 'Al escanear dos veces el mismo día se guardan dos asistencias', ['Las contraseñas se ven como pbkdf2_sha256$…', '/perfil/ sin sesión manda al login', 'El panel muestra mejor y último tiempo'],
-          'Debe registrarse una sola asistencia por día', ['El hash es un error', 'Redirigir al login es un error'], 'Repasa los requisitos.', 'Corrige antes de demostrar.'),
-      ] };
-    }),
+      const mej = r1((t[0] - t[4]) / t[0] * 100);
+      return { lead: `<p>Tiempos de <b>${nom}</b> en 50 m libre, del primero al último: <b>${t.join(' s, ')} s</b>.</p>`,
+        code: `Mejor tiempo (el menor):        ⟪${num(Math.min(...t))}⟫ s\nPrimer tiempo:                  ⟪${num(t[0])}⟫ s\nÚltimo tiempo:                  ⟪${num(t[4])}⟫ s\nMejora = (primero − último) ÷ primero × 100 = ⟪${num(mej)}⟫ %\n\n# consulta del último tiempo\nTiempo.objects.filter(nadador=n).⟪order_by⟫('⟪-fecha⟫').⟪first⟫()\n# función de agregación del mejor tiempo\ntiempos.aggregate(m=⟪Min⟫('segundos'))` }; } }),
+    RT('El panel muestra datos equivocados', 'Las pruebas del panel con los tiempos de tu nadador fallan. Corrige la vista hasta que los números salgan bien.', { type: 'code', intro: 'Presiona ▶ Ejecutar para ver los indicadores que calcula tu código. Compara con los esperados y corrige.', starter: '', rules: [], gen: (K) => {
+      const nom = persona(K); const t = [K.int(460, 520), K.int(440, 500), K.int(430, 490), K.int(420, 480), K.int(410, 470)].map((x) => x / 10);
+      const mn = Math.min(...t), mx = Math.max(...t), mej = r1((t[0] - t[4]) / t[0] * 100), malo = r1((t[0] - t[4]) / t[4] * 100);
+      const starter = `from django.db.models import Max\n\n\ndef panel(request, pk):\n    nadador = get_object_or_404(Nadador, pk=pk)\n    tiempos = Tiempo.objects.filter(nadador=nadador)\n    mejor = tiempos.aggregate(m=Max('segundos'))['m']\n    primero = tiempos.order_by('fecha').first()\n    ultimo = tiempos.order_by('fecha').first()\n    mejora = round((primero.segundos - ultimo.segundos) / ultimo.segundos * 100, 1)\n    return render(request, 'nadadores/panel.html', locals())\n`;
+      return { file: 'nadadores/views.py', lead: `<p>Tiempos de <b>${nom}</b>: ${t.join(', ')} s. Esperado: mejor <b>${mn}</b>, último <b>${t[4]}</b>, mejora <b>${mej} %</b>. Un nadador nuevo, sin tiempos, no debe provocar error.</p>`, starter,
+        ok: `${nom}: mejor ${mn} s · último ${t[4]} s · mejora ${mej} %\nNadador nuevo sin tiempos: mejora 0 %\n✓ Los indicadores coinciden con lo esperado.`,
+        sol: `from django.db.models import Min\n...\nmejor = tiempos.aggregate(m=Min('segundos'))['m']\nultimo = tiempos.order_by('-fecha').first()\nmejora = 0\nif primero and ultimo:\n    mejora = round((primero.segundos - ultimo.segundos) / primero.segundos * 100, 1)`,
+        rules: [
+          { t: 'El mejor tiempo usa Min', re: /aggregate\(\s*m\s*=\s*Min\(/, fn: (c) => /import[^\n]*\bMin\b/.test(c), err: `${nom}: mejor ${mx} s ✗ (esperado ${mn} s)\nEn natación el mejor tiempo es el menor. (¿Importaste Min?)` },
+          { t: "El último tiempo usa order_by('-fecha')", re: /ultimo\s*=\s*tiempos\.order_by\(\s*'-fecha'\s*\)\.first\(\)/, err: `${nom}: último ${t[0]} s ✗ (esperado ${t[4]} s)\nEse es el primer tiempo, no el último.` },
+          { t: 'La mejora se divide entre el primer tiempo', re: /\/\s*primero\.segundos/, err: `${nom}: mejora ${malo} % ✗ (esperado ${mej} %)\nLa fórmula divide entre el tiempo equivocado.` },
+          { t: 'No falla con un nadador sin tiempos', re: /if\s+primero\s+and\s+ultimo\s*:/, err: "Nadador nuevo sin tiempos:\nAttributeError: 'NoneType' object has no attribute 'segundos' (error 500)" },
+        ] }; } }),
   ],
 };
 })();
@@ -3427,7 +3401,11 @@ window.P3RETO = {
     const nc = (x) => String(x ?? '').trim().replace(/\s+/g, ' ');
     host.innerHTML = `${d.lead ? `<div class="lead-card">${d.lead}</div>` : ''}<div class="term" role="group" aria-label="Terminal simulada"><div class="term-bar"><i></i><i></i><i></i><span>${esc(d.shell || 'Terminal')}</span></div>${d.tasks.map((t, i) => `<div class="tm-row" data-i="${i}"><p class="tk-t">${i + 1}. ${t.t}</p><div class="tm-line"><span class="tm-p">${esc(t.prompt || d.prompt || '$')}</span><input type="text" value="${esc(st.ans[i])}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Comando ${i + 1}"></div><pre class="tm-out" hidden></pre><p class="q-fb" aria-live="polite"></p></div>`).join('')}</div>`;
     host.addEventListener('input', (e) => { const r = e.target.closest('.tm-row'); if (!r) return; st.ans[+r.dataset.i] = e.target.value; r.classList.remove('ok', 'bad'); $('.q-fb', r).textContent = ''; $('.tm-out', r).hidden = true; api.save(st); });
-    host.addEventListener('keydown', (e) => { if (e.key !== 'Enter') return; const r = e.target.closest('.tm-row'); if (!r) return; e.preventDefault(); const nx = $(`.tm-row[data-i="${+r.dataset.i + 1}"] input`, host); if (nx) nx.focus(); });
+    /* Enter ejecuta el comando como en una terminal real: si es correcto muestra la salida y pasa al siguiente; si no, muestra el error (no gasta intentos) */
+    host.addEventListener('keydown', (e) => { if (e.key !== 'Enter') return; const r = e.target.closest('.tm-row'); if (!r) return; e.preventDefault(); const i = +r.dataset.i; const t = d.tasks[i]; const c = nc(st.ans[i]); if (!c) return;
+      const out = $('.tm-out', r); r.classList.remove('ok', 'bad');
+      if (t.ok.some((re) => re.test(c))) { out.textContent = t.out || '(listo)'; out.classList.remove('tm-err'); out.hidden = false; const nx = $(`.tm-row[data-i="${i + 1}"] input`, host); if (nx) nx.focus(); }
+      else { out.textContent = t.err ? t.err(c) : `${c.split(' ')[0]}: el comando no hizo lo que se pedía. Revisa el nombre, las opciones y los espacios.`; out.classList.add('tm-err'); out.hidden = false; } });
     api.save(st);
     return {
       check() {
@@ -3550,10 +3528,36 @@ window.P3RETO = {
       }
     };
   };
+
+  /* --- práctica de código: el alumno edita el código y presiona «Ejecutar» para ver lo que pasaría (error o resultado). Ejecutar no gasta intentos. --- */
+  E.code = (host, d, api) => {
+    const st = api.load() || { code: d.starter };
+    const pass = (r) => { try { const c = st.code; return (r.re ? r.re.test(c) : true) && (r.not ? !r.not.test(c) : true) && (r.fn ? !!r.fn(c) : true); } catch (e) { return false; } };
+    host.innerHTML = `${d.lead ? `<div class="lead-card">${d.lead}</div>` : ''}<div class="cx"><div class="cx-bar"><span>📄 ${esc(d.file || 'código')}</span><button type="button" class="btn sm primary cx-run">▶ Ejecutar</button><button type="button" class="btn sm ghost cx-reset">Restaurar código</button></div><textarea class="cx-ed" spellcheck="false" autocapitalize="off" autocorrect="off" rows="${Math.min(24, Math.max(8, st.code.split('\n').length + 2))}">${esc(st.code)}</textarea><div class="cx-out" aria-live="polite"><span class="muted">Presiona <b>▶ Ejecutar</b> para ver qué pasa con tu código. Puedes ejecutar todas las veces que quieras.</span></div></div><ul class="ed-rules" hidden>${d.rules.map((r, i) => `<li data-i="${i}">${esc(r.t)}</li>`).join('')}</ul>`;
+    const ed = $('.cx-ed', host), out = $('.cx-out', host);
+    ed.addEventListener('input', () => { st.code = ed.value; api.save(st); });
+    ed.addEventListener('keydown', (e) => { if (e.key !== 'Tab') return; e.preventDefault(); const a = ed.selectionStart, b = ed.selectionEnd; ed.value = ed.value.slice(0, a) + '    ' + ed.value.slice(b); ed.selectionStart = ed.selectionEnd = a + 4; st.code = ed.value; api.save(st); });
+    const run = () => { const bad = d.rules.find((r) => !pass(r)); const n = d.rules.filter(pass).length;
+      out.className = 'cx-out ' + (bad ? 'err' : 'okk');
+      out.innerHTML = `<pre>${esc(bad ? bad.err : (d.ok || '✓ Todo funciona como se esperaba.'))}</pre><p class="small">${bad ? `Vas bien en ${n} de ${d.rules.length} puntos. Lee el mensaje, corrige y vuelve a ejecutar.` : 'Ahora presiona <b>Revisar</b> para que cuente tu calificación.'}</p>`; };
+    $('.cx-run', host).addEventListener('click', run);
+    $('.cx-reset', host).addEventListener('click', () => { ed.value = d.starter; st.code = d.starter; api.save(st); out.className = 'cx-out'; out.innerHTML = '<span class="muted">Se restauró el código original.</span>'; });
+    api.save(st);
+    return {
+      check() {
+        if (st.code.trim() === d.starter.trim()) return { score: 0, incomplete: true, msg: 'Todavía no cambias nada del código.' };
+        const ul = $('.ed-rules', host); ul.hidden = false; let ok = 0;
+        d.rules.forEach((r, i) => { const li = $(`li[data-i="${i}"]`, ul); const g = pass(r); li.classList.toggle('on', g); if (g) ok++; });
+        run();
+        return { score: ok / d.rules.length, msg: `${ok} de ${d.rules.length} puntos del código correctos.` };
+      }
+    };
+  };
   /* ================= INTERFAZ ================= */
   const HELP = {
     fill: 'Lee todo el código. Escribe en cada recuadro numerado solo la palabra o expresión que falta (respeta mayúsculas cuando sea código). Con <b>Enter</b> pasas al siguiente espacio. Al terminar presiona <b>Revisar</b>.',
-    term: 'Lee cada instrucción y escribe el comando completo después del indicador (prompt), como lo harías en la terminal real. Con <b>Enter</b> pasas a la siguiente línea. Al presionar <b>Revisar</b> verás la salida de los comandos correctos.',
+    term: 'Lee cada instrucción y escribe el comando completo después del indicador (prompt), como lo harías en la terminal real. Presiona <b>Enter</b> para ejecutarlo: verás lo que responde la terminal o el error si algo está mal (ejecutar no gasta intentos). Cuando todos funcionen, presiona <b>Revisar</b>.',
+    code: 'Es código real del proyecto con errores o partes por escribir. <b>Edítalo</b> y presiona <b>▶ Ejecutar</b> para ver qué pasaría (el error o el resultado). Ejecutar no gasta intentos: corrige según el mensaje y vuelve a ejecutar las veces que necesites. Cuando funcione, presiona <b>Revisar</b>. Los nombres y datos son distintos para cada alumno.',
     steps: 'Es un reto <b>paso a paso</b>: lee el contexto de cada paso (código, mensaje o tabla), elige qué harías y por qué, y presiona <b>Comprobar este paso</b>. Solo cuentan los pasos que resuelves al primer intento; si fallas dos veces, se muestra la respuesta y sigues. Cada paso tiene tiempo límite. Al terminar todos, presiona <b>Revisar</b>.',
     classify: 'Lee cada tarjeta y toca la categoría que le corresponde. Cuando hayas clasificado todas, presiona <b>Revisar</b>. Las tarjetas en rojo tienen una pista. Si no llegas al 100%, da clic en <b>🔄 Nuevo intento</b>: cada intento trae tarjetas nuevas.',
     quiz: 'Lee cada pregunta y elige una respuesta. Cuando contestes todas, presiona <b>Revisar</b>. Si no llegas al 100%, lee las pistas y da clic en <b>🔄 Nuevo intento</b>: cada intento trae preguntas nuevas y las opciones en otro orden.',
@@ -3632,11 +3636,12 @@ window.P3RETO = {
       }
       case 'binary': return li(p.items.map((it) => (it.mode === 'read' ? `${esc(it.q)} → <b>${parseInt(it.bits, 2)}</b>` : `${esc(it.q)} → <code>${(it.target >>> 0).toString(2).padStart(p.bits || 8, '0')}</code>`) + why(it.fb)));
       case 'html': case 'python': return (s.code ? `<p>Una solución correcta:</p><pre class="code">${esc(s.code)}</pre>` : p.tip && /\n/.test(p.tip) ? `<p>Una solución correcta:</p><pre class="code">${esc(p.tip)}</pre>` : '') + `<p><b>Lo que debía cumplir:</b></p>${li(p.checks.map((c) => esc(c.t)))}`;
-      case 'form': return `<p>Aquí no hay una sola respuesta correcta: cuenta que cada respuesta tenga la extensión mínima${p.fields.some((f) => f.need) ? ' y las palabras que se piden' : ''}.</p>${li(p.fields.map((f) => `${esc(f.label)}: al menos <b>${f.min || 1}</b> caracteres${f.need ? `; debe incluir: <b>${f.need.map(esc).join(', ')}</b>` : ''}`))}`;
+      case 'form': return (p.sol ? `<p><b>${esc(p.sol)}</b></p>` : '') + `<p>Aquí no hay una sola respuesta correcta: cuenta que cada respuesta tenga la extensión mínima${p.fields.some((f) => f.need) ? ' y las palabras que se piden' : ''}.</p>${li(p.fields.map((f) => `${esc(f.label)}: al menos <b>${f.min || 1}</b> caracteres${f.need ? `; debe incluir: <b>${f.need.map(esc).join(', ')}</b>` : ''}`))}`;
       case 'sheet': return s.sheet ? `<p>Pasos para resolverla:</p>${li(s.sheet)}` : li(p.tasks.map((t) => `${t.text}${t.hint ? `<br>✓ ${esc(t.hint)}` : ''}`));
       case 'steps': return li(p.steps.map((st, k) => `Paso ${k + 1}: ${esc(st.q)}<br>✓ <b>${esc(st.opts[0])}</b>${st.r ? `<br>Razón: ${esc(st.r.ok)}` : ''}${why(st.fb)}`));
       case 'fill': { const out = p.code.replace(/⟪([^⟫]*)⟫/g, (m, a) => '\u0001' + a.split('|')[0] + '\u0002'); return `<p>Código completo (lo que iba en cada espacio está resaltado):</p><pre class="code">${esc(out).replace(/\u0001/g, '<mark>').replace(/\u0002/g, '</mark>')}</pre>`; }
       case 'term': return li(p.tasks.map((t) => `${t.t}<br><code>${esc(t.sol || '')}</code>${t.sol ? '' : why(t.hint)}`));
+      case 'code': return (p.sol ? `<p>Una solución correcta (lo importante):</p><pre class="code">${esc(p.sol)}</pre>` : '') + `<p><b>Lo que debía cumplir tu código:</b></p>${li(p.rules.map((r) => esc(r.t)))}`;
       default: return '';
     }
   };
