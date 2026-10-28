@@ -566,6 +566,7 @@ body.show-cert #print{display:block; position:fixed; inset:0; background:var(--b
 .cx-out.err pre{color:#FCA5A5}.cx-out.okk pre{color:#86EFAC}.cx-out p{margin:.4rem 0 0;color:#CBD5E1}
 .tm-out.tm-err{color:#FCA5A5}
 .lead-card table{border-collapse:collapse;margin:.5rem 0;font-size:.95em}.lead-card th,.lead-card td{border:1px solid #CBD5E1;padding:.3rem .7rem;text-align:left}.lead-card th{background:#E2E8F0}
+.side-p.sr2{margin-top:1.4rem;padding-top:.8rem;border-top:2px solid var(--line,#CBD5E1);color:var(--azul,#1D5FD1)}.side-p.sr1{color:var(--ink,#0F172A)}
 </style>
 </head>
 <body>
@@ -2485,6 +2486,7 @@ window.P3RETO = {
     ps.forEach((p, ei) => { const x = { pid: `${tid}e${ei + 1}`, tid, tema, p, ei, label: p.label || LABELS[ei] || 'Ejercicio' }; tema.ex.push(x); exs.push(x); });
     temas.push(tema);
   }));
+  { const ok = (tm) => [tm.m.parcial || 2, tm.t.serie2 ? 1 : 0, tm.mi, tm.ti]; temas.sort((a, b) => { const x = ok(a), y = ok(b); for (let i = 0; i < 4; i++) if (x[i] !== y[i]) return x[i] - y[i]; return 0; }); exs.length = 0; temas.forEach((tm) => tm.ex.forEach((x) => exs.push(x))); }
   const byPid = Object.fromEntries(exs.map((x) => [x.pid, x]));
   const byTid = Object.fromEntries(temas.map((x) => [x.tid, x]));
   const status = (pid) => { const p = store.prog[pid]; if (!p) return 'nuevo'; if (p.best >= 1) return 'dominado'; if (p.best >= 0.8) return 'hecho'; return 'intentado'; };
@@ -3721,7 +3723,7 @@ window.P3RETO = {
     try { window.scrollTo(0, 0); } catch (e) { /* */ }
   }
   function side(curTid) {
-    $('#side').innerHTML = `<a href="#" class="side-home ${!curTid ? 'on' : ''}">Mapa de prácticas</a>` + G.modules.map((m, mi) => `${!mi || G.modules[mi - 1].parcial !== m.parcial ? `<p class="side-p">${PNAME[m.parcial]}${m.parcial === 3 && p3Lk() ? ' 🔒' : ''}</p>` : ''}<section class="side-m${m.parcial === 3 && p3Lk() ? ' is-locked' : ''}" style="--hc:var(--${m.hilo})"><h2><span class="mcol">${LET[mi]}</span>${esc(m.name)}</h2><ul>${temas.filter((tm) => tm.mi === mi).map((tm) => { const s = temaStatus(tm); return `<li><a href="#${tm.ex[0].pid}" class="st-${s} ${curTid === tm.tid ? 'on' : ''}" ${curTid === tm.tid ? 'aria-current="page"' : ''}><span class="ic" aria-label="${stText[s]}">${stIcon[s]}</span><span class="sl">${LET[tm.mi]}${tm.ti + 1} · ${tm.t.serie2 ? '<em class="s2">2.ª serie</em> ' : ''}${esc(tm.t.t)}<span class="dots">${dots(tm)}</span></span></a></li>`; }).join('')}</ul></section>`).join('');
+    $('#side').innerHTML = `<a href="#" class="side-home ${!curTid ? 'on' : ''}">Mapa de prácticas</a>` + [[2, 1], [2, 2], [3, 0]].map(([pp, sr]) => { const lk = pp === 3 && p3Lk(); const ts = temas.filter((tm) => (tm.m.parcial || 2) === pp && (!sr || (tm.t.serie2 ? 2 : 1) === sr)); if (!ts.length) return ''; const mis = [...new Set(ts.map((tm) => tm.mi))]; return `<p class="side-p${sr ? ' sr' + sr : ''}">${PNAME[pp]}${sr ? `<br>${SERIE[sr]}` : ''}${lk ? ' 🔒' : ''}</p>` + mis.map((mi) => { const m = G.modules[mi]; return `<section class="side-m${lk ? ' is-locked' : ''}${sr === 2 ? ' s2' : ''}" style="--hc:var(--${m.hilo})"><h2><span class="mcol">${LET[mi]}</span>${esc(m.name)}</h2><ul>${ts.filter((tm) => tm.mi === mi).map((tm) => { const s = temaStatus(tm); return `<li><a href="#${tm.ex[0].pid}" class="st-${s} ${curTid === tm.tid ? 'on' : ''}" ${curTid === tm.tid ? 'aria-current="page"' : ''}><span class="ic" aria-label="${stText[s]}">${stIcon[s]}</span><span class="sl">${LET[tm.mi]}${tm.ti + 1} · ${esc(tm.t.t)}<span class="dots">${dots(tm)}</span></span></a></li>`; }).join('')}</ul></section>`; }).join(''); }).join('');
     renderXP(); const dn = doneCount(); $('#pill').innerHTML = `<span><b>${dn}</b> de ${temas.length} temas</span><span class="pbar"><i style="width:${(dn / temas.length) * 100}%"></i></span>`;
   }
   function home() {
@@ -3936,7 +3938,7 @@ window.P3RETO = {
     const best = store.prog[pid];
     const nextLabel = next ? (next.tid === tm.tid ? `Ejercicio ${next.ei + 1} →` : `Siguiente tema: ${LET[next.tema.mi]}${next.tema.ti + 1} →`) : '';
     $('#main').innerHTML = `<article class="prac" style="--hc:var(--${tm.m.hilo})"><a href="#" class="back">← Mapa de prácticas</a>
-      <p class="crumb"><span class="mcol">${LET[tm.mi]}${tm.ti + 1}</span> Tema ${LET[tm.mi]}: ${esc(tm.m.name)} · Subtema ${LET[tm.mi]}${tm.ti + 1}</p>
+      <p class="crumb"><span class="mcol">${LET[tm.mi]}${tm.ti + 1}</span> Tema ${LET[tm.mi]}: ${esc(tm.m.name)} · Subtema ${LET[tm.mi]}${tm.ti + 1}${(tm.m.parcial || 2) === 2 ? ` · <b>${SERIE[tm.t.serie2 ? 2 : 1]}</b>` : ''}</p>
       <h2>${esc(tm.t.t)}</h2>
       <div class="extabs" role="tablist">${tm.ex.map((e) => `<a role="tab" href="#${e.pid}" class="extab st-${status(e.pid)}" aria-selected="${e.pid === pid}"><span class="exn">Ejercicio ${e.ei + 1}</span><span class="exl">${esc(e.label)}${stIcon[status(e.pid)] ? ' ' + stIcon[status(e.pid)] : ''}</span></a>`).join('')}</div>
       ${tm.t.caso ? `<div class="caso${tm.t.reto ? ' is-reto' : ''}"><p class="caso-h"><span aria-hidden="true">${tm.t.reto ? '🏆' : '📖'}</span> ${tm.t.reto ? 'Reto del tema' : 'Caso'}: <b>${esc(tm.t.caso.t)}</b></p><p>${esc(tm.t.caso.x)}</p></div>` : ''}
