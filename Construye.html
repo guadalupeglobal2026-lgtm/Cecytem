@@ -567,6 +567,11 @@ body.show-cert #print{display:block; position:fixed; inset:0; background:var(--b
 .tm-out.tm-err{color:#FCA5A5}
 .lead-card table{border-collapse:collapse;margin:.5rem 0;font-size:.95em}.lead-card th,.lead-card td{border:1px solid #CBD5E1;padding:.3rem .7rem;text-align:left}.lead-card th{background:#E2E8F0}
 .side-p.sr2{margin-top:1.4rem;padding-top:.8rem;border-top:2px solid var(--line,#CBD5E1);color:var(--azul,#1D5FD1)}.side-p.sr1{color:var(--ink,#0F172A)}
+.vg-note{margin:.6rem 0;padding:.5rem .8rem;border-radius:10px;background:#FFF7E6;border:1px solid #F5C26B;font-size:.92rem}
+.vf{margin-top:1rem}.vf-p{margin-top:.6rem;padding:1rem;border:2px solid #0B2F4A;border-radius:12px;background:#F8FAFC}
+.vf-h{margin:0 0 .3rem}.vf-q{font-size:1.08rem;line-height:1.5;margin:.2rem 0 .8rem;padding:.7rem .9rem;background:#fff;border-left:4px solid #0B2F4A;border-radius:6px}
+.vf-e{margin:.4rem 0 .8rem}.vf-e summary{cursor:pointer;font-weight:700}.vf-e div{padding:.5rem .2rem}
+.vf-ok{margin:.2rem 0 .5rem;font-size:.92rem}.vf-ok.si{color:#166534}.vf-ok.no{color:#B91C1C}
 </style>
 </head>
 <body>
@@ -2475,7 +2480,7 @@ window.P3RETO = {
   const rowFor = (x, calif, tipo) => { const tm = x.tema; const pr = store.prog[x.pid] || {}; const d = new Date(); const pad = (n) => String(n).padStart(2, '0');
     return { fecha: `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`, grado: G.short, grupo: store.grupo, alumno: store.name.trim().replace(/\s+/g, ' '),
       tema: `${LET[tm.mi]}${tm.ti + 1}`, temaNombre: tm.t.t, ejercicio: `${LET[tm.mi]}${tm.ti + 1}.${x.ei + 1}`, titulo: x.p.title || x.label, calif: calif == null ? '' : Math.round(calif * 100), intento: pr.att || 0,
-      mejor: Math.round((pr.best || 0) * 100), promTema: temaAvg(tm), temasComp: doneCount(), totalTemas: temas.length, tipo, dev: store.dev, texto: textoFor(x).slice(0, 1500), exTema: tm.ex.length, exHechos: tm.ex.filter(exFin).length, parcial: tm.m.parcial, serie: tm.t.serie2 ? 2 : 1 }; };
+      mejor: Math.round((pr.best || 0) * 100), promTema: temaAvg(tm), temasComp: doneCount(), totalTemas: temas.length, tipo, dev: store.dev, texto: textoFor(x).slice(0, 1500), exTema: tm.ex.length, exHechos: tm.ex.filter(exFin).length, parcial: tm.m.parcial, serie: tm.t.serie2 ? 2 : 1, ...vigRow(x) }; };
   let sending = false;
   const flush = () => new Promise((res) => {
     if (!REPORT_URL || sending || !store.outbox.length) { res(!store.outbox.length); return; }
@@ -2495,7 +2500,7 @@ window.P3RETO = {
   /* reinicio hecho por la docente (con contraseña, desde el simulador o desde su hoja) */
   const applyReset = (id, ej) => { if (!id || store.resetsDone.includes(id)) return false; store.resetsDone.push(id);
     const pids = !ej || ej === '*' ? exs.map((x) => x.pid) : [byLabel[String(ej).toUpperCase()]].filter(Boolean);
-    pids.forEach((pid) => { delete store.prog[pid]; delete store.saves[pid]; delete store.exp[pid]; delete store.picks[pid]; });
+    pids.forEach((pid) => { delete store.prog[pid]; delete store.saves[pid]; delete store.exp[pid]; delete store.picks[pid]; if (store.trk) delete store.trk[pid]; if (store.vf) delete store.vf[pid]; });
     store.outbox = store.outbox.filter((r) => !(ej === '*' || !ej || r.ejercicio === String(ej).toUpperCase()));
     persist(); return true; };
   /* contraseña docente sin internet: se compara su huella SHA-256 (la contraseña no viaja dentro del simulador) */
@@ -3693,6 +3698,99 @@ window.P3RETO = {
     $('#main').innerHTML = `<article class="prac lockv"><a href="#" class="back">← Mapa de prácticas</a><h2>🔒 Tercer parcial cerrado</h2>${!p3Hab() ? '<p class="intro">Tu maestra todavía no habilita las prácticas del <b>tercer parcial</b>. Mientras tanto, termina y repasa las del segundo parcial.</p>' : ''}${p2Left() ? `<p class="intro">Para entrar, primero termina todas las prácticas del <b>segundo parcial</b>. Te faltan <b>${p2Left()}</b> ejercicio(s).</p><p class="muted">Un ejercicio cuenta como terminado cuando llegas a 80% o cuando usas tus 3 intentos.</p>` : ''}${nx ? `<p><a class="btn primary" href="#${nx.pid}">Continuar con ${LET[nx.tema.mi]}${nx.tema.ti + 1} · ${esc(nx.tema.t.t)}</a></p>` : ''}</article>`;
     try { window.scrollTo(0, 0); } catch (e) { /* */ }
   }
+  /* ===== trabajo propio (2.ª serie del segundo parcial y tercer parcial completo) =====
+     1) verificación en clase por la docente (con contraseña)  2) registro del proceso: tiempo activo, ejecuciones e intentos de pegar
+     3) no se puede pegar texto en estas prácticas */
+  const vig = (x) => !!x && (x.tema.m.parcial === 3 || !!x.tema.t.serie2);
+  const trkOf = (pid) => { store.trk = store.trk || {}; return (store.trk[pid] = store.trk[pid] || { s: 0, r: 0, p: 0 }); };
+  const MINSEG = { code: 90, html: 90, form: 90, fill: 45, term: 40, steps: 60, classify: 30, order: 30, spot: 30 };
+  const minSeg = (x) => (x.p.type === 'quiz' ? Math.max(30, ((x.p.qs || []).length || 4) * 8) : MINSEG[x.p.type] || 40);
+  const alertaDe = (x) => { const k = trkOf(x.pid), pr = store.prog[x.pid] || {}, out = [];
+    if ((pr.best || 0) >= 0.8 && k.s < minSeg(x)) out.push(`muy rápido (${k.s} s)`);
+    if ((x.p.type === 'code' || x.p.type === 'term') && (pr.best || 0) >= 0.8 && !k.r) out.push('sin ejecutar');
+    if (k.p) out.push(`intentó pegar ${k.p} ${k.p === 1 ? 'vez' : 'veces'}`);
+    return out.join(' · '); };
+  const vigRow = (x) => { if (!vig(x)) return {}; const k = trkOf(x.pid); return { seg: k.s, ejec: k.r, pegar: k.p, alerta: alertaDe(x) }; };
+  const normA = (t) => String(t || '').trim().replace(/\s+/g, ' ').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const sinHtml = (t) => String(t || '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+  /* reto de verificación: sale del mismo ejercicio y de los datos de ese alumno; cambia en cada clic */
+  const vfReto = (x, p) => {
+    const R = (a) => a[Math.floor(Math.random() * a.length)]; const sv = store.saves[x.pid] || {};
+    const gen = { pide: 'Que te explique en voz alta, sin ayuda, cómo resolvió este ejercicio, y que lo modifique frente a ti en una parte que tú elijas.', espera: '' };
+    try {
+      switch (p.type) {
+        case 'code': { const r = R(p.rules); return { pide: `Que te explique en voz alta qué hace la parte de su código que cumple: <b>«${esc(r.t)}»</b>. Después, que la cambie para que falle, presione <b>▶ Ejecutar</b> y te diga qué significa el mensaje. Al final, que la regrese a como estaba.`, espera: `Mensaje que debe aparecer al romperla:<pre class="code">${esc(r.err)}</pre>` }; }
+        case 'html': { const c = R(p.checks); return { pide: `Que te señale en su código la parte que cumple <b>«${esc(sinHtml(c.t))}»</b>, te explique para qué sirve y la modifique frente a ti (otro texto, otra etiqueta o atributo) sin dejar de cumplirla.`, espera: '' }; }
+        case 'fill': { const a = [...p.code.matchAll(/⟪([^⟫]*)⟫/g)].map((m) => m[1].split('|')[0]); const i = Math.floor(Math.random() * a.length); return { pide: `Señala el <b>espacio ${i + 1}</b>. Que te explique para qué sirve lo que escribió ahí y qué pasaría si lo quitara o lo cambiara.`, espera: `<code>${esc(a[i])}</code>` }; }
+        case 'term': { const i = Math.floor(Math.random() * p.tasks.length), t = p.tasks[i]; return { pide: `Que borre el <b>comando ${i + 1}</b> («${esc(sinHtml(t.t))}»), lo escriba de nuevo sin ayuda, presione Enter y te explique qué hace cada parte.`, espera: `<code>${esc(t.sol || t.hint || '')}</code>` }; }
+        case 'quiz': { const q = R(p.qs); const wr = q.opts.filter((o, i) => i !== q.a); return { pide: `Que no vea la pantalla. Pregúntale: <b>«${esc(sinHtml(q.q))}»</b>${wr.length ? ` y después por qué <b>«${esc(R(wr))}»</b> no es correcta` : ''}.`, espera: `${esc(q.opts[q.a])}${q.r ? `<br>Razón: ${esc(q.r.ok)}` : ''}${q.fb ? `<br><span class="muted">${esc(sinHtml(q.fb))}</span>` : ''}` }; }
+        case 'steps': { const st = R(p.steps); return { pide: `Que no vea la pantalla. Pregúntale: <b>«${esc(sinHtml(st.q))}»</b> y por qué.`, espera: `${esc(st.opts[0])}${st.r ? `<br>Razón: ${esc(st.r.ok)}` : ''}` }; }
+        case 'classify': { const it = R(p.items); return { pide: `Pregúntale en qué categoría va <b>«${esc(sinHtml(it.t || it.html))}»</b> y por qué.`, espera: `${esc(p.cats[it.c])}${it.why ? ` — ${esc(it.why)}` : ''}` }; }
+        case 'order': { const s = R(p.sets); const i = Math.floor(Math.random() * s.items.length); const it = s.items[i]; return { pide: `Que te explique por qué <b>«${esc(sinHtml(it.t || it))}»</b> va en ese lugar y qué pasaría si se hiciera antes o después.`, espera: `Lugar ${i + 1} de ${s.items.length}${s.prompt ? ` (${esc(s.prompt)})` : ''}` }; }
+        case 'spot': { const er = []; (p.sets || [p]).forEach((s) => s.parts.forEach((q) => { if (Array.isArray(q) && q[1]) er.push(q); })); const q = R(er); return { pide: `Señala <b>«${esc(q[0])}»</b>. Que te explique por qué es un error y cómo lo corregiría.`, espera: esc(q[2] || '') }; }
+        case 'form': { const i = Math.floor(Math.random() * p.fields.length); return { pide: `Sin leer la pantalla, que te explique con sus palabras lo que escribió en <b>«${esc(p.fields[i].label)}»</b> y te dé un ejemplo distinto.`, espera: `Lo que escribió:<br><i>${esc(((sv.v || [])[i] || '(vacío)').slice(0, 400))}</i>` }; }
+        default: return gen;
+      }
+    } catch (e) { return gen; }
+  };
+  /* la contraseña se comprueba con la hoja; sin internet, con la huella guardada en esta computadora */
+  const vfClave = (clave) => new Promise((res) => {
+    const off = () => { const kh = CLAVE_HASH || store.claveHash; if (!kh) { res('sin'); return; } sha256('TechKids-Sec·' + clave).then((h) => res(h === kh ? 'ok' : 'bad')); };
+    if (!REPORT_URL || (typeof navigator !== 'undefined' && navigator.onLine === false)) { off(); return; }
+    fetch(`${REPORT_URL}?accion=checkclave&clave=${encodeURIComponent(clave)}`).then((r) => r.json()).then((d) => {
+      if (!d || !d.checked) { off(); return; }
+      if (d.ok) { sha256('TechKids-Sec·' + clave).then((h) => { store.claveHash = h; persist(); }); res('ok'); } else res(d && d.sin ? 'sin' : 'bad'); }).catch(off);
+  });
+  window.__vfReto = vfReto; window.__vig = vig;
+  function vigilar(x, p) {
+    const pid = x.pid, k = trkOf(pid), art = $('.prac'); if (!art) return;
+    const lab = `${LET[x.tema.mi]}${x.tema.ti + 1}.${x.ei + 1}`;
+    $('.engine').insertAdjacentHTML('beforebegin', '<p class="vg-note">✍️ <b>Trabajo propio:</b> en esta práctica no se puede pegar texto; escríbelo tú. Tu maestra puede pedirte en clase que expliques o modifiques este ejercicio frente a ella.</p>');
+    /* tiempo activo: solo cuenta con la página visible y si hubo actividad en los últimos 3 minutos */
+    let act = Date.now(), n = 0;
+    ['keydown', 'pointerdown', 'input', 'scroll', 'change'].forEach((ev) => art.addEventListener(ev, () => { act = Date.now(); }, true));
+    const iv = setInterval(() => { if (!document.body.contains(art)) { clearInterval(iv); persist(); return; }
+      if (document.visibilityState === 'visible' && Date.now() - act < 180000) { k.s++; if (++n % 10 === 0) persist(); } }, 1000);
+    /* ejecuciones: ▶ Ejecutar del editor y Enter en la terminal */
+    art.addEventListener('click', (e) => { if (e.target.closest('.cx-run')) { k.r++; persist(); } });
+    art.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.closest('.tm-row')) { k.r++; persist(); } });
+    /* no se puede pegar ni arrastrar texto */
+    let tp = 0;
+    const no = (e, cuenta) => { if (!e.target.closest || e.target.closest('.vf')) return; e.preventDefault(); if (cuenta && Date.now() - tp > 400) { tp = Date.now(); k.p++; persist(); toast('✋ En esta práctica no se puede pegar: escríbelo tú.'); } };
+    art.addEventListener('paste', (e) => no(e, true), true);
+    art.addEventListener('drop', (e) => no(e, true), true);
+    art.addEventListener('beforeinput', (e) => { if (/^insertFrom(Paste|Drop)/.test(e.inputType || '')) no(e, true); }, true);
+    /* verificación en clase */
+    const vf = (store.vf || {})[pid];
+    $('.foot').insertAdjacentHTML('afterend', `<div class="vf">${vf ? `<p class="vf-ok ${vf.v === 'Sí' ? 'si' : 'no'}">👩‍🏫 Verificación en clase: <b>${vf.v === 'Sí' ? '✓ lo hizo y lo explicó' : '✗ no pudo'}</b> · ${esc(vf.f)}</p>` : ''}<button type="button" class="btn sm ghost" id="vfbtn">👩‍🏫 Verificación en clase (solo docente)</button><div class="vf-p" hidden></div></div>`);
+    $('#vfbtn').addEventListener('click', () => {
+      const pn = $('.vf-p'); if (!pn.hidden) { pn.hidden = true; pn.innerHTML = ''; return; } pn.hidden = false;
+      if (!registered()) { pn.innerHTML = '<p>Primero el alumno debe escribir arriba su <b>nombre y apellidos</b> y su <b>grupo</b>.</p>'; return; }
+      pn.innerHTML = `<p><b>Verificación en clase</b> · ${esc(store.name.trim())} · Grupo ${esc(store.grupo)} · Ejercicio <b>${lab}</b></p><p class="muted small">El simulador te dará un mini reto sobre este ejercicio, con los datos de este alumno. Pídeselo frente a ti y marca el resultado: llegará a tu hoja.</p>
+        <label class="fld"><span>Contraseña docente</span><input type="password" id="vfclave" autocomplete="off"></label><div class="row"><button type="button" class="btn primary" id="vfgo">Ver mini reto</button><button type="button" class="btn ghost" id="vfcan">Cancelar</button></div><p class="docmsg" aria-live="polite"></p>`;
+      $('#vfcan').addEventListener('click', () => { pn.hidden = true; pn.innerHTML = ''; }); $('#vfclave').focus();
+      $('#vfclave').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('#vfgo').click(); });
+      $('#vfgo').addEventListener('click', () => { const clave = $('#vfclave').value, msg = $('.vf-p .docmsg'); if (!clave) { msg.textContent = 'Escribe la contraseña.'; return; }
+        $('#vfgo').disabled = true; msg.textContent = 'Verificando…';
+        vfClave(clave).then((st) => {
+          if (st === 'bad') { msg.textContent = 'Contraseña incorrecta.'; $('#vfgo').disabled = false; return; }
+          const show = () => { const r = vfReto(x, window.__P || p);
+            pn.innerHTML = `<p class="vf-h">Pídele a <b>${esc(store.name.trim())}</b>, sin ayuda y frente a ti:</p><p class="vf-q">${r.pide}</p>${r.espera ? `<details class="vf-e"><summary>Ver la respuesta esperada (solo docente)</summary><div>${r.espera}</div></details>` : ''}
+              <div class="row"><button type="button" class="btn primary" data-vf="Sí">✓ Lo hizo y lo explicó</button><button type="button" class="btn" data-vf="No">✗ No pudo</button><button type="button" class="btn ghost" data-vf="otro">🔄 Otro mini reto</button></div>${st === 'sin' ? '<p class="muted small">Sin conexión: la contraseña se comprobará cuando la hoja reciba el resultado.</p>' : ''}<p class="docmsg" aria-live="polite"></p>`;
+            pn.querySelectorAll('[data-vf]').forEach((b) => b.addEventListener('click', async () => {
+              if (b.dataset.vf === 'otro') { show(); return; }
+              pn.querySelectorAll('[data-vf]').forEach((z) => { z.disabled = true; });
+              const v = b.dataset.vf, row = rowFor(x, null, 'Verificación docente'); row.verif = v; row.vfReto = sinHtml(r.pide).slice(0, 400);
+              const h0 = await sha256(clave); row.firma = await sha256(`${h0}|${normA(row.alumno)}|${row.ejercicio}|${v}|${row.fecha}`);
+              store.vf = store.vf || {}; store.vf[pid] = { v, f: row.fecha }; persist();
+              report([row]).then((ok) => { const m = $('.vf-p .docmsg'); if (m) { m.className = 'docmsg okm'; m.textContent = ok ? '✓ Resultado enviado a tu hoja.' : '✓ Guardado. Se enviará a tu hoja cuando haya conexión.'; } setTimeout(() => route(curHash), 1600); });
+            }));
+          };
+          show();
+        });
+      });
+    });
+  }
   function side(curTid) {
     $('#side').innerHTML = `<a href="#" class="side-home ${!curTid ? 'on' : ''}">Mapa de prácticas</a>` + [[2, 1], [2, 2], [3, 0]].map(([pp, sr]) => { const lk = pp === 3 && p3Lk(); const ts = temas.filter((tm) => (tm.m.parcial || 2) === pp && (!sr || (tm.t.serie2 ? 2 : 1) === sr)); if (!ts.length) return ''; const mis = [...new Set(ts.map((tm) => tm.mi))]; return `<p class="side-p${sr ? ' sr' + sr : ''}">${PNAME[pp]}${sr ? `<br>${SERIE[sr]}` : ''}${lk ? ' 🔒' : ''}</p>` + mis.map((mi) => { const m = G.modules[mi]; return `<section class="side-m${lk ? ' is-locked' : ''}${sr === 2 ? ' s2' : ''}" style="--hc:var(--${m.hilo})"><h2><span class="mcol">${LET[mi]}</span>${esc(m.name)}</h2><ul>${ts.filter((tm) => tm.mi === mi).map((tm) => { const s = temaStatus(tm); return `<li><a href="#${tm.ex[0].pid}" class="st-${s} ${curTid === tm.tid ? 'on' : ''}" ${curTid === tm.tid ? 'aria-current="page"' : ''}><span class="ic" aria-label="${stText[s]}">${stIcon[s]}</span><span class="sl">${LET[tm.mi]}${tm.ti + 1} · ${esc(tm.t.t)}<span class="dots">${dots(tm)}</span></span></a></li>`; }).join('')}</ul></section>`; }).join(''); }).join('');
     renderXP(); const dn = doneCount(); $('#pill').innerHTML = `<span><b>${dn}</b> de ${temas.length} temas</span><span class="pbar"><i style="width:${(dn / temas.length) * 100}%"></i></span>`;
@@ -3927,6 +4025,7 @@ window.P3RETO = {
     if ($('#exp')) { $('#exp').addEventListener('input', (e) => { store.exp[pid] = e.target.value.slice(0, 1500); persist(); expN(); }); expN(); }
     let eng;
     try { eng = E[p.type]($('.engine'), p, api); } catch (e) { console.error(e); $('.engine').innerHTML = '<p class="xl-flash">Este ejercicio no pudo cargarse. Usa “Empezar de nuevo”.</p>'; }
+    if (vig(x)) vigilar(x, p);
     /* intentos: cada ejercicio permite MAXT revisiones y se conserva la calificación más alta */
     const used = () => (store.prog[pid] && store.prog[pid].att) || 0;
     const bestPct = () => Math.round(((store.prog[pid] && store.prog[pid].best) || 0) * 100);
