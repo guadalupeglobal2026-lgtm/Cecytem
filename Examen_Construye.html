@@ -343,7 +343,7 @@ N.forEach((x) => P.push(x));
 <script>
 (() => {
 'use strict';
-const EX = window.EXAMEN, URL_HOJA = 'https://script.google.com/macros/s/AKfycbwKUBOQ0GdmfX7hOiuSQAkzubKh1y2YqtJgR0mTVfUvoFjbRS5dTWMFLFNsvzY2VItJ/exec', NPREG = EX.cuota ? Object.values(EX.cuota).reduce((a, b) => a + b, 0) : EX.preguntas.length;
+const EX = window.EXAMEN, URL_HOJA = 'https://script.google.com/macros/s/AKfycbzQdsl0ZTVMAI2iTleAEXwLlPltgF090L_58vZcDM5gvBQYvFWLYEzuvB96hyLwWnyc/exec', NPREG = EX.cuota ? Object.values(EX.cuota).reduce((a, b) => a + b, 0) : EX.preguntas.length;
 const $ = (s, r = document) => r.querySelector(s), app = $('#app');
 const esc = (t) => String(t ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const normA = (t) => String(t || '').trim().replace(/\s+/g, ' ').toUpperCase();
