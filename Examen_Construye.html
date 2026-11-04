@@ -424,6 +424,7 @@ function docente() {
   m.innerHTML = 'Vista previa docente: escribe tu contraseña. <input type="password" id="dclave" style="max-width:220px;margin-top:6px"> <button class="btn p" id="dgo">Ver examen</button>';
   $('#dgo').addEventListener('click', async () => { const cl = $('#dclave').value; let d = null; try { d = await getJSON(`accion=checkclave&clave=${encodeURIComponent(cl)}`); } catch (e) {}
     if (!d || !d.checked) { m.className = 'msg err'; m.textContent = 'No se pudo comprobar la contraseña (revisa internet o que el Apps Script esté actualizado).'; return; }
+    if (d.sin) { m.className = 'msg err'; m.textContent = 'Todavía no hay contraseña docente. Créala en el simulador con el botón 🔒 Docente y vuelve a intentarlo.'; return; }
     if (!d.ok) { m.className = 'msg err'; m.textContent = 'Contraseña incorrecta.'; return; }
     st = { mat: 'DOCENTE-' + Math.floor(Math.random() * 1e6), ap: 'VISTA', am: 'PREVIA', nom: 'DOCENTE', grp: '-', intento: 1, inicio: Date.now(), ans: {}, cur: 0, salidas: 0, pegar: 0, done: null, previa: true };
     examen(); });
