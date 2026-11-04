@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Examen · Construye aplicaciones web</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--vino:#6E1F33;--vino2:#A13546;--oro:#C9A15A;--tinta:#1F2328;--gris:#5A6270;--linea:#D9DDE3;--fondo:#F4F5F7;--ok:#1B7A43;--mal:#B42318;--azul:#1D5FD1}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--fondo);color:var(--tinta);font:16px/1.5 Montserrat,system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+header{background:var(--vino);color:#fff;padding:14px 18px}
+header h1{margin:0;font-size:1.15rem;font-weight:800}
+header p{margin:2px 0 0;opacity:.85;font-size:.85rem}
+main{max-width:860px;margin:0 auto;padding:18px 16px 60px}
+.card{background:#fff;border:1px solid var(--linea);border-radius:14px;padding:20px;margin:0 0 16px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+h2{margin:0 0 10px;font-size:1.3rem;color:var(--vino)}
+label.f{display:block;margin:0 0 12px}
+label.f span{display:block;font-weight:700;font-size:.9rem;margin-bottom:4px}
+input[type=text],input[type=password]{width:100%;font:inherit;padding:11px 12px;border:1.5px solid var(--linea);border-radius:10px;background:#fff}
+input:focus{outline:none;border-color:var(--vino2);box-shadow:0 0 0 3px rgba(161,53,70,.15)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+@media (max-width:600px){.grid2{grid-template-columns:1fr}}
+.btn{font:inherit;font-weight:700;border:0;border-radius:10px;padding:12px 18px;cursor:pointer;background:#E7E9ED;color:var(--tinta)}
+.btn.p{background:var(--vino);color:#fff}.btn.p:hover{background:var(--vino2)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.msg{margin:10px 0 0;font-weight:600}.msg.err{color:var(--mal)}.msg.ok{color:var(--ok)}
+ul.reglas{margin:6px 0 0;padding-left:20px}ul.reglas li{margin:4px 0}
+.top{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--linea);padding:10px 16px}
+.top .in{max-width:860px;margin:0 auto;display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;font-size:.88rem}
+.bar{height:6px;background:#E7E9ED;border-radius:6px;overflow:hidden;margin-top:6px;width:100%}.bar i{display:block;height:100%;background:var(--oro)}
+.qn{font-size:.8rem;font-weight:800;color:var(--gris);text-transform:uppercase;letter-spacing:.04em;margin:0 0 8px}
+.qt{font-size:1.05rem;margin:0 0 14px;user-select:none;-webkit-user-select:none}
+.qt b{color:var(--vino)}
+pre.code{background:#111827;color:#E5E7EB;padding:12px 14px;border-radius:10px;overflow:auto;font:13.5px/1.5 ui-monospace,Consolas,monospace;margin:10px 0;white-space:pre}
+code{background:#EEF0F3;padding:1px 5px;border-radius:5px;font:.9em ui-monospace,Consolas,monospace}
+.tbl{overflow:auto;margin:10px 0}table{border-collapse:collapse;font-size:.92rem}th,td{border:1px solid var(--linea);padding:6px 10px;text-align:left}th{background:#F1EDEE}
+.doc{background:#FBFAF8;border:1px solid var(--linea);border-radius:10px;padding:10px 14px;margin:10px 0;font-size:.95rem}
+.opts{display:grid;gap:8px;margin:6px 0 0;user-select:none;-webkit-user-select:none}
+.opt{display:flex;gap:10px;align-items:flex-start;border:1.5px solid var(--linea);border-radius:10px;padding:11px 12px;cursor:pointer;background:#fff}
+.opt:hover{border-color:#B9BEC7}.opt input{margin-top:4px;accent-color:var(--vino)}
+.opt.on{border-color:var(--vino);background:#FBF3F5}
+.sub{font-weight:800;color:var(--vino);margin:16px 0 4px;font-size:.95rem}
+.ans input{max-width:420px}.ans small{display:block;color:var(--gris);margin-top:4px}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:16px;flex-wrap:wrap}
+.mapa{display:grid;grid-template-columns:repeat(auto-fill,minmax(38px,1fr));gap:6px}
+.mapa button{font:inherit;font-size:.82rem;font-weight:700;border:1.5px solid var(--linea);background:#fff;border-radius:8px;padding:7px 0;cursor:pointer}
+.mapa button.r{background:#E9F5EE;border-color:#9CD3B1}.mapa button.cur{border-color:var(--vino);box-shadow:0 0 0 2px rgba(110,31,51,.25)}
+.aviso{background:#FFF4E5;border:1px solid #F5C26B;border-radius:10px;padding:10px 14px;margin:0 0 14px;font-size:.92rem}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}
+.modal .card{max-width:520px;width:100%}
+.res{text-align:center}.res .big{font-size:3.6rem;font-weight:800;color:var(--vino);line-height:1;margin:8px 0}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#1F2328;color:#fff;padding:10px 16px;border-radius:10px;font-weight:600;z-index:30;max-width:90vw}
+.muted{color:var(--gris)}.small{font-size:.85rem}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header><h1>Examen del segundo parcial · Construye aplicaciones web</h1><p>CECyTEM Plantel Metepec II · Técnico en Programación</p></header>
+<div id="app"></div>
+<script>
+/* Examen del segundo parcial · Construye aplicaciones web (Sistema AquaLink)
+   Cada pregunta es una función gen(K) que arma la pregunta con datos distintos para cada alumno.
+   Formato que devuelve gen:
+     { q, opts: [correcta, ...incorrectas] }                       opción múltiple
+     { q, opts: [...], why: [razón correcta, ...incorrectas] }       respuesta + razón (vale 0.5 + 0.5)
+     { q, num: valor, tol: tolerancia, unit: 's' }                   respuesta numérica
+     { q, txt: [regex...], ph: 'ejemplo de formato' }                escribir un comando o valor  */
+(() => {
+const c = (t) => `<pre class="code">${String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`;
+const k = (t) => `<code>${String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;')}</code>`;
+const NOM = ['Ana', 'Luis', 'Sofía', 'Diego', 'Valeria', 'Mateo', 'Camila', 'Iker', 'Regina', 'Emiliano', 'Ximena', 'Santiago', 'Renata', 'Leonardo'];
+const r1 = (x) => Math.round(x * 10) / 10;
+const rx = (t) => String(t).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+window.EXAMEN = {
+  materia: 'Construye',
+  titulo: 'Construye aplicaciones web',
+  temas: { A: 'Base de datos y entorno Django', B: 'Servidor local XAMPP y conexión', C: 'Modelos, administración y login', D: 'Pasaporte con QR y asistencia', E: 'Panel deportivo y consultas' },
+  preguntas: [
+  /* ================= A. Base de datos y entorno Django ================= */
+  { t: 'A', gen: (K) => { const s = K.pick([
+      ['Cada nadador registra muchos tiempos de nado; cada tiempo es de un solo nadador.', 0],
+      ['Un instructor atiende varios horarios y cada horario tiene varios instructores.', 1],
+      ['Cada usuario del sistema corresponde a un solo nadador y cada nadador tiene un solo usuario.', 2],
+      ['Un nadador se inscribe en varias competencias y en cada competencia participan muchos nadadores.', 1],
+      ['Un nadador puede tener varios reportes de incidente; cada reporte es de un nadador.', 0]]);
+    const R = ['Uno a muchos (1:N)', 'Muchos a muchos (N:M)', 'Uno a uno (1:1)'];
+    const W = ['La llave foránea va en la tabla del lado «muchos».', 'Se necesita una tabla intermedia con dos llaves foráneas.', 'Cada registro de una tabla se une con un solo registro de la otra, por eso en Django se usa OneToOneField.'];
+    return { q: `Lee la regla del negocio de AquaLink: <b>«${s[0]}»</b><br>¿Qué tipo de relación es y por qué?`, opts: [R[s[1]], ...R.filter((x, i) => i !== s[1])], why: [W[s[1]], ...W.filter((x, i) => i !== s[1])] }; } },
+  { t: 'A', gen: (K) => { const [p, h] = K.pick([['instructor', 'clase'], ['horario', 'asistencia'], ['nadador', 'tiempo'], ['carril', 'entrenamiento']]);
+    return { q: `Un <b>${p}</b> tiene muchos registros de <b>${h}</b>, y cada ${h} pertenece a un solo ${p}. ¿Dónde colocas la llave foránea?`, opts: [`En la tabla ${h}, como ${p}_id`, `En la tabla ${p}, como ${h}_id`, 'En las dos tablas, una en cada una', `En una tabla intermedia ${p}_${h}`] }; } },
+  { t: 'A', gen: (K) => { const [a, b] = K.pick([['nadador', 'horario'], ['instructor', 'horario'], ['nadador', 'competencia'], ['nadador', 'taller']]);
+    return { q: `En AquaLink, un ${a} se relaciona con muchos ${b}s y cada ${b} con muchos ${a}s. Un compañero propone guardar en la tabla ${a} un campo de texto con los id: «3,7,12». ¿Qué le respondes?`, opts: [`Que conviene una tabla intermedia con ${a}_id y ${b}_id, porque así MySQL puede validar cada relación con llaves foráneas`, 'Que está bien, porque ocupa menos espacio', `Que mejor repita la tabla ${b} dentro de ${a}`, 'Que las relaciones muchos a muchos no se pueden guardar en MySQL'] }; } },
+  { t: 'A', gen: (K) => { const f = K.pick([
+      ['el tiempo de una prueba, por ejemplo 44.37 segundos', 'DECIMAL', 'Guarda decimales exactos, sin redondeos inesperados.'],
+      ['la fecha de un registro de asistencia', 'DATE', 'Permite comparar y ordenar fechas, por ejemplo «asistencias de hoy».'],
+      ['el número de carril (1 a 8)', 'INT', 'Es un número entero con el que se puede calcular y comparar.'],
+      ['el nombre completo del nadador', 'VARCHAR', 'Es texto de longitud variable.']]);
+    const T = ['DECIMAL', 'DATE', 'INT', 'VARCHAR'], Wy = ['Guarda decimales exactos, sin redondeos inesperados.', 'Permite comparar y ordenar fechas, por ejemplo «asistencias de hoy».', 'Es un número entero con el que se puede calcular y comparar.', 'Es texto de longitud variable.'];
+    return { q: `¿Qué tipo de dato de MySQL eliges para <b>${f[0]}</b> y por qué?`, opts: [f[1], ...T.filter((x) => x !== f[1])], why: [f[2], ...Wy.filter((x) => x !== f[2])] }; } },
+  { t: 'A', gen: (K) => { const n = K.int(40, 99), m = K.int(8, 30);
+    return { q: `La tabla nadador tiene ${m} registros (id del 1 al ${m}). Alguien ejecuta:${c(`INSERT INTO asistencia (nadador_id, fecha)\nVALUES (${n}, '2026-10-12');`)}¿Qué pasa?`, opts: ['MySQL rechaza el registro porque viola la llave foránea: no existe ese nadador', 'Se guarda sin problema', `MySQL crea automáticamente al nadador ${n}`, 'Se borra la tabla asistencia'] }; } },
+  { t: 'A', gen: (K) => { const h = K.pick(['asistencia', 'tiempo', 'incidente']);
+    return { q: `Al importar este script, MySQL marca un error en la primera tabla:${c(`CREATE TABLE ${h} (\n    id INT AUTO_INCREMENT PRIMARY KEY,\n    nadador_id INT NOT NULL,\n    FOREIGN KEY (nadador_id) REFERENCES nadador(id)\n);\nCREATE TABLE nadador (\n    id INT AUTO_INCREMENT PRIMARY KEY,\n    nombre VARCHAR(100) NOT NULL\n);`)}¿Cuál es la causa?`, opts: [`La tabla ${h} se crea antes que nadador, a la que hace referencia`, 'Falta poner DATE en nadador_id', 'No se puede usar AUTO_INCREMENT dos veces', `El nombre ${h} está reservado por MySQL`] }; } },
+  { t: 'A', gen: (K) => { const v = K.pick(['venv', 'entorno', 'env', 'mi_entorno']);
+    return { q: `En la terminal de VS Code (Windows), escribe el comando que crea un entorno virtual llamado <b>${v}</b>.`, txt: [new RegExp(`^(python3?|py) -m venv ${v}$`, 'i')], sol: `python -m venv ${v}`, ph: 'Escribe el comando completo' }; } },
+  { t: 'A', gen: (K) => { const p = K.pick(['aqualink', 'natacion', 'alberca']);
+    return { q: `Tu compañero escribió ${k(`django-admin startproject ${p}`)} sin el punto final. ¿Qué pasó en la carpeta?`, opts: [`Se creó una carpeta ${p} extra y manage.py quedó dentro de ella, no en la carpeta actual`, 'No pasó nada diferente: el punto es opcional', 'Se borró la carpeta actual', 'Django marcó error y no creó nada'] }; } },
+  { t: 'A', gen: (K) => { const app = K.pick(['nadadores', 'asistencias', 'entrenamientos']);
+    return { q: `Creaste la app <b>${app}</b> y escribiste sus modelos, pero ${k('python manage.py makemigrations')} responde «No changes detected». ¿Qué falta?`, opts: [`Registrar '${app}' en INSTALLED_APPS de settings.py`, 'Instalar otra vez Django', 'Encender Apache en XAMPP', `Escribir la app en urls.py`] }; } },
+  { t: 'A', gen: (K) => ({ q: 'Instalaste Django antes de activar el entorno virtual. Después activas el entorno y al ejecutar manage.py aparece <b>«No module named django»</b>. ¿Qué pasó y por qué?', opts: ['Django quedó instalado fuera del entorno; hay que instalarlo con el entorno activo', 'El proyecto está dañado y hay que borrarlo', 'Falta encender MySQL', 'Hay que reiniciar la computadora'], why: ['Cada entorno virtual tiene sus propias librerías, separadas de las del sistema.', 'Django solo funciona con internet.', 'manage.py necesita a MySQL para importar Django.', 'Python guarda los módulos en la memoria RAM.'] }) },
+
+  /* ================= B. Servidor local XAMPP y conexión ================= */
+  { t: 'B', gen: (K) => ({ q: 'Al presionar Start en MySQL, el panel de XAMPP muestra: <b>«Port 3306 in use by another application»</b>. ¿Qué haces?', opts: ['Detener el otro servicio de MySQL que ocupa el puerto (o cambiar el puerto) y volver a iniciar', 'Reinstalar Django', 'Abrir phpMyAdmin aunque MySQL esté apagado', 'Cambiar el puerto de Apache a 3306'] }) },
+  { t: 'B', gen: (K) => { const p = K.pick(['80', '8000']);
+    return { q: `En settings.py alguien escribió ${k(`'PORT': '${p}',`)} en DATABASES. MySQL de XAMPP está encendido. ¿Qué pasa y por qué?`, opts: ['Django no logra conectarse a MySQL', 'Funciona igual que con cualquier puerto', 'Se borra la base de datos', 'phpMyAdmin deja de abrir'], why: [`MySQL escucha en el puerto 3306; el ${p} es de ${p === '80' ? 'Apache' : 'runserver'}.`, 'Django prueba todos los puertos hasta encontrar MySQL.', 'El puerto solo cambia la velocidad de la conexión.', 'El puerto solo importa al importar el .sql.'] }; } },
+  { t: 'B', gen: (K) => { const pasos = ['Iniciar Apache y MySQL en el panel de XAMPP', 'Abrir http://localhost/phpmyadmin', 'Crear la base de datos aqualink', 'Seleccionar la base y abrir la pestaña Importar', 'Elegir aqualink.sql y dar clic en Importar', 'Verificar que aparezcan las tablas'];
+    const i = K.int(1, 4); const lista = pasos.filter((x, j) => j !== i);
+    return { q: `Un compañero escribió estos pasos para dejar lista la base, pero le falta uno:<ol>${lista.map((x) => `<li>${x}</li>`).join('')}</ol>¿Cuál falta?`, opts: [pasos[i], 'Instalar Postman', 'Ejecutar python manage.py runserver', 'Crear el superusuario'] }; } },
+  { t: 'B', gen: (K) => { const t = K.pick(['nadador', 'asistencia', 'tiempo']);
+    return { q: `Al importar aqualink.sql por segunda vez, phpMyAdmin dice: <b>«#1050 - Table '${t}' already exists»</b>. ¿Qué es lo más razonable?`, opts: ['Revisar si el script ya se había importado y, si se necesita repetir, borrar o vaciar las tablas antes de importar', 'Importar el archivo varias veces hasta que funcione', 'Cambiar la extensión del archivo a .txt', 'Apagar XAMPP y dejarlo así'] }; } },
+  { t: 'B', gen: (K) => ({ q: `Escribe el valor exacto que va en ${k("'ENGINE'")} de DATABASES para que Django use MySQL.`, txt: [/^'?django\.db\.backends\.mysql'?,?$/i], sol: 'django.db.backends.mysql', ph: 'django.db.backends.…' }) },
+  { t: 'B', gen: (K) => { const E = [["Can't connect to MySQL server on 'localhost' (10061)", 0], ['Error loading MySQLdb module. Did you install mysqlclient?', 1], ["Access denied for user 'root'@'localhost' (using password: YES)", 2], [`Unknown database '${K.pick(['aqualinkk', 'aqualnk', 'aqua_link'])}'`, 3]];
+    const C = ['MySQL está apagado en XAMPP', 'Falta instalar el conector mysqlclient', 'Usuario o contraseña incorrectos en DATABASES', 'El nombre de la base no coincide con el de phpMyAdmin'];
+    const e = K.pick(E); return { q: `Al ejecutar runserver aparece:${c(e[0])}¿Cuál es la causa?`, opts: [C[e[1]], ...C.filter((x, i) => i !== e[1])] }; } },
+  { t: 'B', gen: (K) => { const E = [["Can't connect to MySQL server: Connection refused", 0], ["Access denied for user 'admin'@'localhost'", 2], ['Error loading MySQLdb module', 1]];
+    const S = ['Iniciar MySQL en el panel de XAMPP', 'Ejecutar pip install mysqlclient con el entorno activo', "Usar 'USER': 'root' y 'PASSWORD': '' como en XAMPP"];
+    const e = K.pick(E); return { q: `Tu equipo ve este mensaje:${c(e[0])}¿Qué solución aplicas primero?`, opts: [S[e[1]], ...S.filter((x, i) => i !== e[1]), 'Borrar la carpeta del proyecto'] }; } },
+  { t: 'B', gen: (K) => ({ q: 'Con el entorno virtual activo, escribe el comando que instala el conector de MySQL para Python que usa Django.', txt: [/^(python -m )?pip3? install mysqlclient$/i], sol: 'pip install mysqlclient', ph: 'Escribe el comando completo' }) },
+  { t: 'B', gen: (K) => { const db = K.pick(['aqualink', 'aqualink_db', 'natacion']), mal = db + K.pick(['s', '1', '_2026']);
+    return { q: `En phpMyAdmin la base se llama <b>${db}</b>. En settings.py está ${k(`'NAME': '${mal}',`)}. ¿Qué mensaje esperas al ejecutar migrate?`, opts: [`Unknown database '${mal}'`, "Access denied for user 'root'@'localhost'", 'Error loading MySQLdb module', 'Las migraciones se aplican sin error'] }; } },
+  { t: 'B', gen: (K) => ({ q: "En XAMPP el usuario root no tiene contraseña. Un compañero escribió <code>'PASSWORD': 'root'</code> y aparece «Access denied … (using password: YES)». ¿Qué corriges y por qué?", opts: ["Dejar 'PASSWORD': ''", "Cambiar 'USER' a 'admin'", 'Reinstalar MySQL', "Cambiar 'HOST' a 'google.com'"], why: ['«using password: YES» indica que Django envió una contraseña que no coincide con la de MySQL.', 'El usuario root solo funciona en Linux.', 'El mensaje indica que MySQL está apagado.', 'El error es del navegador, no de MySQL.'] }) },
+
+  /* ================= C. Modelos, administración y login ================= */
+  { t: 'C', gen: (K) => { const f = K.pick([
+      ['muchos tiempos pertenecen a un nadador', 'ForeignKey'], ['cada nadador tiene exactamente un usuario para iniciar sesión', 'OneToOneField'],
+      ['la fecha de nacimiento', 'DateField'], ['los segundos de una prueba con dos decimales', 'DecimalField']]);
+    const T = ['ForeignKey', 'OneToOneField', 'DateField', 'DecimalField', 'CharField'];
+    return { q: `En models.py, ¿qué tipo de campo usas para: <b>${f[0]}</b>?`, opts: [f[1], ...T.filter((x) => x !== f[1]).slice(0, 3)] }; } },
+  { t: 'C', gen: (K) => ({ q: `Al ejecutar makemigrations aparece un error con este modelo:${c("class Tiempo(models.Model):\n    nadador = models.ForeignKey(Nadador)\n    segundos = models.DecimalField(max_digits=6, decimal_places=2)")}¿Qué falta?`, opts: ['on_delete en la ForeignKey, por ejemplo on_delete=models.CASCADE', 'max_length en DecimalField', 'Un campo id escrito a mano', 'Importar Tiempo en settings.py'] }) },
+  { t: 'C', gen: (K) => { const f = K.pick(['telefono', 'categoria', 'carril']);
+    return { q: `Agregaste el campo <b>${f}</b> al modelo Nadador. Al abrir la lista aparece «Unknown column 'nadadores_nadador.${f}'». ¿Qué te faltó y por qué?`, opts: ['Ejecutar makemigrations y después migrate', 'Ejecutar solo runserver otra vez', 'Agregar la columna escribiéndola en el HTML', 'Reiniciar el navegador'], why: ['makemigrations crea el plan del cambio y migrate lo aplica en la tabla de MySQL.', 'runserver crea las columnas nuevas al reiniciar.', 'Las columnas se crean desde la plantilla.', 'El navegador guarda las tablas en caché.'] }; } },
+  { t: 'C', gen: (K) => { const n = K.int(1, 9);
+    return { q: `En /admin/ la lista de nadadores se ve así: «Nadador object (${n})», «Nadador object (${n + 1})»… ¿Qué agregas al modelo?`, opts: ['Un método __str__ que regrese self.nombre', 'list_filter en admin.py', 'Otro migrate', 'Un campo id'] }; } },
+  { t: 'C', gen: (K) => { const r = K.pick([['buscar nadadores escribiendo su nombre', 'search_fields'], ['filtrar la lista por nivel', 'list_filter'], ['ver en columnas el nombre, el nivel y la fecha de nacimiento', 'list_display']]);
+    const O = ['search_fields', 'list_filter', 'list_display', 'ordering'];
+    return { q: `El encargado de la alberca quiere, en el panel de administración, <b>${r[0]}</b>. ¿Qué opción agregas en NadadorAdmin?`, opts: [r[1], ...O.filter((x) => x !== r[1])] }; } },
+  { t: 'C', gen: (K) => ({ q: 'Escribe el comando que crea el usuario administrador para entrar a /admin/.', txt: [/^(python3?|py) manage\.py createsuperuser$/i], sol: 'python manage.py createsuperuser', ph: 'Escribe el comando completo' }) },
+  { t: 'C', gen: (K) => { const r = K.pick(['/perfil/', '/panel/', '/pasaporte/']);
+    return { q: `La vista de ${r} tiene ${k('@login_required')}. Un visitante sin sesión escribe esa dirección en el navegador. ¿Qué pasa?`, opts: ['Lo redirige a la página de inicio de sesión (código 302)', 'Ve los datos del primer nadador', 'Aparece un error 500', 'Ve la página en blanco con código 200'] }; } },
+  { t: 'C', gen: (K) => { const a = K.pick(NOM), b = K.pick(NOM.filter((x) => x !== a));
+    return { q: `Esta es la vista del perfil:${c("@login_required\ndef perfil(request):\n    nadador = Nadador.objects.first()\n    return render(request, 'nadadores/perfil.html',\n                  {'nadador': nadador})")}${a} y ${b} inician sesión. ¿Qué ven y cómo se corrige?`, opts: ['Los dos ven el perfil del mismo nadador; se corrige buscando con usuario=request.user', `Cada quien ve su perfil; está correcta`, 'Ninguno puede entrar; falta @login_required', 'Ven un error 404; falta la plantilla'] }; } },
+  { t: 'C', gen: (K) => ({ q: 'En phpMyAdmin, la tabla auth_user muestra en password algo como <b>pbkdf2_sha256$870000$…</b>. Un compañero propone guardar las contraseñas en texto normal «para poder recuperarlas». ¿Qué le respondes?', opts: ['Que no: Django las guarda cifradas con un hash para que nadie pueda leerlas', 'Que sí, porque es más práctico', 'Que es indiferente', 'Que solo se cifren las de los administradores'], why: ['Si alguien entra a la base, no puede ver las contraseñas reales; para olvidos se restablece, no se recupera.', 'El hash ocupa más espacio en el disco.', 'Las contraseñas de menores de edad no necesitan protección.', 'El hash se puede leer con phpMyAdmin.'] }) },
+  { t: 'C', gen: (K) => ({ q: 'Después de iniciar sesión, Django lleva al usuario a /accounts/profile/ y aparece un error 404. ¿Qué ajuste falta?', opts: ["LOGIN_REDIRECT_URL = 'perfil' en settings.py", 'Quitar @login_required', 'Volver a ejecutar createsuperuser', 'Cambiar el puerto de MySQL'] }) },
+
+  /* ================= D. Pasaporte con QR y asistencia ================= */
+  { t: 'D', gen: (K) => ({ q: "Al abrir el pasaporte aparece <b>ModuleNotFoundError: No module named 'qrcode'</b>. ¿Qué haces?", opts: ['Instalar la librería con pip install "qrcode[pil]" con el entorno virtual activo', 'Borrar la vista del pasaporte', 'Reiniciar XAMPP', 'Agregar qrcode a INSTALLED_APPS'] }) },
+  { t: 'D', gen: (K) => { const r = K.pick(['registrar_asistencia', 'marcar_asistencia']);
+    return { q: `En la vista del pasaporte se usa ${k(`reverse('${r}', args=[nadador.pk])`)} en lugar de escribir la dirección a mano. ¿Por qué conviene?`, opts: ['Porque construye la dirección a partir del nombre de la ruta', 'Porque cifra la dirección', 'Porque hace el QR más pequeño', 'Porque evita iniciar sesión'], why: ['Si la ruta cambia en urls.py, los QR nuevos siguen apuntando bien sin tocar la vista.', 'Django no acepta textos con «/».', 'reverse comprime la imagen PNG.', 'reverse quita el @login_required.'] }; } },
+  { t: 'D', gen: (K) => ({ q: '¿Qué debe contener el código QR del pasaporte de un nadador?', opts: ['La dirección completa de la ruta que registra la asistencia de ese nadador', 'Su nombre completo, edad y teléfono', 'Su usuario y contraseña', 'Todos sus tiempos de nado'], why: ['Los nadadores son menores de edad: el QR no debe llevar datos personales, solo la dirección.', 'Así el encargado ve todos los datos sin internet.', 'Así el nadador no necesita iniciar sesión.', 'El QR guarda los datos más seguros que la base.'] }) },
+  { t: 'D', gen: (K) => { const n = K.pick(NOM); const D = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes'];
+    const scans = []; D.forEach((d) => { const v = K.int(0, 3); for (let i = 0; i < v; i++) scans.push(`${d} ${7 + i}:${K.pick(['05', '15', '30', '45'])}`); });
+    if (scans.length < 3) scans.push('lunes 8:10', 'lunes 8:12');
+    const dias = new Set(scans.map((s) => s.split(' ')[0])).size;
+    return { q: `La vista usa ${k('get_or_create(nadador=nadador, fecha=date.today())')}. Durante la semana, el encargado escaneó el pasaporte de ${n} en estos momentos:<br><b>${scans.join(' · ')}</b><br>¿Cuántos registros de asistencia de ${n} quedan guardados esa semana?`, num: dias, tol: 0 }; } },
+  { t: 'D', gen: (K) => { const n = K.pick(NOM), t = K.int(3, 6);
+    return { q: `Un compañero cambió la vista a ${k('Asistencia.objects.create(nadador=nadador, fecha=date.today())')} y quitó la restricción UniqueConstraint. Hoy escanearon ${t} veces el pasaporte de ${n}. ¿Cuántos registros de asistencia de ${n} hay hoy?`, num: t, tol: 0 }; } },
+  { t: 'D', gen: (K) => { const n = K.pick(NOM), h = K.int(7, 9), m = K.int(10, 40);
+    return { q: `${n} ya tiene registrada su asistencia de hoy a las ${h}:${m}. A las ${h}:${m + 5} el encargado vuelve a escanear su pasaporte. ¿Qué mensaje aparece?`, opts: ['«La asistencia de hoy ya estaba registrada»', '«Asistencia registrada» y se crea otro registro', 'Un error 404', 'Se borra la asistencia anterior'] }; } },
+  { t: 'D', gen: (K) => ({ q: `En el modelo Asistencia está:${c("constraints = [\n    models.UniqueConstraint(fields=['nadador', 'fecha'],\n                            name='una_asistencia_por_dia'),\n]")}Si ya existe get_or_create en la vista, ¿para qué sirve también esta restricción?`, opts: ['Para que la base de datos rechace un duplicado aunque alguien intente guardarlo desde otra parte del sistema', 'Para generar el código QR', 'Para iniciar sesión más rápido', 'No sirve para nada: get_or_create ya lo hace todo'] }) },
+  { t: 'D', gen: (K) => ({ q: 'El encargado escanea un QR con su celular y, en lugar de registrar la asistencia, aparece la página de inicio de sesión. ¿Está bien o mal?', opts: ['Está bien: la vista tiene @login_required y el celular aún no inició sesión', 'Está mal: el QR está dañado', 'Está mal: MySQL está apagado', 'Está mal: falta collectstatic'], why: ['Solo el personal con sesión puede registrar asistencias; así nadie las registra desde fuera.', 'Los QR no pueden abrir páginas con formularios.', 'El login aparece cuando la base está apagada.', 'Sin archivos estáticos Django pide iniciar sesión.'] }) },
+  { t: 'D', gen: (K) => ({ q: `En ${k('asistencia, creada = Asistencia.objects.get_or_create(nadador=nadador, fecha=date.today())')}, ¿qué guarda la variable <b>creada</b>?`, opts: ['True si se creó un registro nuevo y False si ya existía', 'La fecha de hoy', 'El nadador encontrado', 'El número de asistencias del nadador'] }) },
+  { t: 'D', gen: (K) => { const n = K.int(400, 999);
+    return { q: `Alguien escanea un QR viejo que apunta a /asistencia/${n}/, pero ese nadador ya no existe. La vista usa ${k(`get_object_or_404(Nadador, pk=pk)`)}. ¿Qué responde el servidor?`, opts: ['Un error 404: no se encontró el nadador', 'Un error 500 con pantalla amarilla', 'Registra la asistencia de otro nadador', 'Registra la asistencia sin nadador'] }; } },
+
+  /* ================= E. Panel deportivo y consultas ================= */
+  { t: 'E', gen: (K) => { const n = K.pick(NOM).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    const Q = [[`Nadador.objects.get(pk=${K.int(2, 40)})`, 0], [`Tiempo.objects.filter(nadador=${n})`, 1], ['Nadador.objects.count()', 2], [`Tiempo.objects.filter(nadador=${n}).order_by('-fecha').first()`, 0], ["Nadador.objects.filter(nivel='avanzado').order_by('nombre')", 1], ['Asistencia.objects.filter(fecha=date.today()).count()', 2]];
+    const R = ['Un solo registro', 'Varios registros (QuerySet)', 'Un número'];
+    const x = K.pick(Q); return { q: `¿Qué devuelve esta consulta del ORM?${c(x[0])}`, opts: [R[x[1]], ...R.filter((y, i) => i !== x[1]), 'Una página HTML'] }; } },
+  { t: 'E', gen: (K) => { const n = K.pick(NOM), t = K.int(3, 9);
+    return { q: `${n} tiene ${t} tiempos registrados. La vista ejecuta ${k(`Tiempo.objects.get(nadador=${n.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')})`)}. ¿Qué pasa?`, opts: ['Falla con MultipleObjectsReturned, porque get espera un solo registro', `Devuelve los ${t} tiempos`, 'Devuelve el primer tiempo', 'Devuelve el número de tiempos'] }; } },
+  { t: 'E', gen: (K) => { const n = K.pick(NOM); const t = [K.int(450, 520), K.int(440, 505), K.int(430, 495), K.int(425, 490), K.int(415, 485)].map((x) => x / 10);
+    return { q: `Tiempos de ${n} en 50 m libre, del primero al último: <b>${t.join(' s, ')} s</b>.<br>¿Qué valor muestra el panel como <b>mejor tiempo</b>? (en segundos)`, num: Math.min(...t), tol: 0.001, unit: 's' }; } },
+  { t: 'E', gen: (K) => { const n = K.pick(NOM); const t = [K.int(460, 520), K.int(440, 505), K.int(435, 495), K.int(425, 490), K.int(415, 470)].map((x) => x / 10);
+    const m = r1((t[0] - t[4]) / t[0] * 100);
+    return { q: `Tiempos de ${n}, del primero al último: <b>${t.join(' s, ')} s</b>. El panel calcula la mejora con${c('(primero - ultimo) / primero * 100')}¿Qué porcentaje de mejora muestra? (redondea a un decimal)`, num: m, tol: 0.1, unit: '%' }; } },
+  { t: 'E', gen: (K) => ({ q: '¿Qué consulta obtiene el <b>último</b> tiempo registrado de un nadador?', opts: ["tiempos.order_by('-fecha').first()", "tiempos.order_by('fecha').first()", "tiempos.aggregate(m=Max('segundos'))", 'tiempos.count()'] }) },
+  { t: 'E', gen: (K) => { const n = K.pick(NOM), a = K.int(440, 480) / 10, b = r1(a + K.int(10, 25) / 10), m = r1((a - b) / a * 100);
+    return { q: `${n} empezó con <b>${a} s</b> y su último tiempo es <b>${b} s</b>. El panel muestra una mejora de <b>${m} %</b>. ¿Cómo interpretas ese número?`, opts: ['Su tiempo aumentó: esta vez nadó más lento que al inicio', 'Mejoró un ' + Math.abs(m) + ' %', 'Hay un error en el sistema', 'No cambió su rendimiento'], why: ['La mejora es negativa porque el último tiempo es mayor que el primero, y en natación un tiempo menor es mejor.', 'Los porcentajes negativos no existen en Django.', 'El panel siempre debe mostrar números positivos.', 'Solo cuenta el mejor tiempo, no el último.'] }; } },
+  { t: 'E', gen: (K) => ({ q: '¿Qué consulta responde «¿Cuántos nadadores asistieron hoy?»', opts: ['Asistencia.objects.filter(fecha=date.today()).count()', 'Asistencia.objects.all()', 'Nadador.objects.count()', 'Asistencia.objects.get(fecha=date.today())'] }) },
+  { t: 'E', gen: (K) => ({ q: `Un nadador nuevo todavía no tiene tiempos. Sin la condición ${k('if primero and ultimo:')}, ¿qué pasaría al abrir su panel?`, opts: ["Un error (AttributeError: 'NoneType' object has no attribute 'segundos'), porque primero y ultimo valen None", 'Mostraría una mejora del 100 %', 'Mostraría los tiempos de otro nadador', 'Nada: Django pone 0 automáticamente'] }) },
+  { t: 'E', gen: (K) => { const O = [['runserver inicia sin errores y la página abre en el navegador', 0, 'Es lo que se espera del servidor.'], ['Se puede abrir /perfil/ sin iniciar sesión', 1, 'Debe pedir iniciar sesión (RNF2).'], ['Al escanear dos veces el mismo día se guardan dos asistencias', 1, 'Debe registrarse una sola vez por día.'], ['Las contraseñas se ven completas en la tabla auth_user', 1, 'Deben verse cifradas (pbkdf2_sha256$…).'], ['Los nadadores registrados aparecen en phpMyAdmin', 0, 'Confirma que Django guarda en MySQL.']];
+    const o = K.pick(O); const otros = ['Es solo un detalle visual.', 'Lo decide cada nadador.', 'Depende del color del navegador.'];
+    return { q: `Lista de cotejo antes de la demostración con el encargado: <b>«${o[0]}»</b>. ¿Cumple o no cumple, y por qué?`, opts: [['Cumple', 'No cumple'][o[1]], ['Cumple', 'No cumple'][1 - o[1]]], why: [o[2], ...otros] }; } },
+  { t: 'E', gen: (K) => ({ q: 'Los nadadores de AquaLink son menores de edad. ¿Cuál de estas decisiones del equipo protege mejor sus datos?', opts: ['Pedir inicio de sesión para ver perfiles y no poner datos personales en el QR', 'Publicar la lista de nadadores con sus teléfonos para que el encargado la vea rápido', 'Guardar las contraseñas en texto para recuperarlas', 'Compartir el usuario administrador con todo el grupo'] }) },
+  ],
+};
+})();
+
+/* Construye · banco ampliado: (1) las preguntas que tenían texto fijo ahora cambian de caso o de datos,
+   (2) preguntas nuevas: el banco tiene 16 por tema y a cada alumno le tocan 10 por tema, sorteadas con su matrícula. */
+(() => {
+const c = (t) => `<pre class="code">${String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`;
+const k = (t) => `<code>${String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;')}</code>`;
+const NOM = ['Ana', 'Luis', 'Sofía', 'Diego', 'Valeria', 'Mateo', 'Camila', 'Iker', 'Regina', 'Emiliano', 'Ximena', 'Santiago', 'Renata', 'Leonardo'];
+const sa = (t) => t.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+const r1 = (x) => Math.round(x * 10) / 10;
+const EX = window.EXAMEN; EX.cuota = { A: 10, B: 10, C: 10, D: 10, E: 10 };
+const P = EX.preguntas;
+/* opción múltiple a partir de un caso elegido: [pregunta, correcta, incorrectas...] */
+const caso = (K, L) => { const x = K.pick(L); return { q: x[0], opts: x.slice(1) }; };
+
+/* ---------- 1. Preguntas que antes eran iguales para todos ---------- */
+P[9] = { t: 'A', gen: (K) => { const lib = K.pick(['django', 'mysqlclient', 'qrcode']);
+  return { q: `Instalaste <b>${lib}</b> antes de activar el entorno virtual. Después activas el entorno y aparece <b>«No module named '${lib === 'mysqlclient' ? 'MySQLdb' : lib}'»</b>. ¿Qué pasó y por qué?`, opts: [`${lib} quedó instalado fuera del entorno; hay que instalarlo con el entorno activo`, 'El proyecto está dañado y hay que borrarlo', 'Falta encender MySQL', 'Hay que reiniciar la computadora'], why: ['Cada entorno virtual tiene sus propias librerías, separadas de las del sistema.', 'Las librerías solo funcionan con internet.', 'Python necesita a MySQL para importar módulos.', 'Python guarda los módulos en la memoria RAM.'] }; } };
+P[10] = { t: 'B', gen: (K) => caso(K, [
+  ['Al presionar Start en MySQL, XAMPP muestra «Port 3306 in use by another application». ¿Qué haces?', 'Detener el otro servicio de MySQL que ocupa el puerto (o cambiar el puerto) y volver a iniciar', 'Reinstalar Django', 'Abrir phpMyAdmin con MySQL apagado', 'Cambiar el puerto de Apache a 3306'],
+  ['Al presionar Start en Apache, XAMPP muestra «Port 80 in use by another application». ¿Qué haces?', 'Cerrar el programa que usa el puerto 80 (o cambiar el puerto de Apache) y volver a iniciar', 'Cambiar el puerto de MySQL a 80', 'Ejecutar makemigrations', 'Borrar la base aqualink'],
+  ['runserver muestra «Error: That port is already in use.» ¿Qué haces?', 'Cerrar el otro runserver que sigue abierto o usar otro puerto, por ejemplo runserver 8001', 'Apagar MySQL', 'Reinstalar XAMPP', 'Cambiar ENGINE en settings.py']]) };
+P[14] = { t: 'B', gen: (K) => { const x = K.pick([["'ENGINE'", 'django.db.backends.mysql', /^'?django\.db\.backends\.mysql'?,?$/i], ["'PORT'", '3306', /^'?3306'?,?$/], ["'USER'", 'root', /^'?root'?,?$/i]]);
+  return { q: `XAMPP usa MySQL con el usuario root, sin contraseña y en su puerto estándar. Escribe el valor que va en ${k(x[0])} de DATABASES.`, txt: [x[2]], sol: x[1], ph: 'Solo el valor' }; } };
+P[17] = { t: 'B', gen: (K) => { const x = K.pick([['instala el conector de MySQL que usa Django', 'pip install mysqlclient', /^(python -m )?pip3? install mysqlclient$/i], ['crea en MySQL las tablas internas de Django', 'python manage.py migrate', /^(python3?|py) manage\.py migrate$/i], ['inicia el servidor de desarrollo', 'python manage.py runserver', /^(python3?|py) manage\.py runserver$/i]]);
+  return { q: `Con el entorno virtual activo, escribe el comando que <b>${x[0]}</b>.`, txt: [x[2]], sol: x[1], ph: 'Escribe el comando completo' }; } };
+P[19] = { t: 'B', gen: (K) => { const pw = K.pick(['root', '1234', 'admin', 'xampp']);
+  return { q: `En XAMPP el usuario root no tiene contraseña. Un compañero escribió ${k(`'PASSWORD': '${pw}'`)} y aparece «Access denied … (using password: YES)». ¿Qué corriges y por qué?`, opts: ["Dejar 'PASSWORD': ''", "Cambiar 'USER' a 'admin'", 'Reinstalar MySQL', "Cambiar 'HOST' a 'google.com'"], why: ['«using password: YES» indica que Django envió una contraseña que no coincide con la de MySQL.', 'El usuario root solo funciona en Linux.', 'El mensaje indica que MySQL está apagado.', 'El error es del navegador, no de MySQL.'] }; } };
+P[21] = { t: 'C', gen: (K) => { const x = K.pick([
+    ['nadador = models.ForeignKey(Nadador)', 'on_delete en la ForeignKey, por ejemplo on_delete=models.CASCADE'],
+    ["segundos = models.DecimalField(max_digits=6)", 'decimal_places en DecimalField, por ejemplo decimal_places=2'],
+    ['nombre = models.CharField()', 'max_length en CharField, por ejemplo max_length=100']]);
+  return { q: `Al ejecutar makemigrations aparece un error por este campo:${c(x[0])}¿Qué falta?`, opts: [x[1], 'Un campo id escrito a mano', 'Importar el modelo en settings.py', 'Ejecutar runserver antes'] }; } };
+P[25] = { t: 'C', gen: (K) => { const x = K.pick([['crea el usuario administrador para entrar a /admin/', 'python manage.py createsuperuser', /^(python3?|py) manage\.py createsuperuser$/i], ['genera las migraciones después de cambiar models.py', 'python manage.py makemigrations', /^(python3?|py) manage\.py makemigrations( \w+)?$/i], ['crea la app nadadores dentro del proyecto', 'python manage.py startapp nadadores', /^(python3?|py) manage\.py startapp nadadores$/i]]);
+  return { q: `Escribe el comando que <b>${x[0]}</b>.`, txt: [x[2]], sol: x[1], ph: 'Escribe el comando completo' }; } };
+P[28] = { t: 'C', gen: (K) => caso(K, [
+  ['En phpMyAdmin, la columna password de auth_user muestra algo como «pbkdf2_sha256$870000$…». ¿Qué significa?', 'Que Django guardó la contraseña cifrada con un hash y nadie puede leerla', 'Que la contraseña está dañada', 'Que el usuario no tiene contraseña', 'Que hay que volver a ejecutar migrate'],
+  ['Un compañero propone guardar las contraseñas en texto normal «para poder recuperarlas si alguien las olvida». ¿Qué le respondes?', 'Que no: deben guardarse con hash; si alguien la olvida, se restablece, no se recupera', 'Que sí, porque es más práctico', 'Que solo se cifren las de los administradores', 'Que es indiferente'],
+  ['¿Qué formulario de Django sirve para registrar un usuario nuevo y guardar su contraseña cifrada?', 'UserCreationForm', 'ModelAdmin', 'LoginView', 'HttpResponse']]) };
+P[29] = { t: 'C', gen: (K) => caso(K, [
+  ['Después de iniciar sesión, Django lleva al usuario a /accounts/profile/ y aparece un error 404. ¿Qué ajuste falta?', "LOGIN_REDIRECT_URL = 'perfil' en settings.py", 'Quitar @login_required', 'Volver a ejecutar createsuperuser', 'Cambiar el puerto de MySQL'],
+  ['Al abrir /login/ aparece TemplateDoesNotExist: login.html. ¿Qué revisas?', 'Que la plantilla login.html exista en la carpeta templates con ese nombre', 'Que MySQL esté encendido', 'Que el modelo tenga __str__', 'Que esté instalado qrcode'],
+  ['¿Qué vista de Django usas en urls.py para cerrar sesión?', 'auth_views.LogoutView', 'auth_views.LoginView', 'UserCreationForm', 'admin.site.register']]) };
+P[30] = { t: 'D', gen: (K) => { const x = K.pick([['qrcode', 'pip install "qrcode[pil]"'], ['PIL', 'pip install pillow']]);
+  return { q: `Al abrir el pasaporte aparece <b>ModuleNotFoundError: No module named '${x[0]}'</b>. ¿Qué haces?`, opts: [`Ejecutar ${x[1]} con el entorno virtual activo`, 'Borrar la vista del pasaporte', 'Reiniciar XAMPP', `Agregar ${x[0]} a INSTALLED_APPS`] }; } };
+P[32] = { t: 'D', gen: (K) => { const n = K.pick(NOM);
+  return { q: `El equipo diseña el pasaporte de ${n}, que tiene ${K.int(8, 15)} años. ¿Qué debe contener su código QR?`, opts: ['La dirección completa de la ruta que registra su asistencia', 'Su nombre completo, edad y teléfono', 'Su usuario y contraseña', 'Todos sus tiempos de nado'], why: ['Es menor de edad: el QR no debe llevar datos personales, solo la dirección.', 'Así el encargado ve todos sus datos sin internet.', 'Así no necesita iniciar sesión.', 'El QR guarda los datos más seguros que la base.'] }; } };
+P[36] = { t: 'D', gen: (K) => { const n = K.pick(NOM);
+  return { q: `El modelo Asistencia tiene ${k("UniqueConstraint(fields=['nadador', 'fecha'])")}. Desde el panel de administración alguien intenta agregar a mano una segunda asistencia de ${n} con la fecha de hoy. ¿Qué pasa?`, opts: ['La base de datos la rechaza: ya existe una asistencia de ese nadador en esa fecha', 'Se guarda, porque el panel no usa get_or_create', 'Se borra la asistencia anterior', 'Se cambia la fecha a mañana'] }; } };
+P[37] = { t: 'D', gen: (K) => { const r = K.pick(['registrar la asistencia', 'ver el pasaporte', 'abrir el panel deportivo']);
+  return { q: `El encargado intenta ${r} desde su celular y aparece la página de inicio de sesión. ¿Está bien o mal?`, opts: ['Está bien: la vista tiene @login_required y el celular aún no inició sesión', 'Está mal: el QR está dañado', 'Está mal: MySQL está apagado', 'Está mal: falta collectstatic'], why: ['Solo el personal con sesión puede usar esas vistas; así nadie lo hace desde fuera.', 'Los celulares no pueden abrir páginas de Django.', 'El login aparece cuando la base está apagada.', 'Sin archivos estáticos Django pide iniciar sesión.'] }; } };
+P[38] = { t: 'D', gen: (K) => { const n = K.pick(NOM), ya = K.r() < 0.5;
+  return { q: `En ${k('asistencia, creada = Asistencia.objects.get_or_create(nadador=nadador, fecha=date.today())')}, ${n} ${ya ? 'ya tenía registrada su asistencia de hoy' : 'todavía no tenía asistencia hoy'}. ¿Qué valor toma <b>creada</b>?`, opts: ya ? ['False', 'True', 'None', 'La fecha de hoy'] : ['True', 'False', 'None', 'La fecha de hoy'] }; } };
+P[44] = { t: 'E', gen: (K) => { const x = K.pick([['el último tiempo registrado', "tiempos.order_by('-fecha').first()"], ['el primer tiempo registrado', "tiempos.order_by('fecha').first()"], ['el mejor tiempo (el menor)', "tiempos.aggregate(m=Min('segundos'))"]]);
+  const O = ["tiempos.order_by('-fecha').first()", "tiempos.order_by('fecha').first()", "tiempos.aggregate(m=Min('segundos'))", "tiempos.aggregate(m=Max('segundos'))"];
+  return { q: `¿Qué consulta obtiene <b>${x[0]}</b> de un nadador?`, opts: [x[1], ...O.filter((y) => y !== x[1])] }; } };
+P[46] = { t: 'E', gen: (K) => { const x = K.pick([['¿Cuántos nadadores asistieron hoy?', 'Asistencia.objects.filter(fecha=date.today()).count()'], ['¿Cuántos nadadores hay registrados en total?', 'Nadador.objects.count()'], ['¿Cuáles son los nadadores de nivel avanzado, por nombre?', "Nadador.objects.filter(nivel='avanzado').order_by('nombre')"]]);
+  const O = ['Asistencia.objects.filter(fecha=date.today()).count()', 'Nadador.objects.count()', "Nadador.objects.filter(nivel='avanzado').order_by('nombre')", 'Asistencia.objects.get(fecha=date.today())'];
+  return { q: `¿Qué consulta responde: <b>«${x[0]}»</b>?`, opts: [x[1], ...O.filter((y) => y !== x[1])] }; } };
+P[47] = { t: 'E', gen: (K) => { const n = K.pick(NOM);
+  return { q: `${n} acaba de inscribirse y todavía no tiene tiempos. Sin la condición ${k('if primero and ultimo:')}, ¿qué pasaría al abrir su panel?`, opts: ["Un error (AttributeError: 'NoneType' object has no attribute 'segundos'), porque primero y ultimo valen None", 'Mostraría una mejora del 100 %', 'Mostraría los tiempos de otro nadador', 'Nada: Django pone 0 automáticamente'] }; } };
+P[49] = { t: 'E', gen: (K) => caso(K, [
+  ['Los nadadores de AquaLink son menores de edad. ¿Qué decisión del equipo protege mejor sus datos?', 'Pedir inicio de sesión para ver perfiles y no poner datos personales en el QR', 'Publicar la lista de nadadores con sus teléfonos', 'Guardar las contraseñas en texto', 'Compartir el usuario administrador con todo el grupo'],
+  ['Un compañero quiere subir a un grupo de WhatsApp una captura de phpMyAdmin con la tabla de nadadores para «mostrar el avance». ¿Qué le dices?', 'Que no: son datos de menores de edad; mejor mostrar una captura con datos de prueba', 'Que sí, porque es un trabajo escolar', 'Que sí, si la captura es pequeña', 'Que la suba también a redes sociales'],
+  ['Para la demostración con el encargado, ¿qué datos conviene usar?', 'Datos de prueba inventados, no los de nadadores reales', 'Los datos reales de todos los nadadores', 'Los datos de los compañeros del grupo', 'Las contraseñas reales para que vea que funcionan']]) };
+
+/* ---------- 2. Preguntas nuevas (6 por tema) ---------- */
+const N = [
+  /* A */
+  { t: 'A', gen: (K) => { const [a, b] = K.pick([['nadador', 'tiempo'], ['instructor', 'clase'], ['nadador', 'asistencia']]);
+    return { q: `En el diagrama E-R, la relación entre ${a} y ${b} es 1:N. ¿En qué tabla aparece la columna ${k(a + '_id')}?`, opts: [b, a, 'En las dos', 'En ninguna: Django la oculta'] }; } },
+  { t: 'A', gen: (K) => { const x = K.pick([['NOT NULL', 'El campo no puede quedar vacío'], ['AUTO_INCREMENT', 'MySQL asigna el siguiente id automáticamente'], ['PRIMARY KEY', 'Identifica de forma única a cada registro']]);
+    const O = ['El campo no puede quedar vacío', 'MySQL asigna el siguiente id automáticamente', 'Identifica de forma única a cada registro', 'Cifra el valor del campo'];
+    return { q: `En el script aqualink.sql, ¿qué hace ${k(x[0])}?`, opts: [x[1], ...O.filter((y) => y !== x[1])] }; } },
+  { t: 'A', gen: (K) => { const n = K.int(3, 9);
+    return { q: `La tabla nadador tiene ${n} registros y nadie ha borrado ninguno. Se inserta un nadador nuevo sin escribir su id (la columna es AUTO_INCREMENT). ¿Qué id le asigna MySQL?`, num: n + 1, tol: 0 }; } },
+  { t: 'A', gen: (K) => { const x = K.pick([['python --version', 'Verificar que Python esté instalado'], ['venv\\Scripts\\activate', 'Activar el entorno virtual'], ['django-admin startproject aqualink .', 'Crear el proyecto en la carpeta actual']]);
+    const O = ['Verificar que Python esté instalado', 'Activar el entorno virtual', 'Crear el proyecto en la carpeta actual', 'Crear la base de datos en MySQL'];
+    return { q: `¿Para qué sirve el comando ${k(x[0])}?`, opts: [x[1], ...O.filter((y) => y !== x[1])] }; } },
+  { t: 'A', gen: (K) => { const s = ['Crear el entorno virtual', 'Activar el entorno virtual', 'Instalar Django', 'Crear el proyecto', 'Crear la app nadadores']; const i = K.int(1, 4);
+    return { q: `Estás preparando el proyecto. Ya hiciste: <b>${s.slice(0, i).join(' → ')}</b>. ¿Qué sigue?`, opts: [s[i], ...s.filter((x, j) => j !== i && j < i).slice(-2), 'Importar aqualink.sql en phpMyAdmin'] }; } },
+  { t: 'A', gen: (K) => { const t = K.pick(['tiempo', 'asistencia']);
+    return { q: `En el diagrama E-R de AquaLink, ¿qué elemento de la tabla ${t} permite saber a qué nadador pertenece cada registro?`, opts: ['La llave foránea nadador_id', 'La llave primaria id de la tabla ' + t, 'El nombre de la tabla', 'El tipo de dato DATE'], why: ['La FK guarda el id del nadador relacionado y MySQL valida que exista.', 'La PK de ' + t + ' cambia según el nadador.', 'El nombre de la tabla dice a quién pertenece cada fila.', 'Las fechas identifican al nadador.'] }; } },
+  /* B */
+  { t: 'B', gen: (K) => { const x = K.pick([['Apache', '80'], ['MySQL', '3306'], ['el servidor de desarrollo de Django (runserver)', '8000']]);
+    return { q: `¿Qué puerto usa <b>${x[0]}</b> por defecto?`, num: +x[1], tol: 0 }; } },
+  { t: 'B', gen: (K) => { const h = K.pick(['localhost', '127.0.0.1']);
+    return { q: `En DATABASES tienes ${k(`'HOST': '${h}'`)}. ¿Qué significa?`, opts: ['Que MySQL está en la misma computadora donde corre Django', 'Que la base está en internet', 'Que Django usará SQLite', 'Que la conexión no tiene contraseña'] }; } },
+  { t: 'B', gen: (K) => caso(K, [
+    ['Abres http://localhost/phpmyadmin y el navegador dice que no se puede acceder al sitio. ¿Qué revisas primero?', 'Que Apache esté iniciado en el panel de XAMPP', 'Que exista models.py', 'Que esté instalado mysqlclient', 'Que tengas una cuenta de GitHub'],
+    ['phpMyAdmin abre, pero muestra «No se puede conectar: configuración inválida» y no ves las bases. ¿Qué revisas primero?', 'Que MySQL esté iniciado en el panel de XAMPP', 'Que Apache esté apagado', 'Que runserver esté detenido', 'Que el navegador sea Chrome']]) },
+  { t: 'B', gen: (K) => { const n = K.int(4, 9);
+    return { q: `Importaste aqualink.sql, que crea ${n} tablas. ¿Cómo compruebas que quedó bien antes de conectar Django?`, opts: [`En phpMyAdmin, abrir la base aqualink y verificar que aparezcan las ${n} tablas`, 'Ejecutar runserver y esperar', 'Abrir el archivo .sql en el Bloc de notas', 'Reiniciar la computadora'] }; } },
+  { t: 'B', gen: (K) => ({ q: `Ejecutaste ${k('python manage.py migrate')} con MySQL conectado. ¿Qué deberías ver después en phpMyAdmin, dentro de la base ${K.pick(['aqualink', 'aqualink_db'])}?`, opts: ['Tablas nuevas de Django como auth_user y django_migrations', 'Ningún cambio', 'Que se borraron las tablas importadas', 'Un archivo db.sqlite3'] }) },
+  { t: 'B', gen: (K) => { const e = K.pick([["Can't connect to MySQL server on 'localhost' (10061)", 'MySQL'], ["Unknown database 'aqualinkk'", 'settings.py (NAME)'], ['Error loading MySQLdb module', 'el entorno virtual (falta mysqlclient)']]);
+    return { q: `Te dicta este error un compañero por teléfono:${c(e[0])}¿Dónde está el problema y por qué?`, opts: [`En ${e[1]}`, ...['MySQL', 'settings.py (NAME)', 'el entorno virtual (falta mysqlclient)'].filter((x) => x !== e[1]).map((x) => `En ${x}`)], why: [e[1] === 'MySQL' ? 'Django no logra llegar al servidor de MySQL: está apagado.' : e[1].startsWith('settings') ? 'MySQL responde, pero no tiene una base con ese nombre.' : 'Python no encuentra el conector que usa Django para hablar con MySQL.', 'Es un problema del navegador.', 'Falta crear el superusuario.', 'El archivo aqualink.sql está vacío.'] }; } },
+  /* C */
+  { t: 'C', gen: (K) => { const m = K.pick(['Nadador', 'Tiempo', 'Asistencia']);
+    return { q: `Creaste el modelo ${m} y migraste, pero no aparece en /admin/. ¿Qué falta?`, opts: [`Registrarlo en admin.py, por ejemplo admin.site.register(${m})`, 'Volver a crear el superusuario', `Escribir ${m} en settings.py`, 'Reiniciar XAMPP'] }; } },
+  { t: 'C', gen: (K) => { const x = K.pick([['models.CASCADE', 'Se borran también sus tiempos'], ['models.PROTECT', 'MySQL/Django impide borrar al nadador mientras tenga tiempos']]);
+    return { q: `En Tiempo está ${k(`nadador = models.ForeignKey(Nadador, on_delete=${x[0]})`)}. ¿Qué pasa si se borra un nadador que tiene tiempos?`, opts: [x[1], ...['Se borran también sus tiempos', 'MySQL/Django impide borrar al nadador mientras tenga tiempos'].filter((y) => y !== x[1]), 'Los tiempos quedan con otro nadador al azar'] }; } },
+  { t: 'C', gen: (K) => { const n = K.pick(NOM);
+    return { q: `${n} inicia sesión y abre /perfil/. La vista hace ${k('get_object_or_404(Nadador, usuario=request.user)')}, pero su usuario todavía no tiene un nadador asociado. ¿Qué ve?`, opts: ['Una página 404', 'El perfil de otro nadador', 'Un perfil vacío con código 200', 'La página de inicio de sesión'] }; } },
+  { t: 'C', gen: (K) => ({ q: `Escribiste ${k("list_display = ('nombre', 'nivel', 'edad')")} en NadadorAdmin, pero el modelo no tiene ningún campo ni método llamado ${k(K.pick(['edad', 'telefono']))}. ¿Qué pasa al revisar el proyecto?`, opts: ['Django marca un error porque list_display nombra algo que no existe en el modelo', 'Se agrega la columna automáticamente en MySQL', 'Se muestra la columna vacía sin avisar', 'No pasa nada'] }) },
+  { t: 'C', gen: (K) => { const n = K.int(2, 6);
+    return { q: `Hiciste ${n} cambios en models.py en distintos momentos y en cada ocasión ejecutaste makemigrations y migrate. ¿Qué guarda Django en la carpeta migrations?`, opts: ['Un archivo por cada makemigrations, con el plan de cada cambio', 'Una copia de la base de datos', 'Las contraseñas de los usuarios', 'Las plantillas HTML'] }; } },
+  { t: 'C', gen: (K) => { const v = K.pick(['perfil', 'panel', 'pasaporte']);
+    return { q: `Olvidaste poner ${k('@login_required')} en la vista ${v}. ¿Qué riesgo hay?`, opts: ['Cualquier persona sin sesión puede abrir esa página y ver datos de los nadadores', 'Ninguno: Django protege todas las vistas', 'Que la página cargue más lento', 'Que no se pueda iniciar sesión'], why: ['Sin el decorador, la vista responde a cualquiera; con él, redirige al login.', 'El decorador solo cambia el diseño de la página.', 'El decorador acelera las consultas.', 'login_required solo sirve en el panel de administración.'] }; } },
+  /* D */
+  { t: 'D', gen: (K) => { const pk = K.int(2, 80), ip = `192.168.${K.int(0, 2)}.${K.int(10, 99)}`;
+    return { q: `El servidor corre en ${ip}:8000 y la ruta de asistencia es ${k("path('asistencia/<int:pk>/', …)")}. ¿Qué dirección completa debe llevar el QR del nadador ${pk}?`, opts: [`http://${ip}:8000/asistencia/${pk}/`, `/asistencia/${pk}/`, `http://${ip}:3306/asistencia/${pk}/`, `http://${ip}:8000/asistencia/`] }; } },
+  { t: 'D', gen: (K) => { const n = K.pick(NOM), d = K.int(3, 5), extra = K.int(1, 4);
+    return { q: `${n} asistió ${d} días distintos esta semana. Además, en ${extra} de esos días el encargado escaneó su QR dos veces. La vista usa get_or_create con nadador y fecha. ¿Cuántas veces vio el encargado el mensaje «La asistencia de hoy ya estaba registrada»?`, num: extra, tol: 0 }; } },
+  { t: 'D', gen: (K) => caso(K, [
+    [`En la plantilla del pasaporte está ${k('<img src="data:image/png;base64,{{ qr }}">')}. ¿Qué contiene la variable qr?`, 'La imagen PNG del código QR convertida a texto base64', 'La contraseña del nadador', 'La dirección de MySQL', 'El nombre del archivo del QR en el disco'],
+    [`En la vista del pasaporte, ¿para qué sirve ${k('buffer = BytesIO()')}?`, 'Para guardar la imagen PNG del QR en memoria, sin crear un archivo en el disco', 'Para conectarse a MySQL', 'Para iniciar sesión', 'Para leer el código QR con la cámara'],
+    [`¿Qué hace ${k('qrcode.make(url)')} en la vista del pasaporte?`, 'Crea la imagen del código QR con la dirección que recibe', 'Escanea un código QR', 'Registra la asistencia', 'Envía el QR por correo']]) },
+  { t: 'D', gen: (K) => { const n = K.pick(NOM);
+    return { q: `${n} escanea su QR el lunes a las 8:00 y a las 23:59. El martes a las 0:01 vuelve a escanear. ¿Cuántos registros de asistencia tiene en total?`, num: 2, tol: 0 }; } },
+  { t: 'D', gen: (K) => ({ q: `¿Por qué la vista de asistencia usa ${k('fecha=date.today()')} y no la fecha y hora completas?`, opts: ['Porque la regla es una asistencia por día, no por momento', 'Porque MySQL no guarda horas', 'Porque date.today() es más rápido', 'Porque así se genera el QR'], why: [`Si se usara la hora, cada escaneo tendría un valor distinto y get_or_create crearía un registro nuevo cada vez${K.pick(['.', ' (por ejemplo a las 8:00 y a las 8:05).'])}`, 'La hora solo se puede guardar en VARCHAR.', 'date.today() evita iniciar sesión.', 'La fecha completa no cabe en el QR.'] }) },
+  { t: 'D', gen: (K) => { const v = K.pick([['30 a 60 segundos', 'un video corto del escaneo funcionando'], ['capturas del QR', 'las imágenes del pasaporte generado']]);
+    return { q: `Para la evidencia del tema D, la planeación pide ${v[1]}. ¿Qué demuestra mejor que el pasaporte funciona?`, opts: ['Escanear el QR con un celular y que se registre la asistencia una sola vez por día', 'Una captura del código en VS Code', 'Una foto del monitor apagado', 'El diagrama E-R'] }; } },
+  /* E */
+  { t: 'E', gen: (K) => { const n = K.pick(NOM); const t = [K.int(450, 520), K.int(440, 505), K.int(430, 495), K.int(425, 490)].map((x) => x / 10);
+    return { q: `Tiempos de ${n}, del primero al último: <b>${t.join(' s, ')} s</b>. ¿Qué valor muestra el panel como <b>último tiempo</b>? (en segundos)`, num: t[3], tol: 0.001, unit: 's' }; } },
+  { t: 'E', gen: (K) => { const n = K.pick(NOM); const t = [K.int(450, 520), K.int(440, 505), K.int(430, 495), K.int(425, 490)].map((x) => x / 10);
+    return { q: `Tiempos de ${n}: <b>${t.join(' s, ')} s</b>. Un compañero usó ${k("aggregate(m=Max('segundos'))")} para el mejor tiempo. ¿Qué número mostraría el panel? (en segundos)`, num: Math.max(...t), tol: 0.001, unit: 's' }; } },
+  { t: 'E', gen: (K) => { const a = K.int(450, 500) / 10, b = r1(a - K.int(30, 60) / 10);
+    return { q: `Un compañero calculó la mejora con ${k('(primero - ultimo) / ultimo * 100')}. Primero: ${a} s, último: ${b} s. ¿Por qué está mal y cuál es la mejora correcta?`, opts: [`${r1((a - b) / a * 100)} %`, `${r1((a - b) / b * 100)} %`, `${r1(a - b)} %`, `${r1(b / a * 100)} %`], why: ['La mejora se mide respecto al tiempo inicial, por eso se divide entre el primero.', 'Siempre se divide entre el tiempo más pequeño.', 'La mejora es solo la resta de los tiempos.', 'Se divide entre 100 y no entre un tiempo.'] }; } },
+  { t: 'E', gen: (K) => { const n = K.int(3, 12);
+    return { q: `${k('Nadador.objects.filter(nivel="avanzado")')} devuelve ${n} registros. ¿Qué devuelve ${k('Nadador.objects.filter(nivel="avanzado").count()')}?`, num: n, tol: 0 }; } },
+  { t: 'E', gen: (K) => { const pk = K.int(100, 999);
+    return { q: `En el shell, ${k(`Nadador.objects.get(pk=${pk})`)} muestra «Nadador matching query does not exist». ¿Qué significa?`, opts: [`No hay ningún nadador con id ${pk}`, 'Hay varios nadadores con ese id', 'MySQL está apagado', 'Falta ejecutar makemigrations'] }; } },
+  { t: 'E', gen: (K) => { const x = K.pick([['El panel muestra «mejor tiempo» igual al tiempo más alto', 'Se usó Max en lugar de Min'], ['El panel muestra como «último tiempo» el primero que registró el nadador', "Se ordenó con 'fecha' en lugar de '-fecha'"], ['El panel muestra los tiempos de todos los nadadores, no solo los de uno', 'Falta filtrar con filter(nadador=nadador)']]);
+    const O = ['Se usó Max en lugar de Min', "Se ordenó con 'fecha' en lugar de '-fecha'", 'Falta filtrar con filter(nadador=nadador)', 'MySQL está apagado'];
+    return { q: `Al probar el panel deportivo: <b>«${x[0]}»</b>. ¿Cuál es la causa más probable en la vista?`, opts: [x[1], ...O.filter((y) => y !== x[1])] }; } },
+];
+N.forEach((x) => P.push(x));
+})();
+
+</script>
+<script>
+(() => {
+'use strict';
+const EX = window.EXAMEN, URL_HOJA = 'https://script.google.com/macros/s/AKfycbwKUBOQ0GdmfX7hOiuSQAkzubKh1y2YqtJgR0mTVfUvoFjbRS5dTWMFLFNsvzY2VItJ/exec', NPREG = EX.cuota ? Object.values(EX.cuota).reduce((a, b) => a + b, 0) : EX.preguntas.length;
+const $ = (s, r = document) => r.querySelector(s), app = $('#app');
+const esc = (t) => String(t ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const normA = (t) => String(t || '').trim().replace(/\s+/g, ' ').toUpperCase();
+const normM = (t) => String(t || '').trim().replace(/\s+/g, '').toUpperCase();
+/* ---------- números aleatorios con semilla: cada matrícula recibe su propia versión del examen ---------- */
+const hash = (s) => { let h = 2166136261 >>> 0; for (const ch of s) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619) >>> 0; } return h; };
+const mkRng = (seed) => { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; };
+const kit = (rnd) => { const K = { r: rnd, int: (a, b) => a + Math.floor(rnd() * (b - a + 1)), pick: (arr) => arr[Math.floor(rnd() * arr.length)],
+  mix: (arr) => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; } }; K.some = (arr, k) => K.mix(arr).slice(0, k); return K; };
+/* arma las 50 preguntas de un alumno: datos, orden de preguntas y orden de opciones */
+const armar = (st) => {
+  const base = `${EX.materia}|${st.mat}|${st.intento}`;
+  /* sorteo de preguntas: de cada tema se toman las que indica la cuota (distintas para cada matrícula) */
+  let elegidas = EX.preguntas.map((p, i) => i);
+  if (EX.cuota) { const KS = kit(mkRng(hash(base + '|sorteo'))); elegidas = [];
+    Object.keys(EX.cuota).forEach((t) => { const idx = EX.preguntas.map((p, i) => (p.t === t ? i : -1)).filter((i) => i >= 0); elegidas.push(...KS.some(idx, EX.cuota[t])); }); }
+  const P = elegidas.map((i) => { const p = EX.preguntas[i]; const K = kit(mkRng(hash(base + '|' + i))); let g; try { g = p.gen(K); } catch (e) { console.error(i, e); g = { q: 'Pregunta no disponible', opts: ['—'] }; }
+    const o = { i, t: p.t, q: g.q };
+    if (g.opts) { o.tipo = g.why ? 'mr' : 'mc'; o.opts = g.opts; o.ord = K.mix(g.opts.map((x, j) => j)); if (g.why) { o.why = g.why; o.word = K.mix(g.why.map((x, j) => j)); } }
+    else if (g.num != null) { o.tipo = 'num'; o.num = g.num; o.tol = g.tol || 0; o.unit = g.unit || ''; }
+    else { o.tipo = 'txt'; o.txt = g.txt; o.ph = g.ph || ''; }
+    return o; });
+  return kit(mkRng(hash(base + '|orden'))).mix(P);
+};
+const puntos = (p, a) => { if (!a) return 0;
+  if (p.tipo === 'mc') return a.o === 0 ? 1 : 0;
+  if (p.tipo === 'mr') return (a.o === 0 ? 0.5 : 0) + (a.w === 0 ? 0.5 : 0);
+  if (p.tipo === 'num') { const v = parseFloat(String(a.v || '').replace(',', '.').replace(/[^\d.\-]/g, '')); return Number.isFinite(v) && Math.abs(v - p.num) <= p.tol + 1e-9 ? 1 : 0; }
+  const t = String(a.v || '').trim().replace(/\s+/g, ' '); return t && p.txt.some((re) => re.test(t)) ? 1 : 0; };
+const respondida = (p, a) => !!a && (p.tipo === 'mc' ? a.o != null : p.tipo === 'mr' ? a.o != null && a.w != null : String(a.v || '').trim() !== '');
+
+/* ---------- guardado local (permite cerrar y volver a abrir la página sin perder respuestas) ---------- */
+const KEY = (m) => `examen502-${EX.materia}-${m}`;
+const load = (m) => { try { return JSON.parse(localStorage.getItem(KEY(m)) || 'null'); } catch (e) { return null; } };
+let st = null; const save = () => { try { localStorage.setItem(KEY(st.mat), JSON.stringify(st)); } catch (e) {} };
+const toast = (t) => { const d = document.createElement('div'); d.className = 'toast'; d.textContent = t; document.body.appendChild(d); setTimeout(() => d.remove(), 3200); };
+const getJSON = (q) => fetch(`${URL_HOJA}?${q}`).then((r) => r.json());
+const estado = (mat) => getJSON(`accion=examen&materia=${encodeURIComponent(EX.materia)}&matricula=${encodeURIComponent(mat)}`);
+
+/* ================= 1. Registro ================= */
+function registro(msg) {
+  app.innerHTML = `<main><div class="card"><h2>Antes de empezar</h2>
+    <p>Este examen tiene <b>${NPREG} preguntas</b> de todo lo visto en el segundo parcial. Lee con atención: en muchas preguntas tienes que analizar código, datos o un caso, y algunas piden también <b>la razón</b> de tu respuesta.</p>
+    <ul class="reglas"><li>Tienes <b>un solo intento</b>. Al entregar verás tu calificación de inmediato y se enviará a tu maestra.</li>
+    <li>Cada alumno tiene <b>datos y orden distintos</b>: copiar las respuestas de un compañero no sirve.</li>
+    <li>No se puede copiar ni pegar. Si sales de la página, queda registrado.</li>
+    <li>Si se cierra la página por accidente, vuelve a abrirla en el mismo dispositivo y escribe tu misma matrícula: tus respuestas se conservan.</li></ul></div>
+    <div class="card"><h2>Tus datos</h2>
+    <label class="f"><span>Número de matrícula o de control</span><input type="text" id="mat" autocomplete="off" inputmode="text" maxlength="20"></label>
+    <div class="grid2"><label class="f"><span>Apellido paterno</span><input type="text" id="ap" autocomplete="off" maxlength="40"></label>
+    <label class="f"><span>Apellido materno</span><input type="text" id="am" autocomplete="off" maxlength="40"></label></div>
+    <div class="grid2"><label class="f"><span>Nombre(s)</span><input type="text" id="nom" autocomplete="off" maxlength="60"></label>
+    <label class="f"><span>Grupo</span><input type="text" id="grp" value="502" autocomplete="off" maxlength="8"></label></div>
+    <div class="row"><button class="btn p" id="go">Comenzar examen</button></div><p class="msg err" id="rmsg">${msg ? esc(msg) : ''}</p></div></main>`;
+  $('#mat').focus();
+  $('#go').addEventListener('click', async () => {
+    const mat = normM($('#mat').value), ap = normA($('#ap').value), am = normA($('#am').value), nom = normA($('#nom').value), grp = normM($('#grp').value) || '502';
+    const m = $('#rmsg');
+    if (mat.length < 4) { m.textContent = 'Escribe tu número de matrícula o de control completo.'; return; }
+    if (mat === 'DOCENTE') { docente(); return; }
+    if (!ap || !am || !nom) { m.textContent = 'Escribe tu nombre y tus dos apellidos.'; return; }
+    m.className = 'msg'; m.textContent = 'Revisando con la hoja de tu maestra…'; $('#go').disabled = true;
+    let s; try { s = await estado(mat); } catch (e) { s = null; }
+    $('#go').disabled = false; m.className = 'msg err';
+    if (!s || !s.ok) { m.textContent = 'No hay conexión con la hoja de tu maestra. Revisa tu internet y vuelve a intentarlo.'; return; }
+    const prev = load(mat);
+    if (s.hecho) { if (prev && prev.done) { st = prev; resultado(); return; } m.textContent = `Ya presentaste este examen con la matrícula ${mat}. Calificación registrada: ${s.calif}. Si es un error, avisa a tu maestra.`; return; }
+    if (prev && prev.done && prev.intento > (s.anulados || 0)) { st = prev; resultado(); enviar(); return; } /* se entregó pero aún no llega a la hoja: se reenvía */
+    if (!s.abierto && !(prev && !prev.done && prev.intento > (s.anulados || 0))) { m.textContent = 'El examen todavía no está abierto. Espera la indicación de tu maestra.'; return; }
+    if (prev && !prev.done && prev.intento > (s.anulados || 0)) { st = prev; } /* continúa donde se quedó */
+    else st = { mat, ap, am, nom, grp, intento: (s.anulados || 0) + 1, inicio: Date.now(), ans: {}, cur: 0, salidas: 0, pegar: 0, done: null };
+    save(); examen();
+  });
+}
+/* vista previa para la maestra (no se guarda en la hoja) */
+function docente() {
+  const m = $('#rmsg'); m.className = 'msg';
+  m.innerHTML = 'Vista previa docente: escribe tu contraseña. <input type="password" id="dclave" style="max-width:220px;margin-top:6px"> <button class="btn p" id="dgo">Ver examen</button>';
+  $('#dgo').addEventListener('click', async () => { const cl = $('#dclave').value; let d = null; try { d = await getJSON(`accion=checkclave&clave=${encodeURIComponent(cl)}`); } catch (e) {}
+    if (!d || !d.checked) { m.className = 'msg err'; m.textContent = 'No se pudo comprobar la contraseña (revisa internet o que el Apps Script esté actualizado).'; return; }
+    if (!d.ok) { m.className = 'msg err'; m.textContent = 'Contraseña incorrecta.'; return; }
+    st = { mat: 'DOCENTE-' + Math.floor(Math.random() * 1e6), ap: 'VISTA', am: 'PREVIA', nom: 'DOCENTE', grp: '-', intento: 1, inicio: Date.now(), ans: {}, cur: 0, salidas: 0, pegar: 0, done: null, previa: true };
+    examen(); });
+}
+
+/* ================= 2. Examen ================= */
+let P = null;
+function examen() {
+  P = armar(st);
+  app.innerHTML = `<div class="top"><div class="in"><span><b>${esc(st.nom)} ${esc(st.ap)} ${esc(st.am)}</b> · ${esc(st.mat)}${st.previa ? ' · <b style="color:var(--mal)">VISTA PREVIA DOCENTE: no se guarda</b>' : ''}</span><span id="cnt"></span><div class="bar"><i id="barra"></i></div></div></div>
+    <main><div class="aviso" id="sal" hidden></div><div class="card" id="q"></div>
+    <div class="card"><p class="qn">Mapa de preguntas</p><div class="mapa" id="mapa"></div>
+    <div class="row" style="margin-top:14px"><button class="btn p" id="entregar">Entregar examen</button><span class="muted small">Revisa que hayas contestado todo antes de entregar.</span></div></div></main>`;
+  pinta(); $('#entregar').addEventListener('click', confirmar);
+}
+const cuenta = () => P.filter((p) => respondida(p, st.ans[p.i])).length;
+function pinta() {
+  const k = st.cur, p = P[k], a = st.ans[p.i] || {};
+  let h = `<p class="qn">Pregunta ${k + 1} de ${NPREG} · ${esc(EX.temas[p.t])}</p><div class="qt">${p.q}</div>`;
+  if (p.tipo === 'mc' || p.tipo === 'mr') {
+    if (p.tipo === 'mr') h += '<p class="sub">Tu respuesta:</p>';
+    h += `<div class="opts">${p.ord.map((j) => `<label class="opt${a.o === j ? ' on' : ''}"><input type="radio" name="o" value="${j}" ${a.o === j ? 'checked' : ''}><span>${esc(p.opts[j])}</span></label>`).join('')}</div>`;
+    if (p.tipo === 'mr') h += `<p class="sub">¿Por qué?</p><div class="opts">${p.word.map((j) => `<label class="opt${a.w === j ? ' on' : ''}"><input type="radio" name="w" value="${j}" ${a.w === j ? 'checked' : ''}><span>${esc(p.why[j])}</span></label>`).join('')}</div><p class="muted small">Vale medio punto la respuesta y medio punto la razón.</p>`;
+  } else {
+    h += `<div class="ans"><input type="text" id="v" value="${esc(a.v || '')}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="${esc(p.tipo === 'num' ? 'Escribe solo el número' : p.ph)}" ${p.tipo === 'num' ? 'inputmode="decimal"' : ''}>${p.tipo === 'num' && p.unit ? ` <b>${esc(p.unit)}</b>` : ''}<small>${p.tipo === 'num' ? 'Escribe el resultado; usa punto decimal si hace falta.' : 'Escríbelo tal como lo teclearías en la terminal o en el código.'}</small></div>`;
+  }
+  h += `<div class="nav"><button class="btn" id="ant" ${k === 0 ? 'disabled' : ''}>← Anterior</button><button class="btn p" id="sig">${k === NPREG - 1 ? 'Ir a entregar' : 'Siguiente →'}</button></div>`;
+  $('#q').innerHTML = h;
+  $('#q').querySelectorAll('input[type=radio]').forEach((r) => r.addEventListener('change', () => { const x = st.ans[p.i] = st.ans[p.i] || {}; x[r.name] = +r.value; save(); pinta(); }));
+  const v = $('#v'); if (v) { v.addEventListener('input', () => { (st.ans[p.i] = st.ans[p.i] || {}).v = v.value.slice(0, 200); save(); barra(); }); v.addEventListener('keydown', (e) => { if (e.key === 'Enter') $('#sig').click(); }); }
+  $('#ant').addEventListener('click', () => { st.cur--; save(); pinta(); window.scrollTo(0, 0); });
+  $('#sig').addEventListener('click', () => { if (k === NPREG - 1) { $('#entregar').scrollIntoView({ behavior: 'smooth' }); return; } st.cur++; save(); pinta(); window.scrollTo(0, 0); });
+  $('#mapa').innerHTML = P.map((x, j) => `<button class="${respondida(x, st.ans[x.i]) ? 'r' : ''}${j === k ? ' cur' : ''}" data-j="${j}">${j + 1}</button>`).join('');
+  $('#mapa').querySelectorAll('button').forEach((b) => b.addEventListener('click', () => { st.cur = +b.dataset.j; save(); pinta(); window.scrollTo(0, 0); }));
+  barra();
+}
+function barra() { const n = cuenta(); $('#cnt').textContent = `Respondidas: ${n} de ${NPREG}`; $('#barra').style.width = `${n / NPREG * 100}%`;
+  const b = $(`#mapa button[data-j="${st.cur}"]`); if (b) b.classList.toggle('r', respondida(P[st.cur], st.ans[P[st.cur].i])); }
+function confirmar() {
+  const falt = P.map((p, j) => (respondida(p, st.ans[p.i]) ? 0 : j + 1)).filter(Boolean);
+  const d = document.createElement('div'); d.className = 'modal';
+  d.innerHTML = `<div class="card"><h2>¿Entregar el examen?</h2>${falt.length ? `<p>Te faltan <b>${falt.length}</b> pregunta(s): ${falt.slice(0, 20).join(', ')}${falt.length > 20 ? '…' : ''}. Las preguntas sin responder cuentan como incorrectas.</p>` : '<p>Respondiste todas las preguntas.</p>'}<p><b>Ya no podrás cambiar tus respuestas.</b></p><div class="row"><button class="btn p" id="si">Sí, entregar</button><button class="btn" id="no">Seguir revisando</button></div></div>`;
+  document.body.appendChild(d); $('#no', d).addEventListener('click', () => d.remove());
+  $('#si', d).addEventListener('click', () => { d.remove(); calificar(); });
+}
+function calificar() {
+  const porTema = {}; let tot = 0, sin = 0; const det = [];
+  P.forEach((p) => { const pt = puntos(p, st.ans[p.i]); tot += pt; if (!respondida(p, st.ans[p.i])) sin++;
+    const t = porTema[p.t] = porTema[p.t] || { p: 0, n: 0 }; t.p += pt; t.n++; det.push([p.i + 1, pt]); });
+  det.sort((a, b) => a[0] - b[0]);
+  const calif = Math.round(tot / NPREG * 100) / 10;
+  st.done = { calif, aciertos: tot, porTema, sin, det, fin: Date.now() }; save(); resultado(); enviar();
+}
+
+/* ================= 3. Resultado y envío ================= */
+function resultado() {
+  const d = st.done, T = Object.keys(EX.temas);
+  app.innerHTML = `<main><div class="card res"><h2>Examen entregado</h2><p>${esc(st.nom)} ${esc(st.ap)} ${esc(st.am)} · ${esc(st.mat)}</p><p class="muted">Tu calificación</p><div class="big">${d.calif.toFixed(1)}</div><p><b>${String(d.aciertos).replace('.', ',')}</b> de ${NPREG} puntos${d.sin ? ` · ${d.sin} sin responder` : ''}</p><p class="msg" id="env"></p></div>
+    <div class="card"><h2>Resultado por tema</h2><div class="tbl"><table><tr><th>Tema</th><th>Puntos</th></tr>${T.filter((t) => d.porTema[t]).map((t) => `<tr><td>${t}. ${esc(EX.temas[t])}</td><td>${String(d.porTema[t].p).replace('.', ',')} de ${d.porTema[t].n}</td></tr>`).join('')}</table></div><p class="muted small">Repasa en el simulador los temas con menos puntos.</p></div></main>`;
+  estadoEnvio();
+}
+function estadoEnvio() { const e = $('#env'); if (!e) return;
+  if (st.previa) { e.className = 'msg'; e.textContent = 'Vista previa docente: este resultado no se guarda.'; return; }
+  if (st.sent) { e.className = 'msg ok'; e.textContent = '✓ Tu calificación quedó registrada con tu maestra.'; return; }
+  e.className = 'msg err'; e.innerHTML = 'Enviando tu calificación… <button class="btn" id="reenv" style="margin-left:6px">Reintentar envío</button>';
+  $('#reenv').addEventListener('click', enviar); }
+let enviando = false;
+async function enviar() {
+  if (st.previa || st.sent || enviando || !st.done) { estadoEnvio(); return; } enviando = true;
+  const d = st.done, T = Object.keys(EX.temas);
+  const fila = { materia: EX.materia, matricula: st.mat, paterno: st.ap, materno: st.am, nombre: st.nom, grupo: st.grp, intento: st.intento,
+    calif: d.calif, aciertos: d.aciertos, total: NPREG, temas: T.filter((t) => d.porTema[t]).map((t) => `${t} ${d.porTema[t].p}/${d.porTema[t].n}`).join(' · '),
+    minutos: Math.round((d.fin - st.inicio) / 6000) / 10, salidas: st.salidas, pegar: st.pegar, sin: d.sin,
+    detalle: d.det.map((x) => `${x[0]}:${x[1]}`).join(' '), dev: (navigator.userAgent.match(/Android|iPhone|iPad|Windows|Mac OS X|CrOS|Linux/) || ['?'])[0] };
+  try { await fetch(URL_HOJA, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ examen: fila }) }); } catch (e) {}
+  /* confirma que llegó a la hoja */
+  for (let i = 0; i < 4 && !st.sent; i++) { try { const s = await estado(st.mat); if (s && s.hecho) { st.sent = true; save(); } } catch (e) {} if (!st.sent) await new Promise((r) => setTimeout(r, 1500)); }
+  enviando = false; estadoEnvio();
+}
+
+/* ---------- cuidado del examen: sin copiar ni pegar, y registro de salidas de la página ---------- */
+const enExamen = () => st && !st.done && P;
+['copy', 'cut', 'paste', 'drop', 'contextmenu'].forEach((ev) => document.addEventListener(ev, (e) => { if (!enExamen()) return; e.preventDefault(); if (ev !== 'contextmenu') { st.pegar++; save(); toast('✋ En el examen no se puede copiar ni pegar.'); } }, true));
+document.addEventListener('visibilitychange', () => { if (!enExamen()) return;
+  if (document.visibilityState === 'hidden') { st.salidas++; save(); }
+  else if (st.salidas) { const s = $('#sal'); if (s) { s.hidden = false; s.innerHTML = `⚠️ Saliste de la página del examen <b>${st.salidas}</b> ${st.salidas === 1 ? 'vez' : 'veces'}. Queda registrado y tu maestra lo verá.`; } } });
+window.addEventListener('beforeunload', (e) => { if (enExamen() && !st.previa) { e.preventDefault(); e.returnValue = ''; } });
+window.__EX = { armar, puntos, respondida, get st() { return st; }, get P() { return P; } };
+registro();
+})();
+</script>
+</body>
+</html>

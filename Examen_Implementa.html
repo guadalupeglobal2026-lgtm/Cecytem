@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Examen · Implementa aplicaciones web</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--vino:#6E1F33;--vino2:#A13546;--oro:#C9A15A;--tinta:#1F2328;--gris:#5A6270;--linea:#D9DDE3;--fondo:#F4F5F7;--ok:#1B7A43;--mal:#B42318;--azul:#1D5FD1}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--fondo);color:var(--tinta);font:16px/1.5 Montserrat,system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+header{background:var(--vino);color:#fff;padding:14px 18px}
+header h1{margin:0;font-size:1.15rem;font-weight:800}
+header p{margin:2px 0 0;opacity:.85;font-size:.85rem}
+main{max-width:860px;margin:0 auto;padding:18px 16px 60px}
+.card{background:#fff;border:1px solid var(--linea);border-radius:14px;padding:20px;margin:0 0 16px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+h2{margin:0 0 10px;font-size:1.3rem;color:var(--vino)}
+label.f{display:block;margin:0 0 12px}
+label.f span{display:block;font-weight:700;font-size:.9rem;margin-bottom:4px}
+input[type=text],input[type=password]{width:100%;font:inherit;padding:11px 12px;border:1.5px solid var(--linea);border-radius:10px;background:#fff}
+input:focus{outline:none;border-color:var(--vino2);box-shadow:0 0 0 3px rgba(161,53,70,.15)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+@media (max-width:600px){.grid2{grid-template-columns:1fr}}
+.btn{font:inherit;font-weight:700;border:0;border-radius:10px;padding:12px 18px;cursor:pointer;background:#E7E9ED;color:var(--tinta)}
+.btn.p{background:var(--vino);color:#fff}.btn.p:hover{background:var(--vino2)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.msg{margin:10px 0 0;font-weight:600}.msg.err{color:var(--mal)}.msg.ok{color:var(--ok)}
+ul.reglas{margin:6px 0 0;padding-left:20px}ul.reglas li{margin:4px 0}
+.top{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--linea);padding:10px 16px}
+.top .in{max-width:860px;margin:0 auto;display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;font-size:.88rem}
+.bar{height:6px;background:#E7E9ED;border-radius:6px;overflow:hidden;margin-top:6px;width:100%}.bar i{display:block;height:100%;background:var(--oro)}
+.qn{font-size:.8rem;font-weight:800;color:var(--gris);text-transform:uppercase;letter-spacing:.04em;margin:0 0 8px}
+.qt{font-size:1.05rem;margin:0 0 14px;user-select:none;-webkit-user-select:none}
+.qt b{color:var(--vino)}
+pre.code{background:#111827;color:#E5E7EB;padding:12px 14px;border-radius:10px;overflow:auto;font:13.5px/1.5 ui-monospace,Consolas,monospace;margin:10px 0;white-space:pre}
+code{background:#EEF0F3;padding:1px 5px;border-radius:5px;font:.9em ui-monospace,Consolas,monospace}
+.tbl{overflow:auto;margin:10px 0}table{border-collapse:collapse;font-size:.92rem}th,td{border:1px solid var(--linea);padding:6px 10px;text-align:left}th{background:#F1EDEE}
+.doc{background:#FBFAF8;border:1px solid var(--linea);border-radius:10px;padding:10px 14px;margin:10px 0;font-size:.95rem}
+.opts{display:grid;gap:8px;margin:6px 0 0;user-select:none;-webkit-user-select:none}
+.opt{display:flex;gap:10px;align-items:flex-start;border:1.5px solid var(--linea);border-radius:10px;padding:11px 12px;cursor:pointer;background:#fff}
+.opt:hover{border-color:#B9BEC7}.opt input{margin-top:4px;accent-color:var(--vino)}
+.opt.on{border-color:var(--vino);background:#FBF3F5}
+.sub{font-weight:800;color:var(--vino);margin:16px 0 4px;font-size:.95rem}
+.ans input{max-width:420px}.ans small{display:block;color:var(--gris);margin-top:4px}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:16px;flex-wrap:wrap}
+.mapa{display:grid;grid-template-columns:repeat(auto-fill,minmax(38px,1fr));gap:6px}
+.mapa button{font:inherit;font-size:.82rem;font-weight:700;border:1.5px solid var(--linea);background:#fff;border-radius:8px;padding:7px 0;cursor:pointer}
+.mapa button.r{background:#E9F5EE;border-color:#9CD3B1}.mapa button.cur{border-color:var(--vino);box-shadow:0 0 0 2px rgba(110,31,51,.25)}
+.aviso{background:#FFF4E5;border:1px solid #F5C26B;border-radius:10px;padding:10px 14px;margin:0 0 14px;font-size:.92rem}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}
+.modal .card{max-width:520px;width:100%}
+.res{text-align:center}.res .big{font-size:3.6rem;font-weight:800;color:var(--vino);line-height:1;margin:8px 0}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#1F2328;color:#fff;padding:10px 16px;border-radius:10px;font-weight:600;z-index:30;max-width:90vw}
+.muted{color:var(--gris)}.small{font-size:.85rem}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header><h1>Examen del segundo parcial · Implementa aplicaciones web</h1><p>CECyTEM Plantel Metepec II · Técnico en Programación</p></header>
+<div id="app"></div>
+<script>
+/* Examen del segundo parcial · Implementa aplicaciones web (sistema de control escolar)
+   Mismo formato que bank_construye.js */
+(() => {
+const c = (t) => `<pre class="code">${String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`;
+const k = (t) => `<code>${String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;')}</code>`;
+const tabla = (h, rows) => `<div class="tbl"><table><tr>${h.map((x) => `<th>${x}</th>`).join('')}</tr>${rows.map((r) => `<tr>${r.map((x) => `<td>${x}</td>`).join('')}</tr>`).join('')}</table></div>`;
+const r1 = (x) => Math.round(x * 10) / 10;
+const rx = (t) => String(t).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const TURNO = { 'Crítica|Alta': 1, 'Crítica|Media': 2, 'Crítica|Baja': 4, 'Media|Alta': 3, 'Media|Media': 5, 'Media|Baja': 7, 'Baja|Alta': 6, 'Baja|Media': 8, 'Baja|Baja': 9 };
+const MATRIZ = tabla(['Severidad \\ Prioridad', 'Alta', 'Media', 'Baja'], [['Crítica', '1', '2', '4'], ['Media', '3', '5', '7'], ['Baja', '6', '8', '9']]);
+
+window.EXAMEN = {
+  materia: 'Implementa',
+  titulo: 'Implementa aplicaciones web',
+  temas: { A: 'Herramientas de desarrollador', B: 'Pruebas de carga y estrés', C: 'Registro de defectos', D: 'Clasificación de defectos', E: 'Corrección de código y convenciones', F: 'Reflexión socioemocional' },
+  preguntas: [
+  /* ================= A. Herramientas de desarrollador ================= */
+  { t: 'A', gen: (K) => { const alto = K.r() < 0.5; const ttfb = alto ? K.int(1800, 2600) : K.int(60, 180), load = alto ? ttfb + K.int(400, 900) : K.int(3400, 5200);
+    return { q: `Mediste /alumnos/: <b>TTFB = ${ttfb} ms</b> y <b>Load = ${(load / 1000).toFixed(1)} s</b>. ¿Dónde está el problema principal?`, opts: alto ? ['En el servidor o la consulta a MySQL: tarda mucho en empezar a responder', 'En imágenes o CSS muy pesados', 'En el código de estado 200', 'No hay ningún problema'] : ['En archivos pesados, como imágenes o CSS: el servidor responde rápido', 'En el servidor o la consulta a MySQL', 'En el código de estado 200', 'No hay ningún problema'] }; } },
+  { t: 'A', gen: (K) => { const img = K.pick(['escudo.png', 'fondo_escuela.jpg', 'banner.png']), kb = K.int(300, 900), falla = K.pick(['buscador.js', 'menu.js', 'logo.svg']);
+    const rows = [['alumnos/', '200', 'document', `${K.int(6, 14)}.${K.int(0, 9)} kB`, `${K.int(150, 700)} ms`], ['estilos.css', '200', 'stylesheet', `${K.int(3, 9)}.${K.int(0, 9)} kB`, `${K.int(20, 80)} ms`], [img, '200', 'png', `${kb} kB`, `${K.int(200, 700)} ms`], [falla, '404', 'script', '0.4 kB', `${K.int(10, 40)} ms`]];
+    return { q: `Así se ve la pestaña Network al medir la lista de alumnos:${tabla(['Name', 'Status', 'Type', 'Size', 'Time'], K.mix(rows))}¿Qué recurso no se encontró en el servidor?`, opts: [`${falla} (404)`, img, 'alumnos/', 'estilos.css'] }; } },
+  { t: 'A', gen: (K) => { const load = K.int(18, 48) / 10, dcl = r1(load * 0.6), ok = load < 3;
+    return { q: `Barra inferior de Network: <b>${K.int(9, 25)} requests · ${K.int(200, 900)} kB · DOMContentLoaded: ${dcl} s · Load: ${load} s</b>. El requisito es que la página cargue en menos de 3 s. ¿Cumple y por qué?`, opts: ok ? ['Sí cumple', 'No cumple'] : ['No cumple', 'Sí cumple'], why: [`Se compara el Load (${load} s) con los 3 s del requisito.`, `Se compara el DOMContentLoaded (${dcl} s) con el requisito.`, 'Se compara el número de requests con 3.', 'Se compara el peso en kB con 3 000.'] }; } },
+  { t: 'A', gen: (K) => ({ q: 'Un compañero midió la lista de alumnos y obtuvo tiempos muy bajos, mucho menores que los del resto del equipo. ¿Qué le faltó hacer?', opts: ['Marcar «Disable cache» y recargar con Ctrl + F5', 'Cerrar el navegador', 'Medir con el celular apagado', 'Subir la concurrencia a 50'] }) },
+  { t: 'A', gen: (K) => { const v = [K.int(10, 30), K.int(10, 30), K.int(10, 30)].map((x) => x / 10); const p = r1((v[0] + v[1] + v[2]) / 3);
+    return { q: `Mediste tres veces el Load del formulario de nuevo alumno: <b>${v.join(' s, ')} s</b>. ¿Qué valor anotas en la bitácora como promedio? (un decimal, en segundos)`, num: p, tol: 0.1, unit: 's' }; } },
+  { t: 'A', gen: (K) => { const C = [['No throttling', K.int(9, 15) / 10], ['Fast 4G', K.int(18, 28) / 10], ['Slow 4G', K.int(31, 45) / 10], ['3G', K.int(50, 70) / 10]];
+    return { q: `Bitácora de la página /alumnos/ con distintas conexiones:${tabla(['Conexión', 'Load'], C.map((x) => [x[0], x[1] + ' s']))}¿Con qué conexiones NO se cumple el requisito de 3 s?`, opts: ['Slow 4G y 3G', 'Solo 3G', 'Todas', 'Ninguna'] }; } },
+  { t: 'A', gen: (K) => { const O = [['La tabla de alumnos obliga a desplazar toda la página hacia los lados', 1], ['Los botones Guardar y Cancelar se pueden tocar con el dedo', 0], ['El botón Nuevo alumno queda cortado a la derecha', 1], ['El formulario se acomoda en una sola columna', 0], ['Los enlaces de la tabla están tan juntos que se toca el equivocado', 1]];
+    const o = K.pick(O); return { q: `Revisas el sistema en modo dispositivo a 375 px de ancho: <b>«${o[0]}»</b>. ¿Cumple o no cumple?`, opts: [['Cumple', 'No cumple'][o[1]], ['Cumple', 'No cumple'][1 - o[1]]] }; } },
+  { t: 'A', gen: (K) => ({ q: 'Abriste F12 después de que la página ya había cargado y la pestaña Network está vacía. ¿Qué haces?', opts: ['Con Network abierta, recargar la página (Ctrl + F5)', 'Cerrar F12 y volver a abrirlo sin recargar', 'Activar el modo celular', 'Reiniciar XAMPP'] }) },
+  { t: 'A', gen: (K) => { const p = K.pick(['/alumnos/', '/alumnos/nuevo/', '/login/']);
+    return { q: `Para tu bitácora necesitas el TTFB de ${p}. ¿Dónde lo encuentras?`, opts: ['En la pestaña Timing de la primera petición, en «Waiting for server response»', 'En la columna Size', 'En la consola de JavaScript', 'En el código fuente de la página'] }; } },
+
+  /* ================= B. Pruebas de carga y estrés ================= */
+  { t: 'B', gen: (K) => { const S = [['GET a /alumnos/ sin iniciar sesión', '302 Found'], [`GET a /alumnos/${K.int(90000, 99999)}/ (alumno que no existe)`, '404 Not Found'], ['Enviar el formulario por POST sin el token CSRF', '403 Forbidden'], ['Una excepción sin manejar en el código de la vista', '500 Internal Server Error'], ['GET a /login/', '200 OK']];
+    const C = ['200 OK', '302 Found', '403 Forbidden', '404 Not Found', '500 Internal Server Error'];
+    const s = K.pick(S); return { q: `En Postman envías: <b>${s[0]}</b>. ¿Qué código esperas?`, opts: [s[1], ...K.some(C.filter((x) => x !== s[1]), 3)] }; } },
+  { t: 'B', gen: (K) => { const a = K.pick([['registrar un alumno nuevo desde el formulario', 'POST'], ['consultar la lista de alumnos', 'GET'], ['ver el detalle del alumno con matrícula ' + K.int(1000, 9999), 'GET']]);
+    return { q: `¿Qué método HTTP corresponde a <b>${a[0]}</b>?`, opts: [a[1], ...['GET', 'POST', 'DELETE', 'PUT'].filter((x) => x !== a[1]).slice(0, 3)] }; } },
+  { t: 'B', gen: (K) => { const cod = K.pick([['500', 'del servidor: falló el código de la aplicación'], ['404', 'del cliente: pidió algo que no existe'], ['403', 'del cliente: no tiene permiso'], ['400', 'del cliente: la petición está mal formada']]);
+    return { q: `Una prueba devuelve el código <b>${cod[0]}</b>. ¿De quién es el error?`, opts: [cod[1].charAt(0).toUpperCase() + cod[1].slice(1), ...['Es una respuesta exitosa', 'Es una redirección al login', cod[0] === '500' ? 'Del cliente: pidió algo que no existe' : 'Del servidor: falló el código de la aplicación']] }; } },
+  { t: 'B', gen: (K) => { const n = K.pick([100, 200, 300, 500]), cc = K.pick([5, 10, 20, 25]), p = K.pick(['login/', 'alumnos/']);
+    return { q: `Ya estás en C:\\xampp\\apache\\bin. Escribe el comando de Apache Bench que envía <b>${n}</b> peticiones en total, <b>${cc}</b> al mismo tiempo, a <b>http://127.0.0.1:8000/${p}</b>.`, txt: [new RegExp(`^ab(\\.exe)? (-n ${n} -c ${cc}|-c ${cc} -n ${n}) http://(127\\.0\\.0\\.1|localhost):8000/${rx(p)}$`, 'i')], sol: `ab -n ${n} -c ${cc} http://127.0.0.1:8000/${p}`, ph: 'ab …' }; } },
+  { t: 'B', gen: (K) => { const n = K.pick([150, 250, 400]), cc = K.pick([15, 30, 40]);
+    return { q: `¿Qué significa ${k(`ab -n ${n} -c ${cc} http://127.0.0.1:8000/login/`)}?`, opts: [`${n} peticiones en total, ${cc} al mismo tiempo`, `${n} usuarios durante ${cc} segundos`, `${n} segundos y ${cc} errores permitidos`, `${cc} peticiones en total, ${n} al mismo tiempo`] }; } },
+  { t: 'B', gen: (K) => { const cs = [10, 25, 50, 75]; const lim = K.int(1, 3); let rps = K.int(30, 40);
+    const rows = cs.map((x, i) => { rps = r1(rps * (0.7 + K.r() * 0.15)); return [`ab -n 200 -c ${x}`, String(rps), i >= lim ? String(K.int(4, 30)) : '0']; });
+    return { q: `Resultados de la prueba de estrés de tu equipo:${tabla(['Comando', 'Requests per second', 'Failed requests'], rows)}¿En qué concurrencia empieza la señal de alerta y por qué?`, opts: [`-c ${cs[lim]}`, ...cs.filter((x, i) => i !== lim).map((x) => `-c ${x}`).slice(0, 3)], why: ['Es la primera en la que aparecen peticiones fallidas (Failed requests mayor que 0).', 'Es la que tiene más peticiones por segundo.', 'Siempre se elige la concurrencia más alta.', 'Es la primera fila de la tabla.'] }; } },
+  { t: 'B', gen: (K) => { const a = K.int(30, 40), b = r1(a * 0.55);
+    return { q: `Al subir la concurrencia, «Requests per second» bajó de <b>${a}</b> a <b>${b}</b>. ¿Qué indica?`, opts: ['Que el servidor atiende menos peticiones por segundo: se está degradando', 'Que el servidor se volvió más rápido', 'Que hubo menos usuarios', 'Nada: es normal y no se reporta'] }; } },
+  { t: 'B', gen: (K) => ({ q: 'El Collection Runner de Postman ejecutó 200 iteraciones de la colección «Control escolar». ¿Por qué se considera una prueba de carga y no de estrés?', opts: ['Porque envía las peticiones una tras otra, no muchas al mismo tiempo', 'Porque Postman es gratuito', 'Porque mide el TTFB', 'Porque solo usa el método GET'] }) },
+  { t: 'B', gen: (K) => { const ms = K.int(1200, 4200);
+    return { q: `En la pestaña Tests tienes:${c('pm.test("Responde en menos de 3 s", () => {\n  pm.expect(pm.response.responseTime).to.be.below(3000);\n});')}La petición tardó <b>${ms} ms</b>. ¿Qué resultado muestra Postman?`, opts: ms < 3000 ? ['PASS', 'FAIL', 'Error de sintaxis', 'Could not send request'] : ['FAIL', 'PASS', 'Error de sintaxis', 'Could not send request'] }; } },
+
+  /* ================= C. Registro de defectos ================= */
+  { t: 'C', gen: (K) => { const E = ['Nuevo', 'Asignado', 'En corrección', 'Corregido', 'Verificado', 'Cerrado']; const i = K.int(0, 4);
+    return { q: `En el ciclo de vida de un defecto, ¿qué estado sigue a <b>«${E[i]}»</b>?`, opts: [E[i + 1], ...K.some(E.filter((x, j) => j !== i + 1 && j !== i), 3)] }; } },
+  { t: 'C', gen: (K) => { const n = K.int(2, 30);
+    return { q: `La incidencia #${n} estaba en «Corregido». Al verificarla, el defecto vuelve a aparecer. ¿A qué estado regresa?`, opts: ['En corrección', 'Nuevo', 'Cerrado', 'Se borra la incidencia'] }; } },
+  { t: 'C', gen: (K) => ({ q: 'En tu equipo, ¿por qué quien corrige un defecto no debe ser quien lo verifica?', opts: ['Para que otra persona confirme que de verdad quedó corregido', 'Porque así lo exige GitHub', 'Porque quien corrige ya no tiene tiempo', 'No importa quién lo verifique'], why: ['Quien corrigió tiende a probar solo lo que cambió y puede dar por buena una corrección incompleta.', 'GitHub bloquea al autor del commit.', 'Así cada quien trabaja menos.', 'La verificación solo es un trámite.'] }) },
+  { t: 'C', gen: (K) => { const d = K.pick([['Nuevo alumno acepta fecha de nacimiento futura', 'el formulario de nuevo alumno'], ['La búsqueda no encuentra apellidos con acento', 'la búsqueda de alumnos'], ['Editar un alumno borra su matrícula', 'la edición de alumnos']]);
+    return { q: `Encontraste un defecto en ${d[1]}. ¿Cuál es el mejor título para la incidencia?`, opts: [d[0], 'No sirve el sistema', 'Error!!!', 'Problema con alumnos'] }; } },
+  { t: 'C', gen: (K) => { const F = [['Pasos', '1. Abrir /alumnos/nuevo/ 2. Escribir fecha 2031-01-01 3. Guardar'], ['Resultado esperado', 'Mensaje: la fecha no puede ser futura'], ['Resultado obtenido', 'El alumno se guarda con fecha 2031'], ['Evidencia', 'captura_fecha_futura.png']];
+    const i = K.int(0, 3); const doc = F.map((f, j) => `<b>${f[0]}:</b> ${j === i ? '<i>(vacío)</i>' : f[1]}`).join('<br>');
+    return { q: `Revisa esta incidencia:<div class="doc"><b>Título:</b> Nuevo alumno acepta fecha de nacimiento futura<br>${doc}</div>¿Qué le falta para que otra persona pueda entenderla y repetirla?`, opts: [F[i][0], ...F.filter((x, j) => j !== i).map((x) => x[0])] }; } },
+  { t: 'C', gen: (K) => ({ q: '¿Qué hace que un reporte de defecto sea <b>reproducible</b>?', opts: ['Que cualquier persona pueda provocar el defecto siguiendo los pasos escritos', 'Que tenga muchas palabras', 'Que lo escriba el docente', 'Que tenga capturas de colores'] }) },
+  { t: 'C', gen: (K) => { const n = K.int(2, 40);
+    return { q: `Corregiste la incidencia <b>#${n}</b> en GitHub. Escribe el texto que pones en el mensaje del commit para que GitHub la cierre sola al integrarlo.`, txt: [new RegExp(`^(fixes|fix|fixed|closes|close|closed|resolves|resolve|resolved) #${n}\\.?$`, 'i')], sol: `Fixes #${n}`, ph: 'palabra clave y número' }; } },
+  { t: 'C', gen: (K) => ({ q: 'Para encontrar defectos en la Actividad 6, ¿qué conviene probar en el formulario de nuevo alumno?', opts: ['Campos vacíos, datos inválidos, fechas futuras y matrículas repetidas', 'Solo datos correctos', 'Solo el color de los botones', 'Nada: si se ve bien, funciona'] }) },
+  { t: 'C', gen: (K) => ({ q: 'En Trello, ¿qué listas lleva el tablero «Defectos · Control escolar»?', opts: ['Nuevo, Asignado, En corrección, Corregido y Verificado', 'Lunes, Martes y Miércoles', 'Bueno, Malo y Regular', 'Solo «Pendientes»'] }) },
+
+  /* ================= D. Clasificación de defectos ================= */
+  { t: 'D', gen: (K) => { const S = [['La decide quien prueba, según el impacto técnico', 'Severidad'], ['La decide el jefe inmediato, según la urgencia', 'Prioridad'], ['Responde a «¿se pierden datos?»', 'Severidad'], ['Responde a «¿hay una entrega cerca?»', 'Prioridad'], ['Responde a «¿se bloquea una función?»', 'Severidad'], ['Responde a «¿lo ven los usuarios hoy?»', 'Prioridad']];
+    const s = K.pick(S); return { q: `<b>«${s[0]}»</b>. ¿Se refiere a la severidad o a la prioridad?`, opts: [s[1], s[1] === 'Severidad' ? 'Prioridad' : 'Severidad'] }; } },
+  { t: 'D', gen: (K) => { const G = [['Nadie puede iniciar sesión', 'Crítico'], ['Eliminar un alumno borra a otro', 'Crítico'], ['Se ven datos de alumnos sin iniciar sesión', 'Crítico'], ['Acepta fecha de nacimiento futura', 'Medio'], ['La búsqueda no encuentra apellidos con acento', 'Medio'], ['Una página tarda más de 3 s', 'Medio'], ['Botón desalineado a 375 px', 'Bajo'], ['Error de ortografía en un título', 'Bajo']];
+    const W = { 'Crítico': 'Bloquea el sistema, pierde datos o expone información.', 'Medio': 'Una función falla, pero se puede seguir trabajando.', 'Bajo': 'Es un detalle visual o de texto.' };
+    const g = K.pick(G); const o = ['Crítico', 'Medio', 'Bajo'];
+    return { q: `Defecto: <b>«${g[0]}»</b>. ¿Qué gravedad tiene y por qué?`, opts: [g[1], ...o.filter((x) => x !== g[1])], why: [W[g[1]], ...o.filter((x) => x !== g[1]).map((x) => W[x])] }; } },
+  { t: 'D', gen: (K) => { const G = [['Al guardar calificaciones, se pierden las del grupo anterior', 'Crítico'], ['El reporte en PDF sale sin el logo de la escuela', 'Bajo'], ['El filtro por grupo no funciona, pero se puede buscar a mano', 'Medio'], ['Cualquiera puede ver /alumnos/ sin sesión', 'Crítico'], ['Un mensaje dice «Guardaro» en lugar de «Guardado»', 'Bajo']];
+    const g = K.pick(G); return { q: `Defecto: <b>«${g[0]}»</b>. ¿Qué gravedad le asignas?`, opts: [g[1], ...['Crítico', 'Medio', 'Bajo'].filter((x) => x !== g[1])] }; } },
+  { t: 'D', gen: (K) => { const s = K.pick(['Crítica', 'Media', 'Baja']), p = K.pick(['Alta', 'Media', 'Baja']);
+    return { q: `Usa la matriz severidad × prioridad (el número es el turno de corrección):${MATRIZ}Un defecto tiene severidad <b>${s}</b> y prioridad <b>${p}</b>. ¿Qué turno le toca?`, num: TURNO[s + '|' + p], tol: 0 }; } },
+  { t: 'D', gen: (K) => { let L; do { L = ['A', 'B', 'C'].map((x) => ({ x, s: K.pick(['Crítica', 'Media', 'Baja']), p: K.pick(['Alta', 'Media', 'Baja']) })); L.forEach((d) => { d.n = TURNO[d.s + '|' + d.p]; }); } while (new Set(L.map((d) => d.n)).size < 3);
+    const ord = L.slice().sort((a, b) => a.n - b.n);
+    return { q: `Con la misma matriz:${MATRIZ}${tabla(['Defecto', 'Severidad', 'Prioridad'], L.map((d) => [d.x, d.s, d.p]))}¿Cuál se corrige primero?`, opts: [`El defecto ${ord[0].x}`, `El defecto ${ord[1].x}`, `El defecto ${ord[2].x}`] }; } },
+  { t: 'D', gen: (K) => ({ q: 'Mañana se presenta el sistema a la dirección y hay un error de ortografía en la página de inicio. ¿Cómo lo clasificas y por qué?', opts: ['Severidad baja, prioridad alta (turno 6)', 'Severidad crítica, prioridad alta (turno 1)', 'Severidad baja, prioridad baja (turno 9)', 'Severidad media, prioridad media (turno 5)'], why: ['No daña el funcionamiento, pero la presentación de mañana lo vuelve urgente.', 'Todo error visible es crítico.', 'La ortografía nunca se corrige antes de una entrega.', 'Siempre se usa el turno de en medio.'] }) },
+  { t: 'D', gen: (K) => ({ q: 'Intercambiaste tu clasificación con otro equipo: ellos marcaron como «bajo» un defecto que ustedes consideran «crítico». ¿Qué hacen?', opts: ['Escuchan sus razones, revisan juntos la tabla de niveles y acuerdan la clasificación con una justificación', 'Imponen su clasificación porque ustedes lo encontraron', 'Lo dejan sin clasificar', 'Borran el defecto del tablero'] }) },
+  { t: 'D', gen: (K) => ({ q: 'Además de la severidad y la prioridad, ¿qué escribe tu equipo en cada incidencia clasificada?', opts: ['Una línea que justifique la clasificación', 'El nombre de quien causó el defecto', 'Nada más', 'La contraseña del sistema'] }) },
+  { t: 'D', gen: (K) => { const a = K.pick([['Crítica', 'Baja', 4], ['Media', 'Alta', 3]]), b = a[2] === 4 ? ['Media', 'Alta', 3] : ['Crítica', 'Baja', 4];
+    return { q: `Según la matriz:${MATRIZ}Hay dos defectos: uno de severidad ${a[0]} y prioridad ${a[1]}, y otro de severidad ${b[0]} y prioridad ${b[1]}. ¿Cuál va primero?`, opts: ['El de severidad Media y prioridad Alta (turno 3)', 'El de severidad Crítica y prioridad Baja (turno 4)', 'Los dos al mismo tiempo', 'Ninguno: primero los de severidad baja'] }; } },
+
+  /* ================= E. Corrección de código y convenciones ================= */
+  { t: 'E', gen: (K) => { const mal = K.pick(['detalle', 'ver_alumno', 'alumno']), ln = K.int(6, 15);
+    const tb = `NoReverseMatch at /alumnos/\nReverse for '${mal}' not found. '${mal}' is not\na valid view function or pattern name.\n\nTraceback (most recent call last):\n  File ".../django/core/handlers/base.py", line 197\n  File "C:/proyectos/escuela/alumnos/views.py",\n    line 21, in lista_alumnos\n\nError during template rendering\nIn template alumnos/lista.html, error at line ${ln}`;
+    return { q: `Django mostró esta página de error:${c(tb)}¿En qué archivo y línea tienes que corregir?`, opts: [`alumnos/lista.html, línea ${ln}`, 'django/core/handlers/base.py, línea 197', 'alumnos/views.py, línea 21', 'settings.py, línea 1'] }; } },
+  { t: 'E', gen: (K) => { const mal = K.pick(['detalle', 'ver_alumno']), bien = K.pick(['detalle_alumno', 'alumno_detalle']);
+    return { q: `Aparece «NoReverseMatch: Reverse for '${mal}' not found». En urls.py la ruta tiene ${k(`name='${bien}'`)}. ¿Cómo lo corriges?`, opts: [`Cambiar {% url '${mal}' … %} por {% url '${bien}' … %} en la plantilla`, 'Poner DEBUG = False', 'Borrar la plantilla', 'Reiniciar XAMPP'] }; } },
+  { t: 'E', gen: (K) => { const X = [['Falta {% endfor %} o {% endif %} en la plantilla', 'TemplateSyntaxError'], ['La plantilla tiene otro nombre o está en otra carpeta', 'TemplateDoesNotExist'], ['Se guardó una matrícula repetida en un campo unique', 'IntegrityError'], ['MySQL está apagado o falta una tabla', 'OperationalError'], ['El nombre de la ruta está mal escrito en {% url %}', 'NoReverseMatch']];
+    const x = K.pick(X); return { q: `Causa: <b>${x[0]}</b>. ¿Qué excepción muestra Django?`, opts: [x[1], ...K.some(X.filter((y) => y[1] !== x[1]).map((y) => y[1]), 3)] }; } },
+  { t: 'E', gen: (K) => { const X = [['IntegrityError: (1062, "Duplicate entry \'' + K.int(2026000, 2026999) + '\' for key \'matricula\'")', 'Se intentó guardar una matrícula que ya existe'], ["OperationalError: (2003, \"Can't connect to MySQL server on 'localhost'\")", 'MySQL está apagado'], ['TemplateDoesNotExist at /alumnos/  alumnos/lista.html', 'Django no encuentra la plantilla con ese nombre o en esa carpeta']];
+    const x = K.pick(X); return { q: `Lee el mensaje:${c(x[0])}¿Cuál es la causa?`, opts: [x[1], ...X.filter((y) => y !== x).map((y) => y[1]), 'Falta instalar Postman'] }; } },
+  { t: 'E', gen: (K) => { const F = [['F401', "'os' imported but unused", 'Borrar la importación que no se usa'], ['E111', 'indentation is not a multiple of 4', 'Usar sangría de 4 espacios'], ['E501', 'line too long (88 > 79 characters)', 'Partir la línea para que no pase de 79 caracteres'], ['E225', 'missing whitespace around operator', 'Poner espacios alrededor del operador, como x = 1']];
+    const f = K.pick(F), ln = K.int(2, 40); return { q: `flake8 muestra:${c(`alumnos/views.py:${ln}:${K.int(1, 20)}: ${f[0]} ${f[1]}`)}¿Qué corriges?`, opts: [f[2], ...F.filter((y) => y !== f).map((y) => y[2])] }; } },
+  { t: 'E', gen: (K) => { const app = K.pick(['alumnos', 'grupos', 'calificaciones']);
+    return { q: `Con el entorno virtual activo, escribe el comando que revisa el estilo PEP 8 de la app <b>${app}</b> con flake8.`, txt: [new RegExp(`^flake8 ${app}/?$`, 'i')], sol: `flake8 ${app}/`, ph: 'flake8 …' }; } },
+  { t: 'E', gen: (K) => { const a = K.pick(['la lista de alumnos', 'el formulario de nuevo alumno', 'la búsqueda']);
+    return { q: `Corregiste un defecto en ${a}: siguiendo los pasos del reporte, el error ya no aparece. ¿Ya puedes moverlo a «Verificado»?`, opts: ['No: falta la prueba de regresión y que otro integrante lo verifique', 'Sí: si el error ya no sale, está terminado', 'Sí, pero solo si flake8 marca errores', 'No: hay que borrar la incidencia'], why: ['Hay que comprobar que la corrección no rompió lo que ya funcionaba, y quien corrige no verifica.', 'Las incidencias corregidas se cierran solas.', 'flake8 decide si un defecto está verificado.', 'Las incidencias no se pueden mover de estado.'] }; } },
+  { t: 'E', gen: (K) => ({ q: '¿Qué es una prueba de regresión?', opts: ['Volver a probar lo que ya funcionaba para confirmar que la corrección no lo rompió', 'Regresar a la versión anterior del código', 'Probar solo el defecto corregido', 'Borrar las pruebas viejas'] }) },
+  { t: 'E', gen: (K) => { const v = K.pick(['ListaAlumnos', 'listaAlumnos', 'LISTA']);
+    return { q: `Según PEP 8 y las convenciones de Django, ¿cómo debe llamarse la vista ${k(`def ${v}(request):`)}?`, opts: ['lista_alumnos', 'ListaAlumnos', 'listaalumnos', 'LISTA_ALUMNOS'] }; } },
+
+  /* ================= F. Reflexión socioemocional ================= */
+  { t: 'F', gen: (K) => { const n = K.int(2, 30); const a = K.pick([`«Al guardar con fecha futura, el formulario acepta el dato. Adjunto la captura en la incidencia #${n}.»`, `«La búsqueda no encuentra "Muñoz"; los pasos están en la incidencia #${n}.»`]);
+    return { q: 'Vas a reportar a un compañero un defecto de su código. ¿Qué frase es asertiva?', opts: [a, '«Tu código está mal hecho.»', '«Esto nunca funcionó.»', '«¿Quién fue el que rompió la búsqueda?»'] }; } },
+  { t: 'F', gen: (K) => { const ms = K.int(32, 48) / 10;
+    return { q: '¿Cuál de estas frases <b>NO</b> es asertiva?', opts: ['«Siempre arruinas lo que tocas.»', `«En la prueba 3 con 50 peticiones, el promedio fue de ${ms} s.»`, '«Al editar un alumno se borra su matrícula; dejé los pasos en el tablero.»', '«¿Podemos revisar juntos la incidencia antes de la entrega?»'] }; } },
+  { t: 'F', gen: (K) => ({ q: 'Tu prueba de estrés falló tres veces seguidas y tu compañero quiere dejarlo para otro día. ¿Qué muestra <b>tolerancia a la frustración</b>?', opts: ['Tomar el error como información, revisar qué cambió y probar otra solución', 'Rendirse y entregar sin pruebas', 'Culpar al compañero que configuró el servidor', 'Repetir exactamente lo mismo esperando otro resultado'] }) },
+  { t: 'F', gen: (K) => ({ q: 'Después de una demostración fallida, tu equipo se recupera, analiza qué pasó y prepara una nueva estrategia. ¿Qué habilidad muestran?', opts: ['Resiliencia', 'Competencia', 'Indiferencia', 'Perfeccionismo'] }) },
+  { t: 'F', gen: (K) => { const s = K.pick(['el servidor se cayó minutos antes de presentar', 'otro equipo reabrió dos defectos que ya habían cerrado', 'el reporte se pidió un día antes de lo planeado']);
+    return { q: `En tu tabla reto–emoción–estrategia–resultado anotaste: <b>${s}</b> y sentiste frustración. ¿Qué estrategia es la más adecuada y por qué?`, opts: ['Hacer una pausa breve, repartir tareas concretas con el equipo y avanzar en lo prioritario', 'Discutir con el equipo hasta encontrar al culpable', 'No hacer nada y esperar a que se resuelva solo', 'Hacerlo todo tú sin avisar al equipo'], why: ['Regular la emoción primero permite pensar con claridad, y organizarse en equipo resuelve más rápido.', 'Encontrar culpables evita que se repita el problema.', 'Los problemas técnicos se arreglan solos con el tiempo.', 'Trabajar solo siempre es más rápido que en equipo.'] }; } },
+  ],
+};
+})();
+
+/* Implementa · banco ampliado: casos variables en las preguntas que eran fijas y preguntas nuevas.
+   El banco tiene 15 por tema (8 en reflexión) y a cada alumno le tocan 9 por tema (5 en reflexión). */
+(() => {
+const c = (t) => `<pre class="code">${String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`;
+const k = (t) => `<code>${String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;')}</code>`;
+const tabla = (h, rows) => `<div class="tbl"><table><tr>${h.map((x) => `<th>${x}</th>`).join('')}</tr>${rows.map((r) => `<tr>${r.map((x) => `<td>${x}</td>`).join('')}</tr>`).join('')}</table></div>`;
+const r1 = (x) => Math.round(x * 10) / 10;
+const rx = (t) => String(t).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const NOM = ['Ana', 'Luis', 'Sofía', 'Diego', 'Valeria', 'Mateo', 'Camila', 'Iker', 'Regina', 'Emiliano', 'Ximena', 'Santiago'];
+const TURNO = { 'Crítica|Alta': 1, 'Crítica|Media': 2, 'Crítica|Baja': 4, 'Media|Alta': 3, 'Media|Media': 5, 'Media|Baja': 7, 'Baja|Alta': 6, 'Baja|Media': 8, 'Baja|Baja': 9 };
+const EX = window.EXAMEN; EX.cuota = { A: 9, B: 9, C: 9, D: 9, E: 9, F: 5 };
+const P = EX.preguntas;
+const caso = (K, L) => { const x = K.pick(L); return { q: x[0], opts: x.slice(1) }; };
+
+/* ---------- 1. Preguntas que antes eran iguales para todos ---------- */
+P[3] = { t: 'A', gen: (K) => caso(K, [
+  ['Un compañero midió la lista de alumnos y obtuvo tiempos mucho más bajos que el resto del equipo. ¿Qué le faltó?', 'Marcar «Disable cache» y recargar con Ctrl + F5', 'Cerrar el navegador', 'Subir la concurrencia a 50', 'Activar el modo celular'],
+  ['Mediste tres veces la misma página y obtuviste 1.4 s, 1.7 s y 1.5 s. ¿Qué haces?', 'Anotar el promedio: es variación normal de la red', 'Quedarte solo con el valor más bajo', 'Repetir hasta que salgan iguales', 'Reportar un defecto crítico'],
+  ['Activaste el modo celular, pero no aparece el menú para elegir la conexión (Fast 4G, Slow 4G). ¿Qué haces?', 'Ensanchar el panel de las herramientas de desarrollador', 'Reinstalar el navegador', 'Cerrar sesión en el sistema', 'Ejecutar Apache Bench']]) };
+P[7] = { t: 'A', gen: (K) => caso(K, [
+  ['Abriste F12 después de que la página cargó y la pestaña Network está vacía. ¿Qué haces?', 'Con Network abierta, recargar la página (Ctrl + F5)', 'Cerrar F12 y volver a abrirlo sin recargar', 'Activar el modo celular', 'Reiniciar XAMPP'],
+  ['¿Qué atajo activa el modo dispositivo para revisar la página a 375 px?', 'Ctrl + Shift + M', 'Ctrl + Shift + N', 'Ctrl + F5', 'Alt + F4'],
+  ['En la barra inferior de Network, ¿qué valor indica que la página terminó de cargar con imágenes, CSS y scripts?', 'Load', 'DOMContentLoaded', 'requests', 'transferred']]) };
+P[16] = { t: 'B', gen: (K) => { const n = K.pick([50, 100, 200]);
+  return { q: `El Collection Runner de Postman ejecutó ${n} iteraciones de la colección «Control escolar». ¿Por qué se considera una prueba de carga y no de estrés?`, opts: ['Porque envía las peticiones una tras otra, no muchas al mismo tiempo', 'Porque Postman es gratuito', 'Porque mide el TTFB', 'Porque solo usa el método GET'] }; } };
+P[20] = { t: 'C', gen: (K) => { const n = K.pick(NOM), m = K.pick(NOM.filter((x) => x !== n));
+  return { q: `${n} corrigió la incidencia y quiere marcarla como «Verificado» ella misma para terminar rápido. ${m} todavía no la prueba. ¿Qué debe pasar y por qué?`, opts: [`${m} (u otro integrante) la prueba y solo entonces pasa a «Verificado»`, `${n} la marca como «Verificado»`, 'Se cierra directamente', 'Se regresa a «Nuevo»'], why: ['Quien corrigió tiende a probar solo lo que cambió; otra persona confirma que de verdad quedó.', 'GitHub no deja que la misma persona verifique.', 'Así cada quien trabaja menos.', 'La verificación solo es un trámite.'] }; } };
+P[23] = { t: 'C', gen: (K) => { const n = K.int(2, 30);
+  return caso(K, [
+    [`La incidencia #${n} dice «A veces falla el guardado». Nadie logra que vuelva a fallar. ¿Qué le falta?`, 'Pasos numerados y datos exactos para reproducirlo', 'Más signos de exclamación', 'El nombre de quien programó el formulario', 'Una prioridad más alta'],
+    [`¿Qué hace que la incidencia #${n} sea reproducible?`, 'Que cualquier persona pueda provocar el defecto siguiendo los pasos escritos', 'Que tenga muchas palabras', 'Que la escriba el docente', 'Que tenga capturas de colores']]); } };
+P[25] = { t: 'C', gen: (K) => { const f = K.pick(['nuevo alumno', 'edición de alumno', 'búsqueda de alumnos']);
+  return { q: `Para encontrar defectos en el formulario de <b>${f}</b>, ¿qué conviene probar?`, opts: ['Campos vacíos, datos inválidos, fechas futuras y valores repetidos', 'Solo datos correctos', 'Solo el color de los botones', 'Nada: si se ve bien, funciona'] }; } };
+P[26] = { t: 'C', gen: (K) => caso(K, [
+  ['En Trello, ¿qué listas lleva el tablero «Defectos · Control escolar»?', 'Nuevo, Asignado, En corrección, Corregido y Verificado', 'Lunes, Martes y Miércoles', 'Bueno, Malo y Regular', 'Solo «Pendientes»'],
+  ['En GitHub Issues, ¿qué etiquetas se crean para los defectos?', 'bug, crítico, medio y bajo', 'rojo, verde y azul', 'alumno y grupo', 'ninguna'],
+  ['¿Qué roles se reparten en el equipo para atender defectos?', 'Probador, corrector y verificador', 'Jefe, secretario y tesorero', 'Diseñador, cliente y usuario', 'Ninguno']]) };
+P[32] = { t: 'D', gen: (K) => { const x = K.pick([['Mañana se presenta el sistema a la dirección y hay un error de ortografía en la página de inicio.', 'Severidad baja, prioridad alta (turno 6)', 'No daña el funcionamiento, pero la presentación de mañana lo vuelve urgente.'], ['Eliminar un alumno borra a otro, pero esa función solo se usará al final del semestre, dentro de tres meses.', 'Severidad crítica, prioridad baja (turno 4)', 'Pierde datos, pero no se usará pronto: es grave y no urgente.']]);
+  const O = ['Severidad baja, prioridad alta (turno 6)', 'Severidad crítica, prioridad baja (turno 4)', 'Severidad crítica, prioridad alta (turno 1)', 'Severidad baja, prioridad baja (turno 9)'];
+  return { q: `${x[0]} ¿Cómo lo clasificas y por qué?`, opts: [x[1], ...O.filter((y) => y !== x[1])], why: [x[2], 'Todo error visible es crítico y urgente.', 'Siempre se usa el turno de en medio.', 'La prioridad la decide quien encontró el defecto.'] }; } };
+P[33] = { t: 'D', gen: (K) => { const g = K.pick([['«bajo»', '«crítico»'], ['«medio»', '«bajo»'], ['«crítico»', '«medio»']]);
+  return { q: `Intercambiaste tu clasificación con otro equipo: ellos marcaron como ${g[0]} un defecto que ustedes consideran ${g[1]}. ¿Qué hacen?`, opts: ['Escuchan sus razones, revisan juntos la tabla de niveles y acuerdan la clasificación con una justificación', 'Imponen su clasificación porque ustedes lo encontraron', 'Lo dejan sin clasificar', 'Borran el defecto del tablero'] }; } };
+P[34] = { t: 'D', gen: (K) => { const d = K.pick(['Acepta fecha de nacimiento futura', 'La búsqueda no encuentra apellidos con acento', 'Nadie puede iniciar sesión']);
+  return { q: `Clasificaste la incidencia «${d}». Además de la severidad y la prioridad, ¿qué escribes?`, opts: ['Una línea que justifique la clasificación', 'El nombre de quien causó el defecto', 'Nada más', 'La contraseña del sistema'] }; } };
+P[43] = { t: 'E', gen: (K) => { const x = K.pick([['la lista de alumnos', 'el alta y la búsqueda de alumnos'], ['el formulario de nuevo alumno', 'la lista y la edición de alumnos'], ['la búsqueda', 'la lista y el detalle de alumnos']]);
+  return { q: `Corregiste un defecto en <b>${x[0]}</b>. Como prueba de regresión, ¿qué haces?`, opts: [`Volver a probar ${x[1]}, que ya funcionaban, para confirmar que no se rompieron`, 'Probar solo el defecto corregido', 'Regresar a la versión anterior del código', 'Borrar las pruebas viejas'] }; } };
+P[47] = { t: 'F', gen: (K) => { const s = K.pick(['Tu prueba de estrés falló tres veces seguidas', 'flake8 sigue marcando errores después de tu corrección', 'El otro equipo reabrió tu incidencia']);
+  return { q: `${s} y tu compañero quiere dejarlo para otro día. ¿Qué muestra <b>tolerancia a la frustración</b>?`, opts: ['Tomar el error como información, revisar qué cambió y probar otra solución', 'Rendirse y entregar sin terminar', 'Culpar al compañero', 'Repetir exactamente lo mismo esperando otro resultado'] }; } };
+P[48] = { t: 'F', gen: (K) => { const x = K.pick([['Después de una demostración fallida, tu equipo se recupera, analiza qué pasó y prepara una nueva estrategia.', 'Resiliencia'], ['Aunque el servidor se cayó varias veces, sigues probando con calma y entiendes que el error es parte del proceso.', 'Tolerancia a la frustración'], ['Al reportar un defecto, describes el problema con datos y sin atacar a la persona.', 'Comunicación asertiva']]);
+  const O = ['Resiliencia', 'Tolerancia a la frustración', 'Comunicación asertiva', 'Indiferencia'];
+  return { q: `${x[0]} ¿Qué habilidad se muestra?`, opts: [x[1], ...O.filter((y) => y !== x[1])] }; } };
+
+/* ---------- 2. Preguntas nuevas ---------- */
+const N = [
+  /* A */
+  { t: 'A', gen: (K) => { const p = K.int(9, 30), kb = K.int(150, 900), dcl = K.int(5, 15) / 10, load = r1(dcl + K.int(3, 20) / 10);
+    const x = K.pick([['cuántas peticiones hizo la página', p], ['cuántos kB se transfirieron', kb]]);
+    return { q: `Barra inferior de Network: <b>${p} requests · ${kb} kB transferred · DOMContentLoaded: ${dcl} s · Load: ${load} s</b>. Para tu bitácora, ¿${x[0]}?`, num: x[1], tol: 0 }; } },
+  { t: 'A', gen: (K) => { const l = K.int(8, 30) / 10, d = r1(l * 0.6);
+    return { q: `DOMContentLoaded: ${d} s y Load: ${l} s. ¿Por qué Load siempre es mayor o igual que DOMContentLoaded?`, opts: ['Porque Load espera también imágenes, CSS y scripts; DOMContentLoaded solo el HTML', 'Porque Load mide al servidor', 'Porque DOMContentLoaded incluye las imágenes', 'Es una casualidad de esta medición'] }; } },
+  { t: 'A', gen: (K) => { const v = [K.int(25, 45), K.int(25, 45), K.int(25, 45)].map((x) => x / 10); const p = r1((v[0] + v[1] + v[2]) / 3);
+    return { q: `Con Slow 4G, el login cargó en ${v.join(' s, ')} s. Requisito: menos de 3 s. ¿Cumple?`, opts: p < 3 ? ['Sí: el promedio es ' + p + ' s', 'No: el promedio es ' + p + ' s'] : ['No: el promedio es ' + p + ' s', 'Sí: el promedio es ' + p + ' s'], why: ['Se promedian las tres mediciones y se compara con el requisito.', 'Se toma solo la medición más baja.', 'Se toma solo la primera medición.', 'Se suman las tres mediciones.'] }; } },
+  { t: 'A', gen: (K) => { const w = K.pick([375, 360, 390]);
+    return { q: `Revisas el formulario de nuevo alumno a ${w} px. ¿Qué observación indica que <b>NO</b> cumple?`, opts: ['Hay que desplazar la página hacia los lados para ver los campos', 'Los campos se acomodan en una sola columna', 'Los botones se pueden tocar con el dedo', 'El texto se lee sin hacer zoom'] }; } },
+  { t: 'A', gen: (K) => { const a = K.pick([['TTFB', 'Lo que tarda el servidor en empezar a responder'], ['Throttling', 'Simular una conexión más lenta, como 4G o 3G'], ['Caché', 'Copia de archivos que guarda el navegador para no descargarlos otra vez']]);
+    const O = ['Lo que tarda el servidor en empezar a responder', 'Simular una conexión más lenta, como 4G o 3G', 'Copia de archivos que guarda el navegador para no descargarlos otra vez', 'El número de peticiones de la página'];
+    return { q: `¿Qué es <b>${a[0]}</b>?`, opts: [a[1], ...O.filter((y) => y !== a[1])] }; } },
+  { t: 'A', gen: (K) => { const C = [['No throttling', K.int(8, 14) / 10], ['Fast 4G', K.int(15, 29) / 10], ['Slow 4G', K.int(31, 48) / 10]];
+    return { q: `Bitácora de /alumnos/nuevo/:${tabla(['Conexión', 'Load'], C.map((x) => [x[0], x[1] + ' s']))}¿Qué conclusión está mejor fundamentada?`, opts: [`No cumple con Slow 4G (${C[2][1]} s supera los 3 s); con las demás conexiones sí cumple`, 'La página es lenta', 'La página siempre cumple', 'Hay que cambiar de navegador'] }; } },
+  /* B */
+  { t: 'B', gen: (K) => { const S = [['GET a /alumnos/ con la sesión iniciada', '200 OK'], ['POST del login con usuario y contraseña correctos (redirige a la lista)', '302 Found'], ['GET a /reportes/ (esa ruta no existe en urls.py)', '404 Not Found']];
+    const s = K.pick(S); return { q: `En Postman envías: <b>${s[0]}</b>. ¿Qué código esperas?`, opts: [s[1], ...['200 OK', '302 Found', '404 Not Found', '500 Internal Server Error'].filter((x) => x !== s[1])] }; } },
+  { t: 'B', gen: (K) => ({ q: `Postman muestra «Could not send request» al probar http://127.0.0.1:8000${K.pick(['/alumnos/', '/grupos/', '/login/'])}. ¿Qué revisas primero?`, opts: ['Que esté corriendo python manage.py runserver', 'Que el alumno exista', 'Que flake8 no marque errores', 'Que la incidencia esté en Trello'] }) },
+  { t: 'B', gen: (K) => ({ q: `Todas las peticiones de tu colección a ${K.pick(['/alumnos/', '/grupos/', '/alumnos/nuevo/'])} devuelven el HTML del login. ¿Por qué y qué haces?`, opts: ['Las vistas piden sesión; pruebo /login/ o envío la cookie de sesión', 'El servidor está apagado; ejecuto runserver', 'La página no existe; corrijo urls.py', 'Es un error 500; leo el traceback'] }) },
+  { t: 'B', gen: (K) => ({ q: `En el símbolo del sistema escribes ${k(`ab -n ${K.pick([100, 200])} -c 10 http://127.0.0.1:8000/login/`)} y aparece «"ab" no se reconoce como un comando interno o externo». ¿Qué haces?`, opts: ['Entrar a C:\\xampp\\apache\\bin con cd y volver a ejecutarlo', 'Instalar Postman', 'Bajar la concurrencia a 1', 'Reiniciar MySQL'] }) },
+  { t: 'B', gen: (K) => { const rps = K.int(15, 45), cc = K.pick([5, 10, 20]);
+    return { q: `Apache Bench reporta <b>Requests per second: ${rps}</b> con -c ${cc}. ¿Qué significa?`, opts: [`El servidor atendió en promedio ${rps} peticiones cada segundo`, `Hubo ${rps} errores`, `Cada petición tardó ${rps} segundos`, `Se conectaron ${rps} usuarios`] }; } },
+  { t: 'B', gen: (K) => { const ms = K.pick([3000, 2000, 1500]);
+    return { q: `Escribe en Postman la línea que comprueba que la respuesta tardó menos de <b>${ms} ms</b> (dentro de pm.test).`, txt: [new RegExp(`^pm\\.expect\\(\\s*pm\\.response\\.responseTime\\s*\\)\\.to\\.be\\.below\\(\\s*${ms}\\s*\\);?$`)], sol: `pm.expect(pm.response.responseTime).to.be.below(${ms});`, ph: 'pm.expect(…)' }; } },
+  /* C */
+  { t: 'C', gen: (K) => { const n = K.int(2, 40);
+    return { q: `La incidencia #${n} ya está en «Verificado»: otra persona confirmó que el defecto no aparece. ¿Qué estado sigue?`, opts: ['Cerrado', 'Nuevo', 'En corrección', 'Asignado'] }; } },
+  { t: 'C', gen: (K) => { const x = K.pick([['Nuevo alumno acepta fecha de nacimiento futura', 'Mensaje: «la fecha no puede ser futura» y no se guarda'], ['Se puede guardar un alumno con matrícula repetida', 'Mensaje: «la matrícula ya existe» y no se guarda'], ['El formulario acepta un alumno sin nombre', 'Mensaje: «este campo es obligatorio» y no se guarda']]);
+    return { q: `Título de la incidencia: <b>${x[0]}</b>. ¿Qué escribes en «Resultado esperado»?`, opts: [x[1], 'Que funcione bien', 'No sirve', 'Que lo arregle el programador'] }; } },
+  { t: 'C', gen: (K) => caso(K, [
+    ['¿Qué evidencia adjuntas a una incidencia?', 'Una captura o un video corto que muestre el defecto', 'El código completo del proyecto', 'La contraseña del administrador', 'Nada'],
+    ['¿Dónde se registra cada defecto encontrado por el equipo?', 'Como tarjeta en Trello o issue en GitHub, con la plantilla completa', 'En un mensaje de WhatsApp', 'En la memoria de quien lo encontró', 'En un comentario dentro del código']]) },
+  { t: 'C', gen: (K) => { const n = K.int(3, 12);
+    return { q: `Tu equipo registró ${n} incidencias. ${Math.min(n - 1, K.int(1, 3))} de ellas no tienen pasos para reproducirlas. ¿Qué haces antes de entregar?`, opts: ['Completar los pasos numerados en esas incidencias', 'Borrarlas', 'Entregarlas así', 'Cambiarles la prioridad a baja'] }; } },
+  { t: 'C', gen: (K) => { const n = K.int(2, 40);
+    return { q: `El commit dice «Arreglé cosas». ¿Qué mensaje es mejor para cerrar la incidencia #${n}?`, opts: [`Fixes #${n}: valida que la fecha de nacimiento no sea futura`, 'Arreglé cosas', 'ya quedó', `#${n}`] }; } },
+  { t: 'C', gen: (K) => { const est = K.pick(['Asignado', 'En corrección']);
+    return { q: `Una incidencia está en «${est}». ¿Qué significa?`, opts: est === 'Asignado' ? ['Alguien ya se hizo responsable de corregirla', 'Ya se corrigió', 'Ya se verificó', 'Nadie la ha visto'] : ['Alguien está modificando el código para corregirla', 'Ya se verificó', 'Nadie la ha visto', 'Ya se cerró'] }; } },
+  /* D */
+  { t: 'D', gen: (K) => { const s = K.pick(['Crítica', 'Media', 'Baja']), p = K.pick(['Alta', 'Media', 'Baja']);
+    const MATRIZ = tabla(['Severidad \\ Prioridad', 'Alta', 'Media', 'Baja'], [['Crítica', '1', '2', '4'], ['Media', '3', '5', '7'], ['Baja', '6', '8', '9']]);
+    return { q: `Con la matriz:${MATRIZ}¿Qué turno tiene un defecto de severidad <b>${s}</b> y prioridad <b>${p}</b>?`, num: TURNO[s + '|' + p], tol: 0 }; } },
+  { t: 'D', gen: (K) => { const x = K.pick([['Al guardar calificaciones se pierden las del grupo anterior', 'Crítico'], ['El filtro por grupo no funciona, pero se puede buscar a mano', 'Medio'], ['Un mensaje dice «Guardaro» en lugar de «Guardado»', 'Bajo'], ['El reporte en PDF tarda 8 s en generarse', 'Medio']]);
+    return { q: `Defecto: <b>«${x[0]}»</b>. ¿Qué gravedad tiene?`, opts: [x[1], ...['Crítico', 'Medio', 'Bajo'].filter((y) => y !== x[1])] }; } },
+  { t: 'D', gen: (K) => { const x = K.pick([['Rojo', 'Corregir ya'], ['Ámbar', 'Corregir en esta semana'], ['Claro', 'Corregir cuando haya tiempo']]);
+    const O = ['Corregir ya', 'Corregir en esta semana', 'Corregir cuando haya tiempo', 'No corregir'];
+    return { q: `En la matriz severidad × prioridad, ¿qué indica el color <b>${x[0].toLowerCase()}</b>?`, opts: [x[1], ...O.filter((y) => y !== x[1])] }; } },
+  { t: 'D', gen: (K) => { const x = K.pick([['¿Se pierden datos?', 'Severidad'], ['¿Hay una entrega cerca?', 'Prioridad'], ['¿Se bloquea una función?', 'Severidad'], ['¿Lo ven los usuarios hoy?', 'Prioridad']]);
+    return { q: `Para clasificar un defecto te preguntas: <b>${x[0]}</b> Esa pregunta te ayuda a decidir…`, opts: [`La ${x[1].toLowerCase()}`, `La ${x[1] === 'Severidad' ? 'prioridad' : 'severidad'}`] }; } },
+  { t: 'D', gen: (K) => { let L; do { L = ['A', 'B', 'C', 'D'].map((x) => ({ x, s: K.pick(['Crítica', 'Media', 'Baja']), p: K.pick(['Alta', 'Media', 'Baja']) })); L.forEach((d) => { d.n = TURNO[d.s + '|' + d.p]; }); } while (new Set(L.map((d) => d.n)).size < 4);
+    const ult = L.slice().sort((a, b) => b.n - a.n)[0];
+    return { q: `Con la matriz (Crítica 1·2·4, Media 3·5·7, Baja 6·8·9 para prioridad Alta·Media·Baja):${tabla(['Defecto', 'Severidad', 'Prioridad'], L.map((d) => [d.x, d.s, d.p]))}¿Cuál se corrige al <b>final</b>?`, opts: [`El defecto ${ult.x}`, ...L.filter((d) => d !== ult).map((d) => `El defecto ${d.x}`)] }; } },
+  { t: 'D', gen: (K) => ({ q: `Un defecto expone las calificaciones de ${K.pick(['todos los alumnos', 'un grupo completo'])} a quien abra una dirección sin iniciar sesión. ¿Qué gravedad tiene y por qué?`, opts: ['Crítico', 'Medio', 'Bajo'], why: ['Expone información personal: es crítico aunque el sistema siga funcionando.', 'Solo es crítico si el sistema se apaga.', 'Es un detalle visual.', 'Depende de cuántas personas lo vean.'] }) },
+  /* E */
+  { t: 'E', gen: (K) => { const n = K.int(10, 60);
+    return { q: `Al guardar un alumno aparece: <b>IntegrityError (1048, "Column 'grupo_id' cannot be null")</b> en la línea ${n} de views.py. ¿Qué significa?`, opts: ['Se intentó guardar el alumno sin grupo, y ese campo es obligatorio', 'MySQL está apagado', 'La plantilla no existe', 'Falta instalar flake8'] }; } },
+  { t: 'E', gen: (K) => { const t = K.pick(['lista.html', 'detalle.html', 'formulario.html']);
+    return { q: `Aparece «TemplateDoesNotExist: alumnos/${t}». La plantilla está guardada en templates/alumno/${t}. ¿Qué corriges?`, opts: [`El nombre de la carpeta: debe ser templates/alumnos/${t}, o cambiar la ruta en render`, 'Instalar otra vez Django', 'Poner DEBUG = False', 'Borrar la vista'] }; } },
+  { t: 'E', gen: (K) => { const n = K.int(2, 6);
+    return { q: `flake8 mostró ${n} observaciones en alumnos/views.py. Corregiste todas. ¿Qué debe mostrar al volver a ejecutarlo?`, opts: ['Nada: ninguna observación', `${n} observaciones otra vez`, 'Un mensaje de éxito en verde', 'El número de líneas del archivo'] }; } },
+  { t: 'E', gen: (K) => { const x = K.pick([['x=1', 'E225'], ['import os (sin usarlo)', 'F401'], ['  return render(...)  (2 espacios de sangría)', 'E111']]);
+    return { q: `¿Qué código de flake8 esperas para <b>${x[0]}</b>?`, opts: [x[1], ...['E225', 'F401', 'E111', 'E501'].filter((y) => y !== x[1])] }; } },
+  { t: 'E', gen: (K) => caso(K, [
+    ['¿Dónde más ves el error de Django, además de la página amarilla del navegador?', 'En la terminal donde corre runserver', 'En phpMyAdmin', 'En Postman', 'En Trello'],
+    ['En el traceback aparecen archivos de django/ y archivos de tu proyecto. ¿Cuáles revisas primero?', 'Los de tu proyecto, como views.py o la plantilla', 'Los de django/, porque ahí está el error', 'Ninguno: se reinstala Django', 'Solo la primera línea'],
+    ['Ante un error nuevo, ¿qué haces primero?', 'Leer el traceback para hallar el tipo de error, el archivo y la línea', 'Cambiar código al azar hasta que funcione', 'Reinstalar Django', 'Borrar la app']]) },
+  { t: 'E', gen: (K) => { const v = K.pick([['q', 'busqueda'], ['a', 'alumnos'], ['d', 'datos_alumno']]);
+    return { q: `En la vista hay ${k(`${v[0]} = Alumno.objects.filter(...)`)}. Según las convenciones del Tema 5, ¿cómo conviene llamar a la variable?`, opts: [`Con un nombre que diga qué guarda, como ${v[1] === 'busqueda' ? 'alumnos' : v[1]}`, 'Con una sola letra para escribir menos', 'Con mayúsculas, como ALUMNOS', 'Con el nombre del programador'] }; } },
+  /* F */
+  { t: 'F', gen: (K) => { const n = K.int(2, 30); const x = K.pick([`«Tu búsqueda nunca sirve.»`, `«¿Otra vez rompiste el login?»`, `«Eso está mal, como siempre.»`]);
+    return { q: `Un compañero escribió en la incidencia #${n}: ${x} ¿Cómo lo reescribes de forma asertiva?`, opts: [`«En la incidencia #${n}: al buscar "Muñoz" no aparece ningún resultado; dejo los pasos y la captura.»`, '«Ya ni modo, así se queda.»', '«Arréglalo tú, que lo hiciste.»', '«No pasa nada, no lo reporto.»'] }; } },
+  { t: 'F', gen: (K) => { const e = K.pick(['frustración', 'nervios', 'enojo']);
+    return { q: `En tu tabla de reflexión escribiste la emoción <b>${e}</b>. ¿Qué va en la columna «Estrategia»?`, opts: ['Lo que hiciste para enfrentar el reto, por ejemplo pedir ayuda o dividir el problema', 'Lo que sentiste', 'La calificación que obtuviste', 'El nombre de quien causó el problema'] }; } },
+  { t: 'F', gen: (K) => ({ q: `Al terminar el parcial, tu equipo escribe un acuerdo para el tercer parcial. ¿Cuál es el más útil?`, opts: [`«Cada viernes revisamos juntos el tablero y repartimos las incidencias${K.pick([' de la semana', ' pendientes'])}.»`, '«Vamos a echarle ganas.»', '«El que falle paga.»', '«Ya no vamos a tener errores.»'] }) },
+];
+N.forEach((x) => P.push(x));
+})();
+
+</script>
+<script>
+(() => {
+'use strict';
+const EX = window.EXAMEN, URL_HOJA = 'https://script.google.com/macros/s/AKfycbwKUBOQ0GdmfX7hOiuSQAkzubKh1y2YqtJgR0mTVfUvoFjbRS5dTWMFLFNsvzY2VItJ/exec', NPREG = EX.cuota ? Object.values(EX.cuota).reduce((a, b) => a + b, 0) : EX.preguntas.length;
+const $ = (s, r = document) => r.querySelector(s), app = $('#app');
+const esc = (t) => String(t ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const normA = (t) => String(t || '').trim().replace(/\s+/g, ' ').toUpperCase();
+const normM = (t) => String(t || '').trim().replace(/\s+/g, '').toUpperCase();
+/* ---------- números aleatorios con semilla: cada matrícula recibe su propia versión del examen ---------- */
+const hash = (s) => { let h = 2166136261 >>> 0; for (const ch of s) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619) >>> 0; } return h; };
+const mkRng = (seed) => { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; };
+const kit = (rnd) => { const K = { r: rnd, int: (a, b) => a + Math.floor(rnd() * (b - a + 1)), pick: (arr) => arr[Math.floor(rnd() * arr.length)],
+  mix: (arr) => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; } }; K.some = (arr, k) => K.mix(arr).slice(0, k); return K; };
+/* arma las 50 preguntas de un alumno: datos, orden de preguntas y orden de opciones */
+const armar = (st) => {
+  const base = `${EX.materia}|${st.mat}|${st.intento}`;
+  /* sorteo de preguntas: de cada tema se toman las que indica la cuota (distintas para cada matrícula) */
+  let elegidas = EX.preguntas.map((p, i) => i);
+  if (EX.cuota) { const KS = kit(mkRng(hash(base + '|sorteo'))); elegidas = [];
+    Object.keys(EX.cuota).forEach((t) => { const idx = EX.preguntas.map((p, i) => (p.t === t ? i : -1)).filter((i) => i >= 0); elegidas.push(...KS.some(idx, EX.cuota[t])); }); }
+  const P = elegidas.map((i) => { const p = EX.preguntas[i]; const K = kit(mkRng(hash(base + '|' + i))); let g; try { g = p.gen(K); } catch (e) { console.error(i, e); g = { q: 'Pregunta no disponible', opts: ['—'] }; }
+    const o = { i, t: p.t, q: g.q };
+    if (g.opts) { o.tipo = g.why ? 'mr' : 'mc'; o.opts = g.opts; o.ord = K.mix(g.opts.map((x, j) => j)); if (g.why) { o.why = g.why; o.word = K.mix(g.why.map((x, j) => j)); } }
+    else if (g.num != null) { o.tipo = 'num'; o.num = g.num; o.tol = g.tol || 0; o.unit = g.unit || ''; }
+    else { o.tipo = 'txt'; o.txt = g.txt; o.ph = g.ph || ''; }
+    return o; });
+  return kit(mkRng(hash(base + '|orden'))).mix(P);
+};
+const puntos = (p, a) => { if (!a) return 0;
+  if (p.tipo === 'mc') return a.o === 0 ? 1 : 0;
+  if (p.tipo === 'mr') return (a.o === 0 ? 0.5 : 0) + (a.w === 0 ? 0.5 : 0);
+  if (p.tipo === 'num') { const v = parseFloat(String(a.v || '').replace(',', '.').replace(/[^\d.\-]/g, '')); return Number.isFinite(v) && Math.abs(v - p.num) <= p.tol + 1e-9 ? 1 : 0; }
+  const t = String(a.v || '').trim().replace(/\s+/g, ' '); return t && p.txt.some((re) => re.test(t)) ? 1 : 0; };
+const respondida = (p, a) => !!a && (p.tipo === 'mc' ? a.o != null : p.tipo === 'mr' ? a.o != null && a.w != null : String(a.v || '').trim() !== '');
+
+/* ---------- guardado local (permite cerrar y volver a abrir la página sin perder respuestas) ---------- */
+const KEY = (m) => `examen502-${EX.materia}-${m}`;
+const load = (m) => { try { return JSON.parse(localStorage.getItem(KEY(m)) || 'null'); } catch (e) { return null; } };
+let st = null; const save = () => { try { localStorage.setItem(KEY(st.mat), JSON.stringify(st)); } catch (e) {} };
+const toast = (t) => { const d = document.createElement('div'); d.className = 'toast'; d.textContent = t; document.body.appendChild(d); setTimeout(() => d.remove(), 3200); };
+const getJSON = (q) => fetch(`${URL_HOJA}?${q}`).then((r) => r.json());
+const estado = (mat) => getJSON(`accion=examen&materia=${encodeURIComponent(EX.materia)}&matricula=${encodeURIComponent(mat)}`);
+
+/* ================= 1. Registro ================= */
+function registro(msg) {
+  app.innerHTML = `<main><div class="card"><h2>Antes de empezar</h2>
+    <p>Este examen tiene <b>${NPREG} preguntas</b> de todo lo visto en el segundo parcial. Lee con atención: en muchas preguntas tienes que analizar código, datos o un caso, y algunas piden también <b>la razón</b> de tu respuesta.</p>
+    <ul class="reglas"><li>Tienes <b>un solo intento</b>. Al entregar verás tu calificación de inmediato y se enviará a tu maestra.</li>
+    <li>Cada alumno tiene <b>datos y orden distintos</b>: copiar las respuestas de un compañero no sirve.</li>
+    <li>No se puede copiar ni pegar. Si sales de la página, queda registrado.</li>
+    <li>Si se cierra la página por accidente, vuelve a abrirla en el mismo dispositivo y escribe tu misma matrícula: tus respuestas se conservan.</li></ul></div>
+    <div class="card"><h2>Tus datos</h2>
+    <label class="f"><span>Número de matrícula o de control</span><input type="text" id="mat" autocomplete="off" inputmode="text" maxlength="20"></label>
+    <div class="grid2"><label class="f"><span>Apellido paterno</span><input type="text" id="ap" autocomplete="off" maxlength="40"></label>
+    <label class="f"><span>Apellido materno</span><input type="text" id="am" autocomplete="off" maxlength="40"></label></div>
+    <div class="grid2"><label class="f"><span>Nombre(s)</span><input type="text" id="nom" autocomplete="off" maxlength="60"></label>
+    <label class="f"><span>Grupo</span><input type="text" id="grp" value="502" autocomplete="off" maxlength="8"></label></div>
+    <div class="row"><button class="btn p" id="go">Comenzar examen</button></div><p class="msg err" id="rmsg">${msg ? esc(msg) : ''}</p></div></main>`;
+  $('#mat').focus();
+  $('#go').addEventListener('click', async () => {
+    const mat = normM($('#mat').value), ap = normA($('#ap').value), am = normA($('#am').value), nom = normA($('#nom').value), grp = normM($('#grp').value) || '502';
+    const m = $('#rmsg');
+    if (mat.length < 4) { m.textContent = 'Escribe tu número de matrícula o de control completo.'; return; }
+    if (mat === 'DOCENTE') { docente(); return; }
+    if (!ap || !am || !nom) { m.textContent = 'Escribe tu nombre y tus dos apellidos.'; return; }
+    m.className = 'msg'; m.textContent = 'Revisando con la hoja de tu maestra…'; $('#go').disabled = true;
+    let s; try { s = await estado(mat); } catch (e) { s = null; }
+    $('#go').disabled = false; m.className = 'msg err';
+    if (!s || !s.ok) { m.textContent = 'No hay conexión con la hoja de tu maestra. Revisa tu internet y vuelve a intentarlo.'; return; }
+    const prev = load(mat);
+    if (s.hecho) { if (prev && prev.done) { st = prev; resultado(); return; } m.textContent = `Ya presentaste este examen con la matrícula ${mat}. Calificación registrada: ${s.calif}. Si es un error, avisa a tu maestra.`; return; }
+    if (prev && prev.done && prev.intento > (s.anulados || 0)) { st = prev; resultado(); enviar(); return; } /* se entregó pero aún no llega a la hoja: se reenvía */
+    if (!s.abierto && !(prev && !prev.done && prev.intento > (s.anulados || 0))) { m.textContent = 'El examen todavía no está abierto. Espera la indicación de tu maestra.'; return; }
+    if (prev && !prev.done && prev.intento > (s.anulados || 0)) { st = prev; } /* continúa donde se quedó */
+    else st = { mat, ap, am, nom, grp, intento: (s.anulados || 0) + 1, inicio: Date.now(), ans: {}, cur: 0, salidas: 0, pegar: 0, done: null };
+    save(); examen();
+  });
+}
+/* vista previa para la maestra (no se guarda en la hoja) */
+function docente() {
+  const m = $('#rmsg'); m.className = 'msg';
+  m.innerHTML = 'Vista previa docente: escribe tu contraseña. <input type="password" id="dclave" style="max-width:220px;margin-top:6px"> <button class="btn p" id="dgo">Ver examen</button>';
+  $('#dgo').addEventListener('click', async () => { const cl = $('#dclave').value; let d = null; try { d = await getJSON(`accion=checkclave&clave=${encodeURIComponent(cl)}`); } catch (e) {}
+    if (!d || !d.checked) { m.className = 'msg err'; m.textContent = 'No se pudo comprobar la contraseña (revisa internet o que el Apps Script esté actualizado).'; return; }
+    if (!d.ok) { m.className = 'msg err'; m.textContent = 'Contraseña incorrecta.'; return; }
+    st = { mat: 'DOCENTE-' + Math.floor(Math.random() * 1e6), ap: 'VISTA', am: 'PREVIA', nom: 'DOCENTE', grp: '-', intento: 1, inicio: Date.now(), ans: {}, cur: 0, salidas: 0, pegar: 0, done: null, previa: true };
+    examen(); });
+}
+
+/* ================= 2. Examen ================= */
+let P = null;
+function examen() {
+  P = armar(st);
+  app.innerHTML = `<div class="top"><div class="in"><span><b>${esc(st.nom)} ${esc(st.ap)} ${esc(st.am)}</b> · ${esc(st.mat)}${st.previa ? ' · <b style="color:var(--mal)">VISTA PREVIA DOCENTE: no se guarda</b>' : ''}</span><span id="cnt"></span><div class="bar"><i id="barra"></i></div></div></div>
+    <main><div class="aviso" id="sal" hidden></div><div class="card" id="q"></div>
+    <div class="card"><p class="qn">Mapa de preguntas</p><div class="mapa" id="mapa"></div>
+    <div class="row" style="margin-top:14px"><button class="btn p" id="entregar">Entregar examen</button><span class="muted small">Revisa que hayas contestado todo antes de entregar.</span></div></div></main>`;
+  pinta(); $('#entregar').addEventListener('click', confirmar);
+}
+const cuenta = () => P.filter((p) => respondida(p, st.ans[p.i])).length;
+function pinta() {
+  const k = st.cur, p = P[k], a = st.ans[p.i] || {};
+  let h = `<p class="qn">Pregunta ${k + 1} de ${NPREG} · ${esc(EX.temas[p.t])}</p><div class="qt">${p.q}</div>`;
+  if (p.tipo === 'mc' || p.tipo === 'mr') {
+    if (p.tipo === 'mr') h += '<p class="sub">Tu respuesta:</p>';
+    h += `<div class="opts">${p.ord.map((j) => `<label class="opt${a.o === j ? ' on' : ''}"><input type="radio" name="o" value="${j}" ${a.o === j ? 'checked' : ''}><span>${esc(p.opts[j])}</span></label>`).join('')}</div>`;
+    if (p.tipo === 'mr') h += `<p class="sub">¿Por qué?</p><div class="opts">${p.word.map((j) => `<label class="opt${a.w === j ? ' on' : ''}"><input type="radio" name="w" value="${j}" ${a.w === j ? 'checked' : ''}><span>${esc(p.why[j])}</span></label>`).join('')}</div><p class="muted small">Vale medio punto la respuesta y medio punto la razón.</p>`;
+  } else {
+    h += `<div class="ans"><input type="text" id="v" value="${esc(a.v || '')}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="${esc(p.tipo === 'num' ? 'Escribe solo el número' : p.ph)}" ${p.tipo === 'num' ? 'inputmode="decimal"' : ''}>${p.tipo === 'num' && p.unit ? ` <b>${esc(p.unit)}</b>` : ''}<small>${p.tipo === 'num' ? 'Escribe el resultado; usa punto decimal si hace falta.' : 'Escríbelo tal como lo teclearías en la terminal o en el código.'}</small></div>`;
+  }
+  h += `<div class="nav"><button class="btn" id="ant" ${k === 0 ? 'disabled' : ''}>← Anterior</button><button class="btn p" id="sig">${k === NPREG - 1 ? 'Ir a entregar' : 'Siguiente →'}</button></div>`;
+  $('#q').innerHTML = h;
+  $('#q').querySelectorAll('input[type=radio]').forEach((r) => r.addEventListener('change', () => { const x = st.ans[p.i] = st.ans[p.i] || {}; x[r.name] = +r.value; save(); pinta(); }));
+  const v = $('#v'); if (v) { v.addEventListener('input', () => { (st.ans[p.i] = st.ans[p.i] || {}).v = v.value.slice(0, 200); save(); barra(); }); v.addEventListener('keydown', (e) => { if (e.key === 'Enter') $('#sig').click(); }); }
+  $('#ant').addEventListener('click', () => { st.cur--; save(); pinta(); window.scrollTo(0, 0); });
+  $('#sig').addEventListener('click', () => { if (k === NPREG - 1) { $('#entregar').scrollIntoView({ behavior: 'smooth' }); return; } st.cur++; save(); pinta(); window.scrollTo(0, 0); });
+  $('#mapa').innerHTML = P.map((x, j) => `<button class="${respondida(x, st.ans[x.i]) ? 'r' : ''}${j === k ? ' cur' : ''}" data-j="${j}">${j + 1}</button>`).join('');
+  $('#mapa').querySelectorAll('button').forEach((b) => b.addEventListener('click', () => { st.cur = +b.dataset.j; save(); pinta(); window.scrollTo(0, 0); }));
+  barra();
+}
+function barra() { const n = cuenta(); $('#cnt').textContent = `Respondidas: ${n} de ${NPREG}`; $('#barra').style.width = `${n / NPREG * 100}%`;
+  const b = $(`#mapa button[data-j="${st.cur}"]`); if (b) b.classList.toggle('r', respondida(P[st.cur], st.ans[P[st.cur].i])); }
+function confirmar() {
+  const falt = P.map((p, j) => (respondida(p, st.ans[p.i]) ? 0 : j + 1)).filter(Boolean);
+  const d = document.createElement('div'); d.className = 'modal';
+  d.innerHTML = `<div class="card"><h2>¿Entregar el examen?</h2>${falt.length ? `<p>Te faltan <b>${falt.length}</b> pregunta(s): ${falt.slice(0, 20).join(', ')}${falt.length > 20 ? '…' : ''}. Las preguntas sin responder cuentan como incorrectas.</p>` : '<p>Respondiste todas las preguntas.</p>'}<p><b>Ya no podrás cambiar tus respuestas.</b></p><div class="row"><button class="btn p" id="si">Sí, entregar</button><button class="btn" id="no">Seguir revisando</button></div></div>`;
+  document.body.appendChild(d); $('#no', d).addEventListener('click', () => d.remove());
+  $('#si', d).addEventListener('click', () => { d.remove(); calificar(); });
+}
+function calificar() {
+  const porTema = {}; let tot = 0, sin = 0; const det = [];
+  P.forEach((p) => { const pt = puntos(p, st.ans[p.i]); tot += pt; if (!respondida(p, st.ans[p.i])) sin++;
+    const t = porTema[p.t] = porTema[p.t] || { p: 0, n: 0 }; t.p += pt; t.n++; det.push([p.i + 1, pt]); });
+  det.sort((a, b) => a[0] - b[0]);
+  const calif = Math.round(tot / NPREG * 100) / 10;
+  st.done = { calif, aciertos: tot, porTema, sin, det, fin: Date.now() }; save(); resultado(); enviar();
+}
+
+/* ================= 3. Resultado y envío ================= */
+function resultado() {
+  const d = st.done, T = Object.keys(EX.temas);
+  app.innerHTML = `<main><div class="card res"><h2>Examen entregado</h2><p>${esc(st.nom)} ${esc(st.ap)} ${esc(st.am)} · ${esc(st.mat)}</p><p class="muted">Tu calificación</p><div class="big">${d.calif.toFixed(1)}</div><p><b>${String(d.aciertos).replace('.', ',')}</b> de ${NPREG} puntos${d.sin ? ` · ${d.sin} sin responder` : ''}</p><p class="msg" id="env"></p></div>
+    <div class="card"><h2>Resultado por tema</h2><div class="tbl"><table><tr><th>Tema</th><th>Puntos</th></tr>${T.filter((t) => d.porTema[t]).map((t) => `<tr><td>${t}. ${esc(EX.temas[t])}</td><td>${String(d.porTema[t].p).replace('.', ',')} de ${d.porTema[t].n}</td></tr>`).join('')}</table></div><p class="muted small">Repasa en el simulador los temas con menos puntos.</p></div></main>`;
+  estadoEnvio();
+}
+function estadoEnvio() { const e = $('#env'); if (!e) return;
+  if (st.previa) { e.className = 'msg'; e.textContent = 'Vista previa docente: este resultado no se guarda.'; return; }
+  if (st.sent) { e.className = 'msg ok'; e.textContent = '✓ Tu calificación quedó registrada con tu maestra.'; return; }
+  e.className = 'msg err'; e.innerHTML = 'Enviando tu calificación… <button class="btn" id="reenv" style="margin-left:6px">Reintentar envío</button>';
+  $('#reenv').addEventListener('click', enviar); }
+let enviando = false;
+async function enviar() {
+  if (st.previa || st.sent || enviando || !st.done) { estadoEnvio(); return; } enviando = true;
+  const d = st.done, T = Object.keys(EX.temas);
+  const fila = { materia: EX.materia, matricula: st.mat, paterno: st.ap, materno: st.am, nombre: st.nom, grupo: st.grp, intento: st.intento,
+    calif: d.calif, aciertos: d.aciertos, total: NPREG, temas: T.filter((t) => d.porTema[t]).map((t) => `${t} ${d.porTema[t].p}/${d.porTema[t].n}`).join(' · '),
+    minutos: Math.round((d.fin - st.inicio) / 6000) / 10, salidas: st.salidas, pegar: st.pegar, sin: d.sin,
+    detalle: d.det.map((x) => `${x[0]}:${x[1]}`).join(' '), dev: (navigator.userAgent.match(/Android|iPhone|iPad|Windows|Mac OS X|CrOS|Linux/) || ['?'])[0] };
+  try { await fetch(URL_HOJA, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ examen: fila }) }); } catch (e) {}
+  /* confirma que llegó a la hoja */
+  for (let i = 0; i < 4 && !st.sent; i++) { try { const s = await estado(st.mat); if (s && s.hecho) { st.sent = true; save(); } } catch (e) {} if (!st.sent) await new Promise((r) => setTimeout(r, 1500)); }
+  enviando = false; estadoEnvio();
+}
+
+/* ---------- cuidado del examen: sin copiar ni pegar, y registro de salidas de la página ---------- */
+const enExamen = () => st && !st.done && P;
+['copy', 'cut', 'paste', 'drop', 'contextmenu'].forEach((ev) => document.addEventListener(ev, (e) => { if (!enExamen()) return; e.preventDefault(); if (ev !== 'contextmenu') { st.pegar++; save(); toast('✋ En el examen no se puede copiar ni pegar.'); } }, true));
+document.addEventListener('visibilitychange', () => { if (!enExamen()) return;
+  if (document.visibilityState === 'hidden') { st.salidas++; save(); }
+  else if (st.salidas) { const s = $('#sal'); if (s) { s.hidden = false; s.innerHTML = `⚠️ Saliste de la página del examen <b>${st.salidas}</b> ${st.salidas === 1 ? 'vez' : 'veces'}. Queda registrado y tu maestra lo verá.`; } } });
+window.addEventListener('beforeunload', (e) => { if (enExamen() && !st.previa) { e.preventDefault(); e.returnValue = ''; } });
+window.__EX = { armar, puntos, respondida, get st() { return st; }, get P() { return P; } };
+registro();
+})();
+</script>
+</body>
+</html>
