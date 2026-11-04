@@ -53,6 +53,8 @@ code{background:#EEF0F3;padding:1px 5px;border-radius:5px;font:.9em ui-monospace
 .modal .card{max-width:520px;width:100%}
 .res{text-align:center}.res .big{font-size:3.6rem;font-weight:800;color:var(--vino);line-height:1;margin:8px 0}
 .toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#1F2328;color:#fff;padding:10px 16px;border-radius:10px;font-weight:600;z-index:30;max-width:90vw}
+.rv{border:1px solid var(--linea);border-left-width:6px;border-radius:10px;padding:12px 14px;margin:0 0 12px}.rv.bien{border-left-color:var(--ok)}.rv.medio{border-left-color:var(--oro)}.rv.malo{border-left-color:var(--mal)}
+.rv p{margin:6px 0}.rv .qt{font-size:.98rem;margin:0 0 8px}.rv-ok{color:var(--ok);font-weight:800}.rv-mal{color:var(--mal);font-weight:800}.rv-c{background:#E9F5EE;border-radius:8px;padding:6px 10px}.rv-y{background:#F4F1FA;border-radius:8px;padding:8px 10px}
 .muted{color:var(--gris)}.small{font-size:.85rem}
 [hidden]{display:none!important}
 </style>
@@ -339,6 +341,78 @@ const N = [
 N.forEach((x) => P.push(x));
 })();
 
+/* Explicaciones para la revisión del examen de Construye.
+   Por número de pregunta del banco: texto, función (g) => texto, u objeto {fragmento de la respuesta correcta: texto}. */
+(() => {
+const pct = (g) => g.num;
+window.EXAMEN.exp = {
+  1: 'La llave foránea va en la tabla del lado «muchos»: cada registro de esa tabla guarda el id del único registro del otro lado al que pertenece.',
+  2: 'En una relación N:M, guardar varios id en un texto impide que MySQL valide cada relación. La tabla intermedia tiene una fila por cada pareja y dos llaves foráneas que MySQL sí puede comprobar.',
+  4: 'La llave foránea solo acepta valores que existan en la tabla referenciada. Como no hay un nadador con ese id, MySQL rechaza el INSERT para proteger la integridad de los datos.',
+  5: 'Una llave foránea solo puede apuntar a una tabla que ya existe. Por eso primero se crea nadador y después las tablas que la referencian.',
+  6: 'El comando es python -m venv seguido del nombre del entorno. Crea una carpeta con su propio Python y sus propias librerías.',
+  7: 'Sin el punto, django-admin crea una carpeta nueva con el nombre del proyecto y pone manage.py dentro. Con el punto, usa la carpeta actual.',
+  8: 'Django solo busca modelos en las apps que están en INSTALLED_APPS. Si la app no está registrada, makemigrations no ve sus cambios.',
+  10: { 'Detener el otro servicio': 'Solo un programa puede usar un puerto a la vez. Si otro MySQL ocupa el 3306, el de XAMPP no puede iniciar.', 'Cerrar el programa que usa el puerto 80': 'Apache necesita el puerto 80. Si otro programa (por ejemplo, otro servidor web) lo ocupa, Apache no inicia.', 'Cerrar el otro runserver': 'Ya hay otro proceso usando el puerto 8000, probablemente otro runserver que quedó abierto. Ciérralo o usa otro puerto.' },
+  12: 'El orden completo es: iniciar Apache y MySQL, abrir phpMyAdmin, crear la base, seleccionarla, abrir Importar, elegir el .sql y verificar las tablas. Sin el paso que faltaba no se puede seguir.',
+  13: 'El error 1050 indica que esas tablas ya existen: el script ya se había importado. No se pueden crear dos tablas con el mismo nombre.',
+  14: (g) => `El valor correcto es ${g.sol}. En XAMPP, MySQL usa el usuario root, sin contraseña, en el puerto 3306, y Django se conecta con el motor django.db.backends.mysql.`,
+  15: { 'MySQL está apagado': '«Can\'t connect» significa que Django no encontró un servidor MySQL escuchando: está apagado en XAMPP.', 'Falta instalar el conector': 'Django necesita la librería mysqlclient (MySQLdb) para hablar con MySQL; si no está instalada en el entorno, aparece ese error.', 'Usuario o contraseña': '«Access denied» significa que MySQL sí responde, pero rechaza el usuario o la contraseña que envió Django.', 'El nombre de la base': '«Unknown database» significa que MySQL funciona, pero no tiene una base con ese nombre: hay un error de dedo en NAME.' },
+  16: { 'Iniciar MySQL': '«Connection refused» indica que no hay ningún MySQL escuchando: primero hay que iniciarlo en XAMPP.', 'pip install mysqlclient': 'Falta el conector de Python para MySQL. Se instala con pip con el entorno virtual activo.', "Usar 'USER': 'root'": 'MySQL rechazó al usuario admin. En XAMPP el usuario es root y no tiene contraseña.' },
+  17: (g) => `El comando correcto es: ${g.sol}.`,
+  18: 'Django se conecta a la base cuyo nombre está en NAME. Si no coincide letra por letra con la de phpMyAdmin, MySQL responde que esa base no existe.',
+  20: { OneToOneField: 'Cada nadador tiene un solo usuario y cada usuario un solo nadador: es una relación 1:1, que en Django es OneToOneField.', DecimalField: 'Los segundos llevan decimales exactos, por ejemplo 44.37. DecimalField los guarda sin redondeos.', DateField: 'Una fecha sin hora se guarda con DateField, y así se puede comparar y ordenar.', ForeignKey: 'Muchos tiempos pertenecen a un nadador: es una relación 1:N, que en Django es ForeignKey.' },
+  21: { on_delete: 'Desde Django 2.0, ForeignKey exige on_delete: dice qué pasa con los registros relacionados cuando se borra el principal.', decimal_places: 'DecimalField necesita max_digits y decimal_places para saber cuántos dígitos y cuántos decimales guardar.', max_length: 'CharField necesita max_length porque en MySQL se crea como VARCHAR con un tamaño máximo.' },
+  23: 'Sin __str__, Django muestra «Nadador object (id)». Con __str__ que regrese self.nombre, en el panel aparece el nombre del nadador.',
+  24: { search_fields: 'search_fields agrega un buscador por los campos indicados.', list_filter: 'list_filter agrega filtros laterales, por ejemplo por nivel.', list_display: 'list_display define qué columnas se ven en la lista del panel.' },
+  25: (g) => `El comando correcto es: ${g.sol}.`,
+  26: '@login_required revisa si hay sesión. Si no la hay, redirige (código 302) a la página de inicio de sesión.',
+  27: 'first() siempre trae el mismo nadador, sin importar quién inició sesión. Para que cada quien vea su perfil se busca con usuario=request.user.',
+  28: { UserCreationForm: 'UserCreationForm valida que las dos contraseñas coincidan y guarda la contraseña cifrada.', 'Que no: deben guardarse con hash': 'Las contraseñas nunca se guardan en texto. Si alguien la olvida, se crea una nueva; así, aunque roben la base, no se pueden leer.', 'Que Django guardó la contraseña cifrada': 'pbkdf2_sha256$… es el hash de la contraseña. Django la verifica sin guardarla en texto, y nadie puede leer la original.' },
+  29: { LOGIN_REDIRECT_URL: 'Después del login, Django manda a /accounts/profile/ si no se indica otra cosa. LOGIN_REDIRECT_URL define a dónde ir.', 'login.html': 'TemplateDoesNotExist significa que Django no encontró la plantilla con ese nombre en las carpetas de templates.', LogoutView: 'Django ya trae vistas listas: LoginView para iniciar sesión y LogoutView para cerrarla.' },
+  30: { qrcode: 'La librería qrcode no está instalada en el entorno virtual. "qrcode[pil]" instala también Pillow para crear el PNG.', pillow: 'El módulo PIL viene del paquete Pillow, que se instala con pip install pillow en el entorno virtual.' },
+  33: (g) => `get_or_create crea un registro solo la primera vez de cada día. Por eso cuentan los días distintos, no los escaneos: ${g.num}.`,
+  34: (g) => `create guarda un registro nuevo cada vez, y sin UniqueConstraint nada lo impide: ${g.num} escaneos = ${g.num} registros.`,
+  35: 'get_or_create encontró la asistencia de hoy, así que no crea otra: creada vale False y se muestra el mensaje de que ya estaba registrada.',
+  36: 'UniqueConstraint protege desde la base de datos: aunque se intente guardar desde el panel u otra vista, MySQL rechaza la segunda asistencia del mismo día.',
+  38: { True: 'Si no existía la asistencia de hoy, get_or_create la crea y creada vale True.', False: 'Si ya existía la asistencia de hoy, get_or_create solo la encuentra y creada vale False.' },
+  39: 'get_object_or_404 busca el registro y, si no existe, responde con un error 404 en lugar de que el código falle con un error 500.',
+  40: { 'Un solo registro': 'get() y first() devuelven un solo objeto.', 'Varios registros': 'filter() y order_by() devuelven un QuerySet, que puede tener varios registros.', 'Un número': 'count() devuelve cuántos registros hay: un número.' },
+  41: 'get() espera exactamente un registro. Si hay varios, lanza MultipleObjectsReturned; para varios registros se usa filter().',
+  42: (g) => `En natación, el mejor tiempo es el más bajo: ${g.num} s. En el panel se calcula con Min.`,
+  43: (g) => `Mejora = (primero − último) ÷ primero × 100 = ${g.num} %. Se divide entre el primer tiempo porque la mejora se mide respecto al inicio.`,
+  44: { "order_by('-fecha')": "El signo menos ordena de la fecha más reciente a la más antigua, y first() toma el primero de esa lista: el último registrado.", "order_by('fecha')": 'Sin signo menos se ordena de la más antigua a la más reciente, y first() toma el primero registrado.', 'Min(': 'El mejor tiempo es el menor, por eso se usa la función de agregación Min.' },
+  46: { 'filter(fecha=date.today()).count()': 'Se filtran las asistencias con la fecha de hoy y se cuentan con count().', 'Nadador.objects.count()': 'count() sobre todos los nadadores da el total registrado.', "filter(nivel='avanzado')": 'filter selecciona a los de nivel avanzado y order_by los ordena por nombre.' },
+  47: 'Sin tiempos, first() devuelve None, y None no tiene el atributo segundos. La condición evita ese error y deja la mejora en 0.',
+  49: { 'Datos de prueba': 'Para demostrar el sistema no hace falta exponer datos reales de menores: los datos inventados muestran lo mismo sin riesgo.', 'Pedir inicio de sesión': 'Los nadadores son menores: sus datos solo deben verlos usuarios con sesión, y el QR no debe llevar datos personales.', 'Que no: son datos de menores': 'Una captura con nombres y datos de menores no debe circular en redes ni grupos; para mostrar avance se usan datos de prueba.' },
+  50: 'En una relación 1:N, la columna con el id del «uno» se agrega en la tabla del lado «muchos».',
+  51: { 'Identifica de forma única': 'PRIMARY KEY marca el campo que distingue a cada registro de los demás; normalmente es id.', 'siguiente id': 'AUTO_INCREMENT pone el siguiente número disponible al insertar, sin escribir el id a mano.', 'no puede quedar vacío': 'NOT NULL obliga a que ese campo siempre tenga un valor.' },
+  52: (g) => `AUTO_INCREMENT asigna el siguiente número después del último usado: ${g.num - 1} + 1 = ${g.num}.`,
+  53: { 'Verificar que Python': 'python --version muestra la versión instalada; si no responde, Python no está instalado o no está en el PATH.', 'Activar el entorno': 'Al activar el entorno, pip y python usan las librerías de ese proyecto. En la terminal aparece (venv).', 'carpeta actual': 'El punto indica «aquí»: el proyecto se crea en la carpeta actual y manage.py queda en la raíz.' },
+  54: 'El orden es: crear el entorno, activarlo, instalar Django (dentro del entorno), crear el proyecto y crear la app.',
+  56: (g) => `Los puertos por defecto son: Apache 80, MySQL 3306 y runserver 8000. La respuesta es ${g.num}.`,
+  57: 'localhost y 127.0.0.1 significan «esta misma computadora»: Django busca MySQL en el mismo equipo donde corre.',
+  58: { 'MySQL esté iniciado': 'phpMyAdmin abre porque Apache está encendido, pero sin MySQL no tiene a qué conectarse.', 'Apache esté iniciado': 'phpMyAdmin es una página web que sirve Apache. Si Apache está apagado, el navegador no puede abrirla.' },
+  59: 'Se revisa en phpMyAdmin que la base tenga todas las tablas del script antes de conectar Django.',
+  60: 'migrate crea en MySQL las tablas internas de Django (usuarios, sesiones, permisos y el control de migraciones).',
+  62: 'Un modelo solo aparece en /admin/ si se registra en admin.py, con admin.site.register o @admin.register.',
+  63: { 'impide borrar': 'PROTECT no deja borrar un registro que tenga otros relacionados; primero habría que borrar sus tiempos.', 'Se borran también': 'CASCADE borra en cadena: al borrar el nadador se borran también sus tiempos.' },
+  64: 'get_object_or_404 no encontró un nadador ligado a ese usuario, así que responde 404. Hay que crear o asociar el nadador a su usuario.',
+  65: 'Django revisa que cada nombre de list_display exista en el modelo (o sea un método). Si no existe, marca un error al revisar el proyecto.',
+  66: 'Cada makemigrations crea un archivo numerado (0001, 0002, …) con el plan del cambio; migrate los aplica en orden.',
+  68: (g) => `El celular necesita la dirección completa: protocolo, IP, puerto 8000 de runserver y la ruta con el id. Es ${g.opts[0]}.`,
+  69: (g) => `El mensaje aparece solo en los escaneos repetidos del mismo día: uno por cada día que se escaneó dos veces, es decir, ${g.num}.`,
+  70: { 'Crea la imagen': 'qrcode.make(url) genera la imagen del código QR que contiene esa dirección.', base64: 'La vista convierte el PNG a texto base64 para incrustarlo directo en la etiqueta img, sin guardar un archivo.', 'en memoria': 'BytesIO es un «archivo» en memoria: ahí se guarda el PNG para luego convertirlo a base64.' },
+  71: 'Lunes 8:00 y 23:59 son el mismo día: un registro. Martes 0:01 ya es otro día: otro registro. En total, 2.',
+  73: 'La evidencia más fuerte es verlo funcionar: escanear y que la asistencia se registre una sola vez por día.',
+  74: (g) => `El último es el que se registró al final de la lista: ${g.num} s.`,
+  75: (g) => `Max devuelve el número más alto, ${g.num} s, que en natación es el peor tiempo. Para el mejor se usa Min.`,
+  77: (g) => `count() cuenta los registros del QuerySet: ${g.num}.`,
+  78: 'DoesNotExist (matching query does not exist) significa que get() no encontró ningún registro con esa condición.',
+  79: { 'Max en lugar de Min': 'Si el «mejor» es el más alto, se usó Max: en natación el mejor es el menor.', "'fecha' en lugar de '-fecha'": "Sin el signo menos, first() toma el registro más antiguo, no el último.", 'Falta filtrar': 'Sin filter(nadador=nadador), la consulta trae los tiempos de todos.' },
+};
+})();
+
 </script>
 <script>
 (() => {
@@ -353,6 +427,11 @@ const hash = (s) => { let h = 2166136261 >>> 0; for (const ch of s) { h ^= ch.ch
 const mkRng = (seed) => { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; };
 const kit = (rnd) => { const K = { r: rnd, int: (a, b) => a + Math.floor(rnd() * (b - a + 1)), pick: (arr) => arr[Math.floor(rnd() * arr.length)],
   mix: (arr) => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; } }; K.some = (arr, k) => K.mix(arr).slice(0, k); return K; };
+/* explicación de la respuesta correcta para la revisión */
+const explica = (i, g) => { if (g.exp) return g.exp; const e = (EX.exp || {})[i]; const ok = String(g.opts ? g.opts[0] : g.sol != null ? g.sol : g.num);
+  let t = ''; try { if (typeof e === 'function') t = e(g); else if (typeof e === 'string') t = e; else if (e) { const k = Object.keys(e).find((x) => ok.includes(x)); t = k ? e[k] : ''; } } catch (err) { t = ''; }
+  if (g.why) t = t ? `${g.why[0]} ${t}` : g.why[0];
+  return t; };
 /* arma las 50 preguntas de un alumno: datos, orden de preguntas y orden de opciones */
 const armar = (st) => {
   const base = `${EX.materia}|${st.mat}|${st.intento}`;
@@ -361,7 +440,7 @@ const armar = (st) => {
   if (EX.cuota) { const KS = kit(mkRng(hash(base + '|sorteo'))); elegidas = [];
     Object.keys(EX.cuota).forEach((t) => { const idx = EX.preguntas.map((p, i) => (p.t === t ? i : -1)).filter((i) => i >= 0); elegidas.push(...KS.some(idx, EX.cuota[t])); }); }
   const P = elegidas.map((i) => { const p = EX.preguntas[i]; const K = kit(mkRng(hash(base + '|' + i))); let g; try { g = p.gen(K); } catch (e) { console.error(i, e); g = { q: 'Pregunta no disponible', opts: ['—'] }; }
-    const o = { i, t: p.t, q: g.q };
+    const o = { i, t: p.t, q: g.q, sol: g.sol, exp: explica(i, g) };
     if (g.opts) { o.tipo = g.why ? 'mr' : 'mc'; o.opts = g.opts; o.ord = K.mix(g.opts.map((x, j) => j)); if (g.why) { o.why = g.why; o.word = K.mix(g.why.map((x, j) => j)); } }
     else if (g.num != null) { o.tipo = 'num'; o.num = g.num; o.tol = g.tol || 0; o.unit = g.unit || ''; }
     else { o.tipo = 'txt'; o.txt = g.txt; o.ph = g.ph || ''; }
@@ -483,8 +562,32 @@ function calificar() {
 function resultado() {
   const d = st.done, T = Object.keys(EX.temas);
   app.innerHTML = `<main><div class="card res"><h2>Examen entregado</h2><p>${esc(st.nom)} ${esc(st.ap)} ${esc(st.am)} · ${esc(st.mat)}</p><p class="muted">Tu calificación</p><div class="big">${d.calif.toFixed(1)}</div><p><b>${String(d.aciertos).replace('.', ',')}</b> de ${NPREG} puntos${d.sin ? ` · ${d.sin} sin responder` : ''}</p><p class="msg" id="env"></p></div>
-    <div class="card"><h2>Resultado por tema</h2><div class="tbl"><table><tr><th>Tema</th><th>Puntos</th></tr>${T.filter((t) => d.porTema[t]).map((t) => `<tr><td>${t}. ${esc(EX.temas[t])}</td><td>${String(d.porTema[t].p).replace('.', ',')} de ${d.porTema[t].n}</td></tr>`).join('')}</table></div><p class="muted small">Repasa en el simulador los temas con menos puntos.</p></div></main>`;
+    <div class="card"><h2>Resultado por tema</h2><div class="tbl"><table><tr><th>Tema</th><th>Puntos</th></tr>${T.filter((t) => d.porTema[t]).map((t) => `<tr><td>${t}. ${esc(EX.temas[t])}</td><td>${String(d.porTema[t].p).replace('.', ',')} de ${d.porTema[t].n}</td></tr>`).join('')}</table></div><p class="muted small">Repasa en el simulador los temas con menos puntos.</p></div>
+    <div class="card"><h2>Revisión de tu examen</h2><p class="muted small">Para cada pregunta ves tu respuesta, la respuesta correcta y por qué.</p>
+    <div class="row" style="margin-bottom:10px"><button class="btn p" data-f="todas">Todas</button><button class="btn" data-f="mal">Solo las que fallaste</button></div><div id="rev"></div></div></main>`;
+  revision('todas');
+  app.querySelectorAll('[data-f]').forEach((b) => b.addEventListener('click', () => { app.querySelectorAll('[data-f]').forEach((x) => x.classList.toggle('p', x === b)); revision(b.dataset.f); }));
   estadoEnvio();
+}
+function revision(f) {
+  if (!P) P = armar(st);
+  const ok = (b) => (b ? '<span class="rv-ok">✓</span>' : '<span class="rv-mal">✗</span>');
+  const html = P.map((p, j) => {
+    const a = st.ans[p.i] || {}, pt = puntos(p, st.ans[p.i]); if (f === 'mal' && pt >= 1) return '';
+    let r = '';
+    if (p.tipo === 'mc' || p.tipo === 'mr') {
+      r += `<p>${ok(a.o === 0)} <b>Tu respuesta:</b> ${a.o != null ? esc(p.opts[a.o]) : '<i>sin responder</i>'}</p>`;
+      if (a.o !== 0) r += `<p class="rv-c"><b>Respuesta correcta:</b> ${esc(p.opts[0])}</p>`;
+      if (p.tipo === 'mr') { r += `<p>${ok(a.w === 0)} <b>Tu razón:</b> ${a.w != null ? esc(p.why[a.w]) : '<i>sin responder</i>'}</p>`; if (a.w !== 0) r += `<p class="rv-c"><b>Razón correcta:</b> ${esc(p.why[0])}</p>`; }
+    } else {
+      const val = String(a.v || '').trim(), corr = p.tipo === 'num' ? `${String(p.num)}${p.unit ? ' ' + p.unit : ''}` : p.sol;
+      r += `<p>${ok(pt >= 1)} <b>Tu respuesta:</b> ${val ? `<code>${esc(val)}</code>` : '<i>sin responder</i>'}</p>`;
+      if (pt < 1) r += `<p class="rv-c"><b>Respuesta correcta:</b> <code>${esc(corr)}</code></p>`;
+    }
+    if (p.exp) r += `<p class="rv-y"><b>¿Por qué?</b> ${esc(p.exp)}</p>`;
+    return `<div class="rv ${pt >= 1 ? 'bien' : pt > 0 ? 'medio' : 'malo'}"><p class="qn">Pregunta ${j + 1} · ${esc(EX.temas[p.t])} · ${String(pt).replace('.', ',')} ${pt === 1 ? 'punto' : 'puntos'}</p><div class="qt">${p.q}</div>${r}</div>`;
+  }).join('');
+  $('#rev').innerHTML = html || '<p class="msg ok">¡No fallaste ninguna pregunta!</p>';
 }
 function estadoEnvio() { const e = $('#env'); if (!e) return;
   if (st.previa) { e.className = 'msg'; e.textContent = 'Vista previa docente: este resultado no se guarda.'; return; }

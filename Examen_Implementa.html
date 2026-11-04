@@ -53,6 +53,8 @@ code{background:#EEF0F3;padding:1px 5px;border-radius:5px;font:.9em ui-monospace
 .modal .card{max-width:520px;width:100%}
 .res{text-align:center}.res .big{font-size:3.6rem;font-weight:800;color:var(--vino);line-height:1;margin:8px 0}
 .toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#1F2328;color:#fff;padding:10px 16px;border-radius:10px;font-weight:600;z-index:30;max-width:90vw}
+.rv{border:1px solid var(--linea);border-left-width:6px;border-radius:10px;padding:12px 14px;margin:0 0 12px}.rv.bien{border-left-color:var(--ok)}.rv.medio{border-left-color:var(--oro)}.rv.malo{border-left-color:var(--mal)}
+.rv p{margin:6px 0}.rv .qt{font-size:.98rem;margin:0 0 8px}.rv-ok{color:var(--ok);font-weight:800}.rv-mal{color:var(--mal);font-weight:800}.rv-c{background:#E9F5EE;border-radius:8px;padding:6px 10px}.rv-y{background:#F4F1FA;border-radius:8px;padding:8px 10px}
 .muted{color:var(--gris)}.small{font-size:.85rem}
 [hidden]{display:none!important}
 </style>
@@ -311,13 +313,96 @@ const N = [
   { t: 'E', gen: (K) => { const v = K.pick([['q', 'busqueda'], ['a', 'alumnos'], ['d', 'datos_alumno']]);
     return { q: `En la vista hay ${k(`${v[0]} = Alumno.objects.filter(...)`)}. Según las convenciones del Tema 5, ¿cómo conviene llamar a la variable?`, opts: [`Con un nombre que diga qué guarda, como ${v[1] === 'busqueda' ? 'alumnos' : v[1]}`, 'Con una sola letra para escribir menos', 'Con mayúsculas, como ALUMNOS', 'Con el nombre del programador'] }; } },
   /* F */
-  { t: 'F', gen: (K) => { const n = K.int(2, 30); const x = K.pick([`«Tu búsqueda nunca sirve.»`, `«¿Otra vez rompiste el login?»`, `«Eso está mal, como siempre.»`]);
-    return { q: `Un compañero escribió en la incidencia #${n}: ${x} ¿Cómo lo reescribes de forma asertiva?`, opts: [`«En la incidencia #${n}: al buscar "Muñoz" no aparece ningún resultado; dejo los pasos y la captura.»`, '«Ya ni modo, así se queda.»', '«Arréglalo tú, que lo hiciste.»', '«No pasa nada, no lo reporto.»'] }; } },
+  { t: 'F', gen: (K) => { const n = K.int(2, 30); const x = K.pick([
+      ['«Tu búsqueda nunca sirve.»', `«En la incidencia #${n}: al buscar "Muñoz" no aparece ningún resultado; dejo los pasos y la captura.»`],
+      ['«¿Otra vez rompiste el login?»', `«En la incidencia #${n}: con usuario y contraseña correctos, el login regresa a la misma página; dejo los pasos y la captura.»`],
+      ['«Ese formulario está mal, como siempre.»', `«En la incidencia #${n}: el formulario de nuevo alumno acepta una fecha de nacimiento futura; dejo los pasos y la captura.»`]]);
+    return { q: `Un compañero escribió en la incidencia #${n}: ${x[0]} ¿Cómo lo reescribes de forma asertiva?`, opts: [x[1], '«Ya ni modo, así se queda.»', '«Arréglalo tú, que lo hiciste.»', '«No pasa nada, no lo reporto.»'] }; } },
   { t: 'F', gen: (K) => { const e = K.pick(['frustración', 'nervios', 'enojo']);
     return { q: `En tu tabla de reflexión escribiste la emoción <b>${e}</b>. ¿Qué va en la columna «Estrategia»?`, opts: ['Lo que hiciste para enfrentar el reto, por ejemplo pedir ayuda o dividir el problema', 'Lo que sentiste', 'La calificación que obtuviste', 'El nombre de quien causó el problema'] }; } },
   { t: 'F', gen: (K) => ({ q: `Al terminar el parcial, tu equipo escribe un acuerdo para el tercer parcial. ¿Cuál es el más útil?`, opts: [`«Cada viernes revisamos juntos el tablero y repartimos las incidencias${K.pick([' de la semana', ' pendientes'])}.»`, '«Vamos a echarle ganas.»', '«El que falle paga.»', '«Ya no vamos a tener errores.»'] }) },
 ];
 N.forEach((x) => P.push(x));
+})();
+
+/* Explicaciones para la revisión del examen de Implementa (mismo formato que exp_construye.js). */
+(() => {
+window.EXAMEN.exp = {
+  0: { 'En el servidor': 'El TTFB mide cuánto tarda el servidor en empezar a responder. Si es alto, el problema está en Django o en la consulta a MySQL, no en los archivos.', 'En archivos pesados': 'El TTFB es bajo: el servidor responde rápido. Si aun así el Load es alto, lo que tarda es descargar imágenes, CSS o scripts pesados.' },
+  1: 'El código 404 significa «no encontrado»: ese archivo no existe en el servidor o la ruta está mal escrita.',
+  3: { 'Disable cache': 'Con la caché activa, el navegador usa copias guardadas y los tiempos salen falsamente bajos. Se desactiva y se recarga con Ctrl + F5.', 'Ensanchar el panel': 'Si el panel de herramientas está muy angosto, el menú de conexiones se oculta. Al ensancharlo aparece.', 'Anotar el promedio': 'La red siempre varía un poco. Por eso se mide varias veces y se anota el promedio.' },
+  4: (g) => `Promedio = suma de las tres mediciones ÷ 3 = ${g.num} s.`,
+  5: 'Se marcan las conexiones cuyo Load supera los 3 s del requisito: en esta bitácora, Slow 4G y 3G.',
+  6: { 'No cumple': 'A 375 px no debe haber desplazamiento horizontal, nada debe quedar cortado y los enlaces deben poder tocarse sin equivocarse.', Cumple: 'Es lo que se espera en un celular: elementos que se pueden tocar con el dedo y contenido acomodado en una columna.' },
+  7: { 'Con Network abierta': 'Network solo registra lo que pasa mientras está abierta. Hay que abrirla primero y luego recargar.', 'Ctrl + Shift + M': 'Ctrl + Shift + M activa el modo dispositivo de las herramientas de desarrollador; después se escribe el ancho de 375 px.', Load: 'Load marca el momento en que la página terminó de cargar todo. Es el valor que se compara con los 3 s.' },
+  8: 'El TTFB se ve en la pestaña Timing de la petición principal, en «Waiting for server response».',
+  9: { '200 OK': 'La página existe y respondió correctamente.', '302 Found': 'La vista pide sesión y redirige al login.', '403 Forbidden': 'Django rechaza formularios POST sin el token CSRF, por seguridad.', '404 Not Found': 'No existe un registro o una ruta con esa dirección.', '500 Internal': 'Una excepción sin manejar en el código provoca un error del servidor.' },
+  10: { POST: 'POST envía datos al servidor para crear o modificar información, como un formulario.', GET: 'GET solo pide información, sin modificar datos.' },
+  11: 'Los códigos 4xx son errores del cliente (pidió algo incorrecto, inexistente o sin permiso). Los 5xx son errores del servidor.',
+  12: (g) => `El comando es «${g.sol}»: -n es el total de peticiones y -c cuántas van al mismo tiempo.`,
+  13: '-n indica cuántas peticiones se envían en total, y -c cuántas se envían al mismo tiempo (la concurrencia).',
+  15: 'Si al subir la concurrencia baja «Requests per second», el servidor atiende menos peticiones por segundo: se está saturando.',
+  16: 'El Collection Runner envía las peticiones una tras otra (volumen normal). La prueba de estrés envía muchas al mismo tiempo para buscar el límite.',
+  17: { PASS: 'La prueba pasa porque el tiempo de respuesta quedó por debajo de 3000 ms.', FAIL: 'La prueba falla porque el tiempo de respuesta fue de 3000 ms o más.' },
+  18: 'El ciclo es Nuevo → Asignado → En corrección → Corregido → Verificado → Cerrado.',
+  19: 'Si la verificación falla, la corrección no sirvió: la incidencia regresa a «En corrección».',
+  21: 'Un buen título dice qué falla y dónde, para que cualquiera lo entienda sin abrir la incidencia.',
+  22: (g) => `Sin «${g.opts[0]}», otra persona no puede entender ni repetir el defecto. La plantilla pide título, pasos, resultado esperado, resultado obtenido y evidencia.`,
+  23: { 'Pasos numerados': 'Si nadie puede repetir el defecto, no se puede corregir ni verificar. Los pasos exactos lo hacen reproducible.', 'Que cualquier persona': 'Un reporte es reproducible cuando, siguiendo los pasos, cualquiera provoca el mismo defecto.' },
+  24: (g) => `Escribir «${g.sol}» en el commit hace que GitHub cierre la incidencia sola al integrarlo.`,
+  25: 'Los defectos aparecen al probar con datos que el sistema no espera: campos vacíos, datos inválidos, fechas futuras y valores repetidos.',
+  26: { 'Nuevo, Asignado': 'Las listas siguen el ciclo de vida del defecto.', 'bug, crítico': 'Las etiquetas marcan que es un defecto (bug) y su gravedad.', 'Probador, corrector': 'Quien prueba encuentra el defecto, quien corrige lo arregla y otra persona lo verifica.' },
+  27: { Severidad: 'La severidad mide el daño técnico (¿se pierden datos?, ¿se bloquea una función?) y la decide quien prueba.', Prioridad: 'La prioridad mide la urgencia (¿hay una entrega cerca?, ¿lo ven los usuarios?) y la decide el jefe inmediato.' },
+  29: { 'Crítico': 'Crítico: bloquea el sistema, pierde datos o expone información.', Medio: 'Medio: una función falla, pero se puede seguir trabajando.', Bajo: 'Bajo: es un detalle visual o de texto.' },
+  30: (g) => `En la matriz se busca la fila de la severidad y la columna de la prioridad: el número de esa celda es el turno, ${g.num}.`,
+  31: 'Se busca el turno de cada defecto en la matriz y se corrige primero el de número más bajo.',
+  33: 'La clasificación se acuerda con argumentos: se escucha al otro equipo, se revisa la tabla de niveles y se escribe la justificación.',
+  34: 'Cada clasificación lleva una línea que la justifica, para que otros entiendan por qué se decidió así.',
+  35: 'Media-Alta tiene turno 3 y Crítica-Baja turno 4: va primero el de número más bajo, aunque su severidad sea menor.',
+  36: 'En el traceback se buscan tus archivos, no los de django/. Al final dice el archivo y la línea de la plantilla donde está el error.',
+  37: 'NoReverseMatch indica que el nombre usado en {% url %} no existe en urls.py. Se corrige escribiendo el name correcto de la ruta.',
+  38: { NoReverseMatch: 'NoReverseMatch: el nombre de la ruta en {% url %} no coincide con ningún name de urls.py.', IntegrityError: 'IntegrityError: se rompió una regla de la base, como un valor unique repetido o un campo obligatorio vacío.', TemplateSyntaxError: 'TemplateSyntaxError: la plantilla tiene un error de sintaxis, como un bloque sin cerrar.', TemplateDoesNotExist: 'TemplateDoesNotExist: Django no encuentra la plantilla con ese nombre o en esa carpeta.', OperationalError: 'OperationalError: problema con la base de datos, como MySQL apagado o una tabla que falta.' },
+  39: { 'MySQL está apagado': '«Can\'t connect to MySQL server» (2003) significa que no hay un MySQL escuchando.', 'matrícula que ya existe': '«Duplicate entry» (1062) significa que se intentó repetir un valor que debe ser único.', 'no encuentra la plantilla': 'TemplateDoesNotExist indica que la plantilla no está con ese nombre o en esa carpeta.' },
+  40: { 'Borrar la importación': 'F401: se importó algo que no se usa.', 'sangría de 4': 'E111: la sangría debe ser múltiplo de 4 espacios.', 'Partir la línea': 'E501: la línea pasa de 79 caracteres.', 'espacios alrededor': 'E225: faltan espacios alrededor de un operador, como = o +.' },
+  41: (g) => `El comando es «${g.sol}»: flake8 seguido de la carpeta de la app que se quiere revisar.`,
+  43: 'La prueba de regresión vuelve a probar lo que ya funcionaba, para confirmar que la corrección no rompió otra parte.',
+  44: 'PEP 8 pide funciones en minúsculas con guion bajo (snake_case), por ejemplo lista_alumnos.',
+  45: 'Una frase asertiva describe el hecho con datos y pasos, sin juzgar a la persona.',
+  46: 'Una frase no asertiva ataca o generaliza sobre la persona en lugar de describir el problema.',
+  47: 'Tolerar la frustración es tomar el error como información y buscar otra solución, en lugar de rendirse o culpar.',
+  48: { Resiliencia: 'Resiliencia: recuperarse de una prueba fallida y seguir con una nueva estrategia.', 'Tolerancia a la frustración': 'Tolerancia a la frustración: entender que el error es parte del proceso y seguir con calma.', 'Comunicación asertiva': 'Comunicación asertiva: hablar del problema con datos, sin atacar a la persona.' },
+  50: (g) => `Se lee directamente en la barra inferior de Network: ${g.num}.`,
+  51: 'DOMContentLoaded ocurre cuando el HTML ya se leyó; Load, cuando además terminaron de cargar imágenes, CSS y scripts. Por eso Load siempre llega después.',
+  53: 'A 375 px no debe haber desplazamiento horizontal: todo debe caber en el ancho de la pantalla.',
+  54: { 'empezar a responder': 'TTFB (Time To First Byte): lo que tarda el servidor en enviar el primer dato.', 'conexión más lenta': 'Throttling: simular una red lenta para medir como un usuario real.', 'Copia de archivos': 'Caché: archivos que el navegador guarda para no descargarlos otra vez; por eso se desactiva al medir.' },
+  55: 'Una conclusión fundamentada nombra la conexión, el tiempo medido y el requisito con el que se compara.',
+  56: { '302 Found': 'Un login correcto redirige (302) a la página siguiente.', '200 OK': 'Con sesión iniciada, la lista responde normalmente con 200.', '404 Not Found': 'Si la ruta no está en urls.py, Django responde 404.' },
+  57: '«Could not send request» significa que no hay ningún servidor escuchando en esa dirección: falta ejecutar runserver.',
+  58: 'Las vistas tienen @login_required: sin sesión, Django redirige al login. Se prueba /login/ o se envía la cookie de sesión.',
+  59: 'ab.exe está en C:\\xampp\\apache\\bin. Si la terminal está en otra carpeta, Windows no lo encuentra.',
+  60: '«Requests per second» es cuántas peticiones atendió el servidor en promedio cada segundo durante la prueba.',
+  61: (g) => `La línea es ${g.sol}: compara el tiempo de respuesta con el límite en milisegundos.`,
+  62: 'Después de «Verificado» sigue «Cerrado»: el defecto ya no se presenta.',
+  63: 'El resultado esperado describe lo que debería hacer el sistema, con el mensaje o comportamiento concreto.',
+  64: { 'Una captura': 'La evidencia (captura o video) confirma el defecto y ayuda a quien lo va a corregir.', 'Como tarjeta': 'Cada defecto se registra en el tablero del equipo (Trello o GitHub Issues) con la plantilla completa.' },
+  65: 'Sin pasos, la incidencia no se puede reproducir ni verificar. Hay que completarlos antes de entregar.',
+  66: 'Un buen mensaje de commit dice qué se corrigió e incluye «Fixes #número» para cerrar la incidencia.',
+  67: { 'modificando el código': '«En corrección»: alguien está cambiando el código para resolverla.', 'se hizo responsable': '«Asignado»: ya hay una persona responsable, aunque todavía no empieza a corregir.' },
+  68: (g) => `Se cruza la fila de la severidad con la columna de la prioridad: turno ${g.num}.`,
+  69: { 'Crítico': 'Se pierden datos: es crítico.', Medio: 'La función sirve, pero con un problema (lenta o con solución alterna): es medio.', Bajo: 'Es un detalle de texto o visual: es bajo.' },
+  70: { 'Corregir ya': 'Rojo: corregir de inmediato.', 'esta semana': 'Ámbar: corregir en esta semana.', 'cuando haya tiempo': 'Claro: corregir cuando haya tiempo.' },
+  71: { 'La severidad': 'Las preguntas sobre el daño técnico (¿se pierden datos?, ¿se bloquea algo?) definen la severidad.', 'La prioridad': 'Las preguntas sobre la urgencia (¿lo ven hoy?, ¿hay entrega?) definen la prioridad.' },
+  72: 'Se busca el turno de cada defecto en la matriz; el de número más alto se corrige al final.',
+  74: 'IntegrityError 1048 indica que un campo obligatorio (NOT NULL) quedó vacío: se intentó guardar sin grupo.',
+  75: 'TemplateDoesNotExist: la ruta en render debe coincidir exactamente con la carpeta y el nombre del archivo.',
+  76: 'Cuando el código cumple PEP 8, flake8 no muestra nada.',
+  77: { F401: 'F401: importación sin usar.', E111: 'E111: sangría que no es múltiplo de 4.', E225: 'E225: faltan espacios alrededor del operador.' },
+  78: { 'terminal donde corre runserver': 'runserver también imprime el error en la terminal.', 'Los de tu proyecto': 'Los archivos de django/ casi nunca tienen el error: busca tus archivos (views.py, la plantilla).', 'Leer el traceback': 'Corregir sin entender la causa crea errores nuevos: primero se lee el tipo, el archivo y la línea.' },
+  79: 'Las convenciones piden nombres que digan qué guardan, para que cualquiera entienda el código.',
+  80: 'La versión asertiva describe qué pasa, dónde y deja los pasos y la evidencia, sin atacar a la persona.',
+  81: 'En la tabla: Reto es lo que pasó, Emoción lo que sentiste, Estrategia lo que hiciste para enfrentarlo y Resultado cómo te fue.',
+  82: 'Un buen acuerdo es concreto: dice qué harán, cuándo y cómo, para poder cumplirlo y revisarlo.',
+};
 })();
 
 </script>
@@ -334,6 +419,11 @@ const hash = (s) => { let h = 2166136261 >>> 0; for (const ch of s) { h ^= ch.ch
 const mkRng = (seed) => { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; };
 const kit = (rnd) => { const K = { r: rnd, int: (a, b) => a + Math.floor(rnd() * (b - a + 1)), pick: (arr) => arr[Math.floor(rnd() * arr.length)],
   mix: (arr) => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; } }; K.some = (arr, k) => K.mix(arr).slice(0, k); return K; };
+/* explicación de la respuesta correcta para la revisión */
+const explica = (i, g) => { if (g.exp) return g.exp; const e = (EX.exp || {})[i]; const ok = String(g.opts ? g.opts[0] : g.sol != null ? g.sol : g.num);
+  let t = ''; try { if (typeof e === 'function') t = e(g); else if (typeof e === 'string') t = e; else if (e) { const k = Object.keys(e).find((x) => ok.includes(x)); t = k ? e[k] : ''; } } catch (err) { t = ''; }
+  if (g.why) t = t ? `${g.why[0]} ${t}` : g.why[0];
+  return t; };
 /* arma las 50 preguntas de un alumno: datos, orden de preguntas y orden de opciones */
 const armar = (st) => {
   const base = `${EX.materia}|${st.mat}|${st.intento}`;
@@ -342,7 +432,7 @@ const armar = (st) => {
   if (EX.cuota) { const KS = kit(mkRng(hash(base + '|sorteo'))); elegidas = [];
     Object.keys(EX.cuota).forEach((t) => { const idx = EX.preguntas.map((p, i) => (p.t === t ? i : -1)).filter((i) => i >= 0); elegidas.push(...KS.some(idx, EX.cuota[t])); }); }
   const P = elegidas.map((i) => { const p = EX.preguntas[i]; const K = kit(mkRng(hash(base + '|' + i))); let g; try { g = p.gen(K); } catch (e) { console.error(i, e); g = { q: 'Pregunta no disponible', opts: ['—'] }; }
-    const o = { i, t: p.t, q: g.q };
+    const o = { i, t: p.t, q: g.q, sol: g.sol, exp: explica(i, g) };
     if (g.opts) { o.tipo = g.why ? 'mr' : 'mc'; o.opts = g.opts; o.ord = K.mix(g.opts.map((x, j) => j)); if (g.why) { o.why = g.why; o.word = K.mix(g.why.map((x, j) => j)); } }
     else if (g.num != null) { o.tipo = 'num'; o.num = g.num; o.tol = g.tol || 0; o.unit = g.unit || ''; }
     else { o.tipo = 'txt'; o.txt = g.txt; o.ph = g.ph || ''; }
@@ -464,8 +554,32 @@ function calificar() {
 function resultado() {
   const d = st.done, T = Object.keys(EX.temas);
   app.innerHTML = `<main><div class="card res"><h2>Examen entregado</h2><p>${esc(st.nom)} ${esc(st.ap)} ${esc(st.am)} · ${esc(st.mat)}</p><p class="muted">Tu calificación</p><div class="big">${d.calif.toFixed(1)}</div><p><b>${String(d.aciertos).replace('.', ',')}</b> de ${NPREG} puntos${d.sin ? ` · ${d.sin} sin responder` : ''}</p><p class="msg" id="env"></p></div>
-    <div class="card"><h2>Resultado por tema</h2><div class="tbl"><table><tr><th>Tema</th><th>Puntos</th></tr>${T.filter((t) => d.porTema[t]).map((t) => `<tr><td>${t}. ${esc(EX.temas[t])}</td><td>${String(d.porTema[t].p).replace('.', ',')} de ${d.porTema[t].n}</td></tr>`).join('')}</table></div><p class="muted small">Repasa en el simulador los temas con menos puntos.</p></div></main>`;
+    <div class="card"><h2>Resultado por tema</h2><div class="tbl"><table><tr><th>Tema</th><th>Puntos</th></tr>${T.filter((t) => d.porTema[t]).map((t) => `<tr><td>${t}. ${esc(EX.temas[t])}</td><td>${String(d.porTema[t].p).replace('.', ',')} de ${d.porTema[t].n}</td></tr>`).join('')}</table></div><p class="muted small">Repasa en el simulador los temas con menos puntos.</p></div>
+    <div class="card"><h2>Revisión de tu examen</h2><p class="muted small">Para cada pregunta ves tu respuesta, la respuesta correcta y por qué.</p>
+    <div class="row" style="margin-bottom:10px"><button class="btn p" data-f="todas">Todas</button><button class="btn" data-f="mal">Solo las que fallaste</button></div><div id="rev"></div></div></main>`;
+  revision('todas');
+  app.querySelectorAll('[data-f]').forEach((b) => b.addEventListener('click', () => { app.querySelectorAll('[data-f]').forEach((x) => x.classList.toggle('p', x === b)); revision(b.dataset.f); }));
   estadoEnvio();
+}
+function revision(f) {
+  if (!P) P = armar(st);
+  const ok = (b) => (b ? '<span class="rv-ok">✓</span>' : '<span class="rv-mal">✗</span>');
+  const html = P.map((p, j) => {
+    const a = st.ans[p.i] || {}, pt = puntos(p, st.ans[p.i]); if (f === 'mal' && pt >= 1) return '';
+    let r = '';
+    if (p.tipo === 'mc' || p.tipo === 'mr') {
+      r += `<p>${ok(a.o === 0)} <b>Tu respuesta:</b> ${a.o != null ? esc(p.opts[a.o]) : '<i>sin responder</i>'}</p>`;
+      if (a.o !== 0) r += `<p class="rv-c"><b>Respuesta correcta:</b> ${esc(p.opts[0])}</p>`;
+      if (p.tipo === 'mr') { r += `<p>${ok(a.w === 0)} <b>Tu razón:</b> ${a.w != null ? esc(p.why[a.w]) : '<i>sin responder</i>'}</p>`; if (a.w !== 0) r += `<p class="rv-c"><b>Razón correcta:</b> ${esc(p.why[0])}</p>`; }
+    } else {
+      const val = String(a.v || '').trim(), corr = p.tipo === 'num' ? `${String(p.num)}${p.unit ? ' ' + p.unit : ''}` : p.sol;
+      r += `<p>${ok(pt >= 1)} <b>Tu respuesta:</b> ${val ? `<code>${esc(val)}</code>` : '<i>sin responder</i>'}</p>`;
+      if (pt < 1) r += `<p class="rv-c"><b>Respuesta correcta:</b> <code>${esc(corr)}</code></p>`;
+    }
+    if (p.exp) r += `<p class="rv-y"><b>¿Por qué?</b> ${esc(p.exp)}</p>`;
+    return `<div class="rv ${pt >= 1 ? 'bien' : pt > 0 ? 'medio' : 'malo'}"><p class="qn">Pregunta ${j + 1} · ${esc(EX.temas[p.t])} · ${String(pt).replace('.', ',')} ${pt === 1 ? 'punto' : 'puntos'}</p><div class="qt">${p.q}</div>${r}</div>`;
+  }).join('');
+  $('#rev').innerHTML = html || '<p class="msg ok">¡No fallaste ninguna pregunta!</p>';
 }
 function estadoEnvio() { const e = $('#env'); if (!e) return;
   if (st.previa) { e.className = 'msg'; e.textContent = 'Vista previa docente: este resultado no se guarda.'; return; }
