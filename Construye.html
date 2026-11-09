@@ -1308,7 +1308,7 @@ window.GRADE = {
   title: 'Construye aplicaciones web · Segundo y tercer parcial',
   subtitle: 'Submódulo 1 · Programación · Grupo 502',
   heroTitle: 'Prácticas del tercer parcial: Construye aplicaciones web',
-  heroText: 'Cada columna es una semana del tercer parcial (semanas 12 a 16) y cada celda es un tema de la planeación: CRUD completo, despliegue en la nube y presentación del Sistema AquaLink.',
+  heroText: 'La primera columna del tercer parcial retoma las actividades que quedaron pendientes del segundo parcial (sistema de control escolar). Después, cada columna es una semana del tercer parcial (semanas 12 a 16) y cada celda es un tema de la planeación: CRUD completo, despliegue en la nube y presentación del Sistema AquaLink.',
   docente: 'Dra. María Guadalupe Guerrero Ordoñez', plantel: 'CECyTEM · Plantel Metepec II', carrera: 'Técnico en Programación',
   materia: 'Construye aplicaciones web', submodulo: 'Submódulo 1', horasSemana: 7,
   modules: [
@@ -1640,7 +1640,7 @@ Directory:  /home/abgales/aqualink/⟪staticfiles⟫`, { label: 'Aplica' }),
         'Impacto para la escuela y la comunidad',
         'Preguntas del público',
       ] }], { label: 'Práctica guiada' }),
-      FORM('Escribe tu guion', 'Escribe las partes principales de tu guion. Esta evidencia corresponde al producto (P) del tema I. Usa el botón «Copiar mis respuestas» para pegarlo en tu documento.', [
+      FORM('Escribe tu guion', 'Escribe las partes principales de tu guion. Esta evidencia corresponde al producto (P) del tema J. Usa el botón «Copiar mis respuestas» para pegarlo en tu documento.', [
         { label: 'Problema que resuelve AquaLink (2 o 3 oraciones)', min: 120 },
         { label: '¿Qué vas a demostrar en vivo y en qué orden?', min: 120 },
         { label: 'Explicación técnica: ¿qué hace Django, qué hace MySQL y qué hace el servidor en la nube?', min: 160, need: ['Django', 'MySQL'] },
@@ -1675,21 +1675,21 @@ Directory:  /home/abgales/aqualink/⟪staticfiles⟫`, { label: 'Aplica' }),
       ], { label: 'Práctica guiada' }),
     ] },
     { t: 'Reflexión de cierre del PAEC', ps: [
-      FORM('Ficha de reflexión socioemocional', 'Responde con sinceridad. Esta ficha forma parte del producto del tema J y la leerá tu maestra.', [
+      FORM('Ficha de reflexión socioemocional', 'Responde con sinceridad. Esta ficha forma parte del producto del tema K y la leerá tu maestra.', [
         { label: '¿Cuál fue tu aportación al equipo en AquaLink?', min: 100 },
         { label: 'Describe un error de integración que resolvieron y cómo lo hicieron', min: 100 },
         { label: '¿Qué harías diferente en un próximo proyecto?', min: 60 },
         { label: '¿Qué impacto tiene AquaLink para la escuela de natación y la comunidad?', min: 80 },
       ], { label: 'Práctica guiada' }),
     ] },
-    reto('Evaluación del tercer parcial', 'Último repaso del tercer parcial: CRUD completo, despliegue en la nube y presentación del Sistema AquaLink.', QZ('', 'Responde cada pregunta. Repasa los temas F a I si lo necesitas.', [
-      Q('¿Qué método HTTP usa el formulario que confirma una baja?', 'POST', ['GET', 'HEAD', 'Ninguno'], 'Tema F.'),
-      Q('¿Qué hace form.save() cuando el formulario se creó con instance?', 'Actualiza el registro existente', ['Crea un registro nuevo', 'Borra el registro', 'No guarda nada'], 'Tema F.'),
-      Q('¿Qué tres ajustes de seguridad se hacen antes de publicar?', 'DEBUG = False, ALLOWED_HOSTS y SECRET_KEY fuera del código', ['DEBUG = True, ALLOWED_HOSTS = [] y SECRET_KEY en GitHub', 'Solo cambiar el logo', 'Desinstalar Django'], 'Tema G.'),
-      Q('¿Qué archivo conecta el servidor web con Django?', 'El archivo WSGI', ['requirements.txt', 'estilos.css', 'aqualink_final.sql'], 'Tema H.'),
-      Q('¿Qué comando reúne los archivos estáticos?', 'python manage.py collectstatic', ['python manage.py migrate', 'pip freeze', 'git clone'], 'Tema H.'),
-      Q('¿Qué registro DNS apunta www a otro nombre de host?', 'CNAME', ['MX', 'TXT', 'A'], 'Tema H.'),
-      Q('En MVT, ¿dónde se escribe la consulta Nadador.objects.filter(activo=True)?', 'En la vista', ['En la plantilla', 'En el archivo .sql', 'En urls.py'], 'Tema I.'),
+    reto('Evaluación del tercer parcial', 'Último repaso del tercer parcial: CRUD completo, despliegue en la nube y presentación del Sistema AquaLink.', QZ('', 'Responde cada pregunta. Repasa los temas G a J si lo necesitas.', [
+      Q('¿Qué método HTTP usa el formulario que confirma una baja?', 'POST', ['GET', 'HEAD', 'Ninguno'], 'Tema G.'),
+      Q('¿Qué hace form.save() cuando el formulario se creó con instance?', 'Actualiza el registro existente', ['Crea un registro nuevo', 'Borra el registro', 'No guarda nada'], 'Tema G.'),
+      Q('¿Qué tres ajustes de seguridad se hacen antes de publicar?', 'DEBUG = False, ALLOWED_HOSTS y SECRET_KEY fuera del código', ['DEBUG = True, ALLOWED_HOSTS = [] y SECRET_KEY en GitHub', 'Solo cambiar el logo', 'Desinstalar Django'], 'Tema H.'),
+      Q('¿Qué archivo conecta el servidor web con Django?', 'El archivo WSGI', ['requirements.txt', 'estilos.css', 'aqualink_final.sql'], 'Tema I.'),
+      Q('¿Qué comando reúne los archivos estáticos?', 'python manage.py collectstatic', ['python manage.py migrate', 'pip freeze', 'git clone'], 'Tema I.'),
+      Q('¿Qué registro DNS apunta www a otro nombre de host?', 'CNAME', ['MX', 'TXT', 'A'], 'Tema I.'),
+      Q('En MVT, ¿dónde se escribe la consulta Nadador.objects.filter(activo=True)?', 'En la vista', ['En la plantilla', 'En el archivo .sql', 'En urls.py'], 'Tema J.'),
     ])),
   ] },
   ],
@@ -2399,12 +2399,232 @@ window.P3RETO = {
 };
 })();
 
+/* Tercer parcial · Construye: BLOQUE INICIAL con las actividades 4 a 11 de la presentación del segundo parcial
+   (sistema de control escolar). Son los primeros ejercicios del tercer parcial. Práctica real con datos por alumno. */
+(() => {
+const rx = (t) => String(t).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const NOM = ['Ana', 'Luis', 'Sofía', 'Diego', 'Valeria', 'Mateo', 'Camila', 'Iker', 'Regina', 'Emiliano', 'Ximena', 'Santiago'];
+const APE = ['López', 'Hernández', 'Martínez', 'García', 'Pérez', 'Ramírez', 'Torres', 'Flores', 'Cruz', 'Morales'];
+const persona = (K) => `${K.pick(NOM)} ${K.pick(APE)}`;
+const r1 = (x) => Math.round(x * 10) / 10;
+const num = (x) => { const a = [String(x), x.toFixed(1), x.toFixed(2)]; return [...new Set(a.concat(a.map((v) => v.replace('.', ','))))].join('|'); };
+const P = (label, ex) => Object.assign({ label }, ex);
+const ENT = {
+  4: ['Tutorial y reporte del servidor local (04_reporte_servidor.pdf).', ['mysqlclient instalado', 'DATABASES con los parámetros correctos', 'migrate sin errores', 'Reporte con evidencias de la conexión']],
+  5: ['Manual del panel de administración con capturas.', ['Modelos con campos y relaciones correctos', 'Migraciones aplicadas sin errores', 'Panel con columnas, buscador y filtro', 'Manual claro para el personal']],
+  6: ['Capturas de registro, login, lista y detalle, y de la contraseña cifrada.', ['Login y logout funcionando', 'Registro con contraseña cifrada', 'Lista y detalle protegidos con sesión', 'Sin sesión redirige al login']],
+  7: ['Código del formulario y capturas del alta de alumnos.', ['ModelForm con los campos correctos', 'Vista con GET, POST y redirect', 'Plantilla con csrf_token', 'Alumnos guardados en MySQL']],
+  8: ['Código del formulario, capturas de las validaciones y video de 30 a 60 s.', ['Rechaza fechas futuras', 'Rechaza matrículas repetidas', 'Mensajes claros en cada caso', 'Video claro de la demostración']],
+  9: ['Código y capturas de la lista, la búsqueda y el detalle.', ['Consultas correctas con el ORM', 'Búsqueda por nombre o apellido', 'Promedio verificado a mano', 'Caso sin calificaciones sin errores']],
+  10: ['Demostración en vivo (D) y lista de cotejo con evidencias.', ['Servidor y base funcionando en vivo', 'Todos los criterios de la lista cumplidos', 'Cada integrante explica su parte', 'Uso de datos de prueba']],
+  11: ['Reflexión escrita del equipo (08_reflexion.docx).', ['Responde las tres preguntas', 'Relaciona el sistema con la comunidad', 'Reconoce el cuidado de los datos', 'Propone una mejora para el Parcial 3']],
+};
+const act = (n, t, pasos) => ({ n: `${n} · del 2.º parcial`, t, pasos, entregable: ENT[n][0], evalua: ENT[n][1] });
+
+window.P3NEW = [{ name: 'Control escolar: del 2.º parcial al 3.º', hilo: 'datos', temas: [
+  /* ===== Actividad 4 · Conecta Django con MySQL ===== */
+  { t: 'Conecta Django con MySQL',
+    exp: { que: 'Configurar DATABASES en settings.py e instalar el conector mysqlclient para que el proyecto escuela guarde y lea sus datos en MySQL de XAMPP.', porque: 'Si la conexión falla, nada de lo que capture el sistema llega a la base. Leer el mensaje de error dice qué falta: el servidor, el conector, el usuario o el nombre de la base.', como: 'Con el entorno activo: pip install mysqlclient, se edita DATABASES (ENGINE mysql, NAME escuela, USER root, PASSWORD vacío, HOST localhost, PORT 3306), se ejecuta migrate y luego runserver.', ejemplo: '«Can\'t connect to MySQL server on \'localhost\'» no es un error del código: MySQL está apagado. Se inicia en XAMPP y migrate termina con «OK».' },
+    act: act(4, 'Conecta Django con MySQL', ['Activa el entorno virtual del proyecto.', 'Instala el conector: pip install mysqlclient.', 'Edita DATABASES en settings.py con los datos de XAMPP.', 'Ejecuta python manage.py migrate.', 'Comprueba en phpMyAdmin las tablas nuevas de Django.', 'Inicia el servidor con python manage.py runserver.', 'Si aparece un error, clasifícalo y corrígelo.', 'Redacta el reporte del servidor local con capturas.']),
+    ps: [
+      P('Práctica', { type: 'term', title: 'Conecta y migra desde la terminal', intro: 'Escribe cada comando y presiona Enter para ejecutarlo. Tu carpeta de entorno tiene un nombre distinto al de tus compañeros.', tasks: [], shell: 'Terminal de VS Code', gen: (K) => {
+        const v = K.pick(['venv', 'env', 'entorno']);
+        return { lead: `<p>Estás en la carpeta del proyecto <b>escuela</b>. Tu entorno virtual se llama <b><code>${v}</code></b>. XAMPP ya tiene MySQL encendido.</p>`, prompt: 'C:\\proyectos\\escuela>', tasks: [
+          { t: 'Activa el entorno virtual (Windows).', sol: `${v}\\Scripts\\activate`, ok: [new RegExp(`^\\.?\\\\?${v}[\\\\/]scripts[\\\\/]activate(\\.bat|\\.ps1)?$`, 'i')], out: `(${v}) C:\\proyectos\\escuela>`, hint: `${v}\\Scripts\\activate`, err: () => 'El sistema no puede encontrar la ruta especificada. (Revisa el nombre de tu entorno.)' },
+          { t: 'Instala el conector de MySQL que usa Django.', sol: 'pip install mysqlclient', ok: [/^(python -m )?pip3? install mysqlclient$/i], prompt: `(${v}) C:\\proyectos\\escuela>`, out: 'Successfully installed mysqlclient-2.2.4', hint: 'pip install …' },
+          { t: 'Crea en MySQL las tablas internas de Django.', sol: 'python manage.py migrate', ok: [/^(python3?|py) manage\.py migrate$/i], prompt: `(${v}) C:\\proyectos\\escuela>`, out: 'Applying contenttypes.0001_initial... OK\nApplying auth.0001_initial... OK\nApplying sessions.0001_initial... OK', hint: 'python manage.py …' },
+          { t: 'Inicia el servidor de desarrollo.', sol: 'python manage.py runserver', ok: [/^(python3?|py) manage\.py runserver( 8000| 127\.0\.0\.1:8000)?$/i], prompt: `(${v}) C:\\proyectos\\escuela>`, out: 'Starting development server at http://127.0.0.1:8000/\nQuit the server with CTRL-BREAK.', hint: 'python manage.py …' },
+        ] }; } }),
+      P('Práctica', { type: 'classify', title: 'Clasifica los errores de conexión', intro: 'Cada mensaje apareció en un equipo distinto. Clasifica la causa para saber qué revisar primero.', cats: ['MySQL apagado', 'Falta el conector', 'Usuario o contraseña', 'Nombre de la base'], items: [], gen: (K) => {
+        const typo = K.pick(['escuelaa', 'escuel', 'escuela_db', 'Escuela1']), u = K.pick(['admin', 'escuela', 'usuario']);
+        const I = [
+          { t: "Can't connect to MySQL server on 'localhost' (10061)", c: 0, why: 'Django no encontró ningún MySQL escuchando: hay que iniciarlo en XAMPP.' },
+          { t: 'OperationalError: (2003) Connection refused', c: 0, why: 'La conexión fue rechazada porque MySQL no está encendido.' },
+          { t: 'Error loading MySQLdb module. Did you install mysqlclient?', c: 1, why: 'Falta pip install mysqlclient con el entorno activo.' },
+          { t: "ModuleNotFoundError: No module named 'MySQLdb'", c: 1, why: 'El módulo MySQLdb viene del paquete mysqlclient, que no está instalado en el entorno.' },
+          { t: `Access denied for user '${u}'@'localhost'`, c: 2, why: 'En XAMPP el usuario es root y no tiene contraseña.' },
+          { t: "Access denied for user 'root'@'localhost' (using password: YES)", c: 2, why: 'Se envió una contraseña, pero root no tiene en XAMPP: PASSWORD debe ir vacío.' },
+          { t: `Unknown database '${typo}'`, c: 3, why: 'MySQL funciona, pero NAME no coincide con la base escuela.' },
+        ];
+        return { items: K.mix([...K.some(I.filter((x) => x.c === 0), 1), ...K.some(I.filter((x) => x.c === 1), 1), ...K.some(I.filter((x) => x.c === 2), 1), ...K.some(I.filter((x) => x.c === 3), 1), K.pick(I)]).filter((x, i, a) => a.indexOf(x) === i) }; } }),
+    ] },
+  /* ===== Actividad 5 · Modelos y panel de administración ===== */
+  { t: 'Modelos y panel de administración',
+    exp: { que: 'Un modelo es una clase de Python que describe una tabla. El panel /admin/ permite capturar y buscar registros sin programar pantallas.', porque: 'El personal de control escolar necesita capturar grupos y alumnos desde el primer día, y encontrarlos rápido.', como: 'Se escriben los modelos en models.py, se ejecutan makemigrations y migrate, se registran en admin.py con list_display, search_fields y list_filter, y se crea el superusuario.', ejemplo: 'Alumno tiene grupo = ForeignKey(Grupo, on_delete=models.PROTECT) y matricula con unique=True. En /admin/ el personal busca «Hernández» y filtra por grupo.' },
+    act: act(5, 'Modelos y panel de administración', ['Escribe los modelos Grupo y Alumno (y después Materia, Inscripcion y Calificacion).', 'Agrega __str__ a cada modelo.', 'Ejecuta makemigrations y migrate.', 'Registra los modelos en admin.py con list_display, search_fields y list_filter.', 'Crea el superusuario con createsuperuser.', 'Entra a /admin/ y captura 2 grupos y 5 alumnos de prueba.', 'Prueba el buscador por apellido y el filtro por grupo.', 'Redacta el manual del panel para el personal, con capturas.']),
+    ps: [
+      P('Práctica', { type: 'code', title: 'Escribe el modelo Alumno', intro: 'Escribe el modelo que pide la escuela. Ejecuta para simular makemigrations y corrige lo que falte.', starter: '', rules: [], gen: (K) => {
+        const ml = K.pick([12, 15, 18]);
+        return { file: 'alumnos/models.py', lead: `<p>Control escolar pide la tabla <b>Alumno</b> con: <b>grupo</b> (un grupo tiene muchos alumnos y no se debe poder borrar un grupo que tenga alumnos), <b>matricula</b> (texto de hasta ${ml} caracteres que no se repita), <b>nombre</b> (hasta 60), <b>apellidos</b> (hasta 80) y <b>fecha_nacimiento</b>. En el panel debe verse como «apellidos nombre».</p>`,
+          starter: `from django.db import models\n\n\nclass Grupo(models.Model):\n    nombre = models.CharField(max_length=10)\n\n    def __str__(self):\n        return self.nombre\n\n\nclass Alumno(models.Model):\n    pass\n`,
+          ok: "(venv) > python manage.py makemigrations\nMigrations for 'alumnos':\n  alumnos/migrations/0002_alumno.py\n    - Create model Alumno\n✓ Listo para migrate.",
+          sol: `class Alumno(models.Model):\n    grupo = models.ForeignKey(Grupo, on_delete=models.PROTECT)\n    matricula = models.CharField(max_length=${ml}, unique=True)\n    nombre = models.CharField(max_length=60)\n    apellidos = models.CharField(max_length=80)\n    fecha_nacimiento = models.DateField()\n\n    def __str__(self):\n        return f'{self.apellidos} {self.nombre}'`,
+          rules: [
+            { t: 'grupo es ForeignKey a Grupo con on_delete=models.PROTECT', re: /grupo\s*=\s*models\.ForeignKey\(\s*Grupo\s*,[^)]*on_delete\s*=\s*models\.PROTECT/, err: "alumnos.Alumno: falta grupo o no protege el borrado.\n(Un grupo con alumnos no debe poder borrarse: on_delete=models.PROTECT)" },
+            { t: `matricula es CharField de ${ml} y única`, fn: (c) => new RegExp(`matricula\\s*=\\s*models\\.CharField\\(([^)]*)\\)`).test(c) && /max_length\s*=\s*\d+/.test(c.match(/matricula\s*=\s*models\.CharField\(([^)]*)\)/)[1]) && new RegExp(`max_length\\s*=\\s*${ml}\\b`).test(c.match(/matricula\s*=\s*models\.CharField\(([^)]*)\)/)[1]) && /unique\s*=\s*True/.test(c.match(/matricula\s*=\s*models\.CharField\(([^)]*)\)/)[1]), err: `alumnos.Alumno.matricula: debe ser CharField(max_length=${ml}, unique=True).\n(Sin unique=True se podrían repetir matrículas.)` },
+            { t: 'nombre (60) y apellidos (80) son CharField', fn: (c) => /nombre\s*=\s*models\.CharField\(\s*max_length\s*=\s*60\s*\)/.test(c) && /apellidos\s*=\s*models\.CharField\(\s*max_length\s*=\s*80\s*\)/.test(c), err: 'alumnos.Alumno: revisa nombre (max_length=60) y apellidos (max_length=80).' },
+            { t: 'fecha_nacimiento es DateField', re: /fecha_nacimiento\s*=\s*models\.DateField\(/, err: 'alumnos.Alumno: falta fecha_nacimiento como DateField.' },
+            { t: '__str__ regresa apellidos y nombre', re: /def\s+__str__\s*\(\s*self\s*\)\s*:\s*\n\s+return\s+(f['"]\{self\.apellidos\}\s*\{self\.nombre\}['"]|self\.apellidos\s*\+\s*['"] ['"]\s*\+\s*self\.nombre)/, err: 'En /admin/ la lista muestra «Alumno object (1)», «Alumno object (2)»…' },
+          ] }; } }),
+      P('Práctica', { type: 'code', title: 'Configura el panel de alumnos', intro: 'Escribe AlumnoAdmin para que el panel haga lo que pide el personal. Ejecuta para abrir /admin/ y revisar.', starter: '', rules: [], gen: (K) => {
+        const bus = K.pick([['apellidos', 'matricula'], ['matricula', 'apellidos'], ['apellidos', 'nombre']]), fil = 'grupo';
+        return { file: 'alumnos/admin.py', lead: `<p>El personal quiere ver en columnas <b>matrícula, apellidos, nombre y grupo</b>; buscar por <b>${bus[0]}</b> o <b>${bus[1]}</b>, y filtrar por <b>${fil}</b>.</p>`,
+          starter: `from django.contrib import admin\nfrom .models import Grupo, Alumno\n\n\nclass AlumnoAdmin(admin.ModelAdmin):\n    pass\n`,
+          ok: '/admin/alumnos/alumno/\n  Buscar: [________]   Filtro: Por grupo ▸ 5A · 5B\n  MATRÍCULA | APELLIDOS | NOMBRE | GRUPO\n✓ El panel tiene columnas, buscador y filtro.',
+          sol: `@admin.register(Alumno)\nclass AlumnoAdmin(admin.ModelAdmin):\n    list_display = ('matricula', 'apellidos', 'nombre', 'grupo')\n    search_fields = ('${bus[0]}', '${bus[1]}')\n    list_filter = ('grupo',)\n\n\nadmin.site.register(Grupo)`,
+          rules: [
+            { t: 'Alumno está registrado en el panel', re: /@admin\.register\(\s*Alumno\s*\)\s*\n\s*class\s+AlumnoAdmin|admin\.site\.register\(\s*Alumno\s*,\s*AlumnoAdmin\s*\)/, err: '/admin/ no muestra Alumnos: falta registrar el modelo (@admin.register(Alumno) o admin.site.register(Alumno, AlumnoAdmin)).' },
+            { t: 'list_display con matrícula, apellidos, nombre y grupo', fn: (c) => { const m = c.match(/list_display\s*=\s*[([]([^)\]]*)[)\]]/); return !!m && ['matricula', 'apellidos', 'nombre', 'grupo'].every((x) => new RegExp(`['"]${x}['"]`).test(m[1])); }, err: 'La lista no muestra todas las columnas pedidas (list_display).' },
+            { t: `search_fields con ${bus[0]} y ${bus[1]}`, fn: (c) => { const m = c.match(/search_fields\s*=\s*[([]([^)\]]*)[)\]]/); return !!m && bus.every((x) => new RegExp(`['"]${x}['"]`).test(m[1])); }, err: `No aparece el buscador o no busca por ${bus[0]} y ${bus[1]} (search_fields).` },
+            { t: 'list_filter por grupo', re: /list_filter\s*=\s*[([]\s*['"]grupo['"]\s*,?\s*[)\]]/, err: "No aparece el filtro lateral por grupo (list_filter = ('grupo',))." },
+            { t: 'Grupo también está registrado', re: /admin\.site\.register\(\s*Grupo\s*\)|@admin\.register\(\s*Grupo\s*\)/, err: 'En /admin/ no se pueden capturar grupos: falta admin.site.register(Grupo).' },
+          ] }; } }),
+    ] },
+  /* ===== Actividad 6 · Registro, login y vistas protegidas ===== */
+  { t: 'Login y vistas protegidas',
+    exp: { que: 'Django ya trae las vistas de inicio y cierre de sesión (LoginView y LogoutView). Las vistas de lista y detalle se protegen con @login_required.', porque: 'Los datos de los alumnos solo deben verlos usuarios con sesión, y las contraseñas deben guardarse cifradas.', como: 'Se conectan LoginView y LogoutView en urls.py con su plantilla, se programa el registro con UserCreationForm, se protegen las vistas y se configuran LOGIN_URL y LOGIN_REDIRECT_URL.', ejemplo: 'Sin sesión, /alumnos/ responde 302 y redirige a /login/. En auth_user la contraseña se ve como pbkdf2_sha256$…' },
+    act: act(6, 'Registro, login y vistas protegidas', ['Conecta LoginView y LogoutView en urls.py.', 'Crea la plantilla login.html con {% csrf_token %} y el formulario.', 'Programa la vista de registro con UserCreationForm.', 'Programa lista_alumnos y detalle_alumno con @login_required.', 'Configura LOGIN_REDIRECT_URL y LOGIN_URL en settings.py.', 'Crea un usuario de prueba y entra al sistema.', 'Prueba /alumnos/ con sesión y en una ventana de incógnito.', 'Revisa en phpMyAdmin que la contraseña esté cifrada.']),
+    ps: [
+      P('Práctica', { type: 'code', title: 'Conecta el login y protege el detalle', intro: 'Corrige urls.py y la vista hasta que las pruebas del login pasen. Presiona ▶ Ejecutar para correrlas.', starter: '', rules: [], gen: (K) => {
+        const tpl = K.pick(['login.html', 'acceso.html']), pk = K.int(3, 60);
+        return { file: 'escuela/urls.py y alumnos/views.py', lead: `<p>Tu plantilla de inicio de sesión se llama <b><code>${tpl}</code></b> y está en templates/.</p>`,
+          starter: `# escuela/urls.py\nurlpatterns = [\n    path('login/', auth_views.LoginView.as_view(), name='login'),\n    path('alumnos/<int:pk>/', views.detalle_alumno, name='detalle_alumno'),\n]\n\n# alumnos/views.py\ndef detalle_alumno(request, pk):\n    alumno = Alumno.objects.get(pk=pk)\n    return render(request, 'alumnos/detalle.html', {'alumno': alumno})\n`,
+          ok: `test_login_abre ............... ok\ntest_logout_existe ............ ok\ntest_detalle_sin_sesion_302 ... ok\ntest_detalle_inexistente_404 .. ok\n✓ 4 pruebas pasaron.`,
+          sol: `path('login/', auth_views.LoginView.as_view(template_name='${tpl}'), name='login'),\npath('logout/', auth_views.LogoutView.as_view(), name='logout'),\n\n@login_required\ndef detalle_alumno(request, pk):\n    alumno = get_object_or_404(Alumno, pk=pk)\n    ...`,
+          rules: [
+            { t: `LoginView usa la plantilla ${tpl}`, re: new RegExp(`LoginView\\.as_view\\(\\s*template_name\\s*=\\s*['"]${rx(tpl)}['"]\\s*\\)`), err: 'test_login_abre ... ERROR\nTemplateDoesNotExist: registration/login.html\n(LoginView busca esa plantilla si no indicas template_name.)' },
+            { t: 'Existe la ruta logout con LogoutView', re: /path\(\s*['"]logout\/['"]\s*,\s*auth_views\.LogoutView\.as_view\(\)\s*,\s*name\s*=\s*['"]logout['"]\s*\)/, err: "test_logout_existe ... FAIL\nNoReverseMatch: Reverse for 'logout' not found." },
+            { t: 'detalle_alumno lleva @login_required', re: /@login_required\s*\n\s*def\s+detalle_alumno/, err: `test_detalle_sin_sesion_302 ... FAIL\nUn visitante sin sesión abrió /alumnos/${pk}/ y vio los datos del alumno (debía redirigir al login).` },
+            { t: 'Usa get_object_or_404', re: /get_object_or_404\(\s*Alumno\s*,\s*pk\s*=\s*pk\s*\)/, err: 'test_detalle_inexistente_404 ... ERROR\nAlumno.DoesNotExist: Alumno matching query does not exist. (error 500; debía ser 404)' },
+          ] }; } }),
+      P('Práctica', { type: 'fill', title: 'Ajustes de sesión y registro', intro: 'Completa settings.py y la vista de registro con lo que hace falta.', code: '', gen: (K) => {
+        const dest = K.pick(['lista_alumnos', 'inicio']);
+        return { file: 'settings.py y alumnos/views.py', lead: `<p>Después de iniciar sesión, el personal debe llegar a la ruta <b><code>${dest}</code></b>. Quien no tiene sesión debe ir a la ruta <b><code>login</code></b>.</p>`,
+          code: `# settings.py\nLOGIN_REDIRECT_URL = '⟪${dest}⟫'\nLOGIN_URL = '⟪login⟫'\n\n# alumnos/views.py\nfrom django.contrib.auth.forms import ⟪UserCreationForm⟫\n\ndef registro(request):\n    if request.method == '⟪POST⟫':\n        form = UserCreationForm(request.⟪POST⟫)\n        if form.⟪is_valid⟫():\n            form.⟪save⟫()\n            return ⟪redirect⟫('login')\n    else:\n        form = UserCreationForm()\n    return render(request, 'registro.html', {'form': form})\n\n# En auth_user la contraseña empieza con: ⟪pbkdf2_sha256⟫$…` }; } }),
+    ] },
+  /* ===== Actividad 7 · Formulario de alta ===== */
+  { t: 'Formulario de alta de alumnos',
+    exp: { que: 'Un ModelForm construye el formulario a partir del modelo Alumno, valida los datos y los guarda en MySQL: es la operación Insertar del CRUD.', porque: 'Con el formulario, el sistema ya inserta alumnos sin usar /admin/. Si deja pasar datos inválidos, todo el sistema muestra información equivocada.', como: 'Se crea AlumnoForm en forms.py; la vista atiende GET (formulario vacío) y POST (valida con is_valid, guarda con save y redirige); la plantilla lleva {% csrf_token %}.', ejemplo: 'GET /alumnos/nuevo/ muestra los campos vacíos; al presionar Guardar se envía un POST, se valida, se guarda y regresa a la lista con «Alumno registrado».' },
+    act: act(7, 'Programa el formulario de alta', ['Crea alumnos/forms.py con AlumnoForm basado en el modelo Alumno.', "Agrega la ruta alumnos/nuevo/ con name='nuevo_alumno'.", 'Programa la vista nuevo_alumno con GET y POST.', 'Crea la plantilla form.html con {% csrf_token %} y {{ form.as_p }}.', 'Agrega en la lista un botón «Nuevo alumno».', 'Registra 3 alumnos de prueba desde el formulario.', 'Comprueba que aparecen en la lista y en phpMyAdmin.', 'Toma capturas del formulario y de la lista actualizada.']),
+    ps: [
+      P('Práctica', { type: 'code', title: 'Programa la vista nuevo_alumno', intro: 'Corrige la vista hasta que las pruebas del alta pasen. ▶ Ejecutar simula capturar alumnos.', starter: '', rules: [], gen: (K) => {
+        const n = persona(K), msg = K.pick(['Alumno registrado', 'Alumno guardado']);
+        return { file: 'alumnos/views.py', lead: `<p>Después de guardar, debe aparecer el mensaje <b>«${msg}»</b> y regresar a la ruta <b><code>lista_alumnos</code></b>.</p>`,
+          starter: `@login_required\ndef nuevo_alumno(request):\n    form = AlumnoForm(request.POST)\n    form.save()\n    return render(request, 'alumnos/form.html', {'form': form})\n`,
+          ok: `GET  /alumnos/nuevo/ → formulario vacío\nPOST datos de ${n} → guardado, 302 a /alumnos/ «${msg}»\nPOST con fecha futura → se vuelve a mostrar con el error\nRecargar la lista → no se duplica\n✓ El alta funciona.`,
+          sol: `@login_required\ndef nuevo_alumno(request):\n    if request.method == 'POST':\n        form = AlumnoForm(request.POST)\n        if form.is_valid():\n            form.save()\n            messages.success(request, '${msg}')\n            return redirect('lista_alumnos')\n    else:\n        form = AlumnoForm()\n    return render(request, 'alumnos/form.html', {'form': form})`,
+          rules: [
+            { t: 'Distingue GET y POST', re: /if\s+request\.method\s*==\s*['"]POST['"]\s*:/, err: 'GET /alumnos/nuevo/ → el formulario aparece lleno de errores «Este campo es obligatorio» antes de capturar nada.\n(Con GET se crea un formulario vacío.)' },
+            { t: 'Valida con is_valid() antes de guardar', re: /if\s+form\.is_valid\(\)\s*:\s*\n\s+form\.save\(\)/, err: 'POST con datos incompletos → ValueError: The Alumno could not be created because the data didn\'t validate.' },
+            { t: `Muestra «${msg}»`, re: new RegExp(`messages\\.success\\(\\s*request\\s*,\\s*['"]${rx(msg)}['"]\\s*\\)`), err: `POST datos de ${n} → se guardó, pero no aparece el mensaje «${msg}».` },
+            { t: 'Redirige a lista_alumnos después de guardar', re: /return\s+redirect\(\s*['"]lista_alumnos['"]\s*\)/, err: `Recargar la página → se registra otra vez a ${n}.\n(Falta redirect después de guardar.)` },
+            { t: 'Con GET crea un formulario vacío', re: /else\s*:\s*\n\s+form\s*=\s*AlumnoForm\(\s*\)/, err: 'GET /alumnos/nuevo/ → falla: falta crear AlumnoForm() vacío en el caso GET.' },
+          ] }; } }),
+      P('Práctica', { type: 'fill', title: 'Ruta y plantilla del formulario', intro: 'Completa la ruta, la plantilla y el botón de la lista.', code: '', gen: (K) => {
+        const btn = K.pick(['Nuevo alumno', 'Agregar alumno']);
+        return { file: 'urls.py · form.html · lista.html', lead: `<p>El botón de la lista dice <b>«${btn}»</b>.</p>`,
+          code: `# alumnos/urls.py\npath('alumnos/⟪nuevo⟫/', views.nuevo_alumno, name='⟪nuevo_alumno⟫'),\n\n<!-- templates/alumnos/form.html -->\n<form method="⟪post⟫">{% ⟪csrf_token⟫ %}\n  {{ form.⟪as_p⟫ }}\n  <button type="submit">Guardar</button>\n</form>\n\n<!-- templates/alumnos/lista.html -->\n<a href="{% ⟪url⟫ 'nuevo_alumno' %}">${btn}</a>` }; } }),
+    ] },
+  /* ===== Actividad 8 · Validaciones y video ===== */
+  { t: 'Validaciones del formulario',
+    exp: { que: 'Reglas que revisan los datos antes de guardarlos: unique=True para la matrícula, clean_fecha_nacimiento para fechas futuras y los campos obligatorios.', porque: 'Una fecha de 2030 o una matrícula repetida provocan errores en listas, boletas y reportes. Validar al capturar es más fácil que corregir después.', como: 'Se escribe un método clean_ + nombre exacto del campo que lanza ValidationError; is_valid() lo ejecuta junto con las reglas del modelo.', ejemplo: 'Con fecha 01/01/2030 aparece «La fecha de nacimiento no puede ser futura» y no se guarda; con una matrícula repetida Django avisa que ya existe.' },
+    act: act(8, 'Validaciones y video de demostración', ['Agrega clean_fecha_nacimiento para rechazar fechas futuras.', 'Comprueba que la matrícula tenga unique=True en el modelo.', 'Prueba guardar con una fecha futura y revisa el mensaje.', 'Prueba con una matrícula repetida.', 'Prueba dejando campos vacíos.', 'Agrega el mensaje «Alumno registrado» con messages.', 'Comprueba en phpMyAdmin que no se guardaron datos inválidos.', 'Graba un video de 30 a 60 s con los casos de prueba.']),
+    ps: [
+      P('Práctica', { type: 'code', title: 'Rechaza las fechas futuras', intro: 'Escribe la validación en AlumnoForm. ▶ Ejecutar prueba con fechas distintas.', starter: '', rules: [], gen: (K) => {
+        const y = K.int(2027, 2035), n = persona(K);
+        return { file: 'alumnos/forms.py', lead: `<p>Mensaje exacto que pide control escolar: <b>«La fecha de nacimiento no puede ser futura»</b>.</p>`,
+          starter: `from datetime import date\nfrom django import forms\nfrom .models import Alumno\n\n\nclass AlumnoForm(forms.ModelForm):\n    class Meta:\n        model = Alumno\n        fields = ['matricula', 'nombre', 'apellidos', 'fecha_nacimiento', 'grupo']\n\n    def clean_fecha(self):\n        fecha = self.cleaned_data['fecha']\n        return fecha\n`,
+          ok: `${n}, nacimiento 2009-05-14 → válido, se guarda\n${n}, nacimiento ${y}-01-01 → «La fecha de nacimiento no puede ser futura», no se guarda\n✓ La validación funciona.`,
+          sol: `    def clean_fecha_nacimiento(self):\n        fecha = self.cleaned_data['fecha_nacimiento']\n        if fecha > date.today():\n            raise forms.ValidationError(\n                'La fecha de nacimiento no puede ser futura')\n        return fecha`,
+          rules: [
+            { t: 'El método se llama clean_fecha_nacimiento', re: /def\s+clean_fecha_nacimiento\s*\(\s*self\s*\)\s*:/, err: `${n}, nacimiento ${y}-01-01 → se guardó ✗\nDjango solo ejecuta clean_ + el nombre exacto del campo (fecha_nacimiento).` },
+            { t: "Lee cleaned_data['fecha_nacimiento']", re: /self\.cleaned_data\[\s*['"]fecha_nacimiento['"]\s*\]/, err: "KeyError: 'fecha'\n(El campo se llama fecha_nacimiento.)" },
+            { t: 'Compara con date.today()', re: /if\s+fecha\s*>\s*date\.today\(\)\s*:/, err: `${n}, nacimiento ${y}-01-01 → se guardó ✗\nFalta comparar la fecha con date.today().` },
+            { t: 'Lanza ValidationError con el mensaje pedido', re: /raise\s+forms\.ValidationError\(\s*['"]La fecha de nacimiento no puede ser futura['"]\s*\)/, err: '${n}: la fecha futura no muestra el mensaje «La fecha de nacimiento no puede ser futura».'.replace('${n}', n) },
+            { t: 'Regresa la fecha si es válida', re: /return\s+fecha\s*$/m, err: `${n}, nacimiento 2009-05-14 → se guardó sin fecha (None).\n(El método debe regresar el valor válido.)` },
+          ] }; } }),
+      P('Práctica', { type: 'classify', title: '¿Qué pasa con cada captura?', intro: 'Ya existe la alumna con matrícula de la primera fila. Clasifica qué hace el formulario con cada captura.', cats: ['Se guarda', 'Error: fecha futura', 'Error: matrícula repetida', 'Error: campo obligatorio'], items: [], gen: (K) => {
+        const m0 = `2026${K.int(100, 999)}`, y = K.int(2027, 2033), p1 = persona(K), p2 = persona(K), p3 = persona(K), p4 = persona(K);
+        return { lead: `<p>En la base ya está registrada la matrícula <b>${m0}</b>.</p>`, items: K.mix([
+          { t: `${p1} · matrícula 2026${K.int(1000, 1999)} · nació 2009-03-12`, c: 0, why: 'Datos completos y válidos: se guarda y regresa a la lista.' },
+          { t: `${p2} · matrícula 2026${K.int(2000, 2999)} · nació ${y}-02-01`, c: 1, why: 'clean_fecha_nacimiento rechaza la fecha futura.' },
+          { t: `${p3} · matrícula ${m0} · nació 2008-11-30`, c: 2, why: 'unique=True: ya existe un alumno con esa matrícula.' },
+          { t: `${p4} · matrícula (vacía) · nació 2009-07-07`, c: 3, why: 'Django muestra «Este campo es obligatorio».' },
+          { t: `Sin nombre · matrícula 2026${K.int(3000, 3999)} · nació 2010-01-15`, c: 3, why: 'El nombre es obligatorio.' },
+        ]) }; } }),
+    ] },
+  /* ===== Actividad 9 · Lista, búsqueda y detalle ===== */
+  { t: 'Lista, búsqueda y detalle con promedio',
+    exp: { que: 'Vistas que consultan la base con el ORM: lista ordenada, búsqueda por nombre o apellido, alumnos por grupo y el promedio de cada alumno.', porque: 'Es lo que el personal usa todos los días. Una consulta equivocada muestra información falsa sobre un estudiante.', como: 'filter con Q e icontains busca, order_by ordena, annotate con Count cuenta por grupo y aggregate con Avg calcula el promedio; si no hay calificaciones, Avg regresa None.', ejemplo: 'Al escribir «her» aparecen Hernández y Herrera. Luis tiene 7.5, 8.0 y 9.0: su promedio es 8.2.' },
+    act: act(9, 'Lista, búsqueda y detalle', ['Captura en /admin/ materias, inscripciones y calificaciones de prueba.', 'Programa lista_alumnos con filter, Q, icontains y order_by.', 'Agrega el formulario de búsqueda con method="get".', 'Muestra el total de alumnos por grupo con annotate y Count.', 'Programa detalle_alumno con su promedio usando Avg.', 'Protege el caso del alumno sin calificaciones.', 'Comprueba a mano el promedio de un alumno.', 'Toma capturas de la lista, la búsqueda y el detalle.']),
+    ps: [
+      P('Práctica', { type: 'code', title: 'Programa la búsqueda de alumnos', intro: 'Corrige la vista hasta que la búsqueda funcione. ▶ Ejecutar prueba con varios textos.', starter: '', rules: [], gen: (K) => {
+        const ap = K.pick([['her', 'Hernández', 'Herrera'], ['mar', 'Martínez', 'Marín'], ['gar', 'García', 'Garduño']]);
+        return { file: 'alumnos/views.py', lead: `<p>Al buscar <b>«${ap[0]}»</b> deben aparecer ${ap[1]} y ${ap[2]}, sin importar mayúsculas, buscando en nombre <b>o</b> apellidos, y la lista debe salir ordenada por apellidos y nombre.</p>`,
+          starter: `from django.db.models import Q, Count\n\n\n@login_required\ndef lista_alumnos(request):\n    q = request.GET.get('q', '')\n    alumnos = Alumno.objects.filter(apellido__contains=q)\n    grupos = Grupo.objects.annotate(total=Count('alumnos'))\n    return render(request, 'alumnos/lista.html', {\n        'alumnos': alumnos, 'grupos': grupos, 'q': q})\n`,
+          ok: `?q=${ap[0]} → ${ap[1]}, ${ap[2]}\n?q=${ap[0].toUpperCase()} → ${ap[1]}, ${ap[2]}\n?q= (vacío) → todos, ordenados por apellidos\nGrupos: 5A (24) · 5B (22)\n✓ La búsqueda funciona.`,
+          sol: `alumnos = (Alumno.objects\n           .filter(Q(nombre__icontains=q) |\n                   Q(apellidos__icontains=q))\n           .order_by('apellidos', 'nombre'))\ngrupos = Grupo.objects.annotate(total=Count('alumno'))`,
+          rules: [
+            { t: 'Usa el campo apellidos (no apellido)', not: /apellido__/, err: "FieldError: Cannot resolve keyword 'apellido' into field. Choices are: apellidos, fecha_nacimiento, grupo, id, matricula, nombre" },
+            { t: 'Busca sin importar mayúsculas (icontains)', fn: (c) => /apellidos__icontains\s*=\s*q/.test(c) && !/__contains/.test(c), err: `?q=${ap[0].toUpperCase()} → 0 resultados ✗\ncontains distingue mayúsculas; icontains no.` },
+            { t: 'Busca en nombre o apellidos con Q y |', re: /Q\(\s*nombre__icontains\s*=\s*q\s*\)\s*\|\s*Q\(\s*apellidos__icontains\s*=\s*q\s*\)|Q\(\s*apellidos__icontains\s*=\s*q\s*\)\s*\|\s*Q\(\s*nombre__icontains\s*=\s*q\s*\)/, err: '?q=Luis → 0 resultados ✗\nLa búsqueda solo revisa los apellidos; con Q(...) | Q(...) se busca en los dos campos.' },
+            { t: "Ordena con order_by('apellidos', 'nombre')", re: /\.order_by\(\s*['"]apellidos['"]\s*,\s*['"]nombre['"]\s*\)/, err: '?q= (vacío) → la lista sale en desorden ✗' },
+            { t: "Count usa la relación alumno", re: /Count\(\s*['"]alumno['"]\s*\)/, err: "FieldError: Cannot resolve keyword 'alumnos' into field.\n(La relación inversa se llama alumno.)" },
+          ] }; } }),
+      P('Práctica', { type: 'fill', title: 'Calcula y programa el promedio', intro: 'Calcula el promedio del alumno (un decimal) y completa la vista del detalle.', code: '', gen: (K) => {
+        const n = persona(K), c = [K.int(60, 100), K.int(60, 100), K.int(60, 100)].map((x) => x / 10), m = ['Construye', 'Implementa', K.pick(['Inglés V', 'Matemáticas V', 'Física'])];
+        const p = r1((c[0] + c[1] + c[2]) / 3);
+        return { file: 'detalle del alumno', lead: `<p>Calificaciones de <b>${n}</b>: ${m.map((x, i) => `${x} ${c[i]}`).join(' · ')}.</p>`,
+          code: `Promedio de ${n} (un decimal):  ⟪${num(p)}⟫\n\n# alumnos/views.py\nalumno = ⟪get_object_or_404⟫(Alumno, pk=pk)\ncalifs = Calificacion.objects.⟪filter⟫(inscripcion__alumno=alumno)\npromedio = califs.⟪aggregate⟫(p=⟪Avg⟫('valor'))['p']\n\n# Si el alumno no tiene calificaciones, promedio vale: ⟪None⟫\n{% if ⟪promedio⟫ %}<p>Promedio: {{ promedio|floatformat:1 }}</p>{% endif %}` }; } }),
+    ] },
+  /* ===== Actividad 10 · Verifica y demuestra el servidor ===== */
+  { t: 'Verifica y demuestra el servidor',
+    exp: { que: 'Comprobar con una lista de cotejo que el servidor y la base cumplen lo prometido, y demostrarlo en vivo ante el jefe inmediato.', porque: 'Un sistema no está terminado cuando «ya corre», sino cuando su usuario comprueba que resuelve su necesidad.', como: 'Se revisa cada punto de la lista con una prueba concreta, se corrige lo que no cumple, se ensaya el guion y se presenta en vivo con datos de prueba.', ejemplo: 'Al revisar la lista, /alumnos/ se abre sin sesión: «No cumple». Se agrega @login_required, se prueba en incógnito y se marca «Cumple».' },
+    act: act(10, 'Verifica y demuestra el servidor', ['Llenen la lista de cotejo con una captura en cada criterio.', 'Corrijan los puntos marcados como «No cumple».', 'Preparen grupos, alumnos y calificaciones de prueba.', 'Repartan el guion: cada integrante explica su parte.', 'Ensayen la demostración con cronómetro.', 'Presenten al jefe inmediato siguiendo el guion.', 'Respondan sus preguntas sobre el uso y la seguridad.', 'Anoten sus observaciones para el Parcial 3.']),
+    ps: [
+      P('Práctica', { type: 'classify', title: 'Llena la lista de cotejo', intro: 'Esto observó tu equipo al revisar el sistema (cada alumno tiene observaciones distintas). Marca si cumple o no cumple.', cats: ['Cumple', 'No cumple'], items: [], gen: (K) => {
+        const I = [
+          { t: 'runserver inicia y la página abre en el navegador', c: 0, why: 'El servidor funciona.' },
+          { t: 'El alumno capturado aparece en phpMyAdmin', c: 0, why: 'Django está conectado a MySQL.' },
+          { t: 'auth_user muestra pbkdf2_sha256$… en password', c: 0, why: 'Las contraseñas están cifradas.' },
+          { t: '/alumnos/ en incógnito redirige a /login/', c: 0, why: 'Acceso solo con sesión.' },
+          { t: 'La búsqueda «her» encuentra Hernández y Herrera', c: 0, why: 'Búsqueda correcta con icontains.' },
+          { t: '/alumnos/ en incógnito muestra la lista completa', c: 1, why: 'Falta @login_required.' },
+          { t: `Se guardó un alumno con fecha de nacimiento ${K.int(2027, 2032)}-03-01`, c: 1, why: 'Falta la validación de fecha futura.' },
+          { t: 'Se registraron dos alumnos con la misma matrícula', c: 1, why: 'Falta unique=True en matricula.' },
+          { t: 'Al recargar después de guardar se duplica el alumno', c: 1, why: 'Falta redirect después de guardar.' },
+          { t: 'El detalle de un alumno sin calificaciones da error 500', c: 1, why: 'Falta proteger el caso en que Avg regresa None.' },
+        ];
+        return { items: K.mix([...K.some(I.filter((x) => x.c === 0), 3), ...K.some(I.filter((x) => x.c === 1), 3)]) }; } }),
+      P('Práctica', { type: 'order', title: 'Ordena el guion de la demostración', intro: 'Ordena los pasos como los presentarían al jefe inmediato, siguiendo el recorrido de un usuario real.', sets: [], gen: (K) => {
+        const n = persona(K);
+        return { sets: [{ prompt: 'Guion de la demostración (de arriba hacia abajo)', items: ['XAMPP con Apache y MySQL encendidos; runserver activo', 'Inicio de sesión del personal', 'Alta de un grupo en /admin/', `Alta de ${n} desde /alumnos/nuevo/`, `${n} aparece en phpMyAdmin`, 'Intento con fecha futura y matrícula repetida', 'Búsqueda por apellido y detalle con promedio', 'Contraseña cifrada y /alumnos/ protegido'] }] }; } }),
+    ] },
+  /* ===== Actividad 11 · Reflexión del impacto social ===== */
+  { t: 'Reflexión del impacto social',
+    exp: { que: 'Reconocer lo que aportó el equipo y lo que el sistema significa para la comunidad escolar.', porque: 'Manejar datos de alumnos, la mayoría menores de edad, implica responsabilidad social y ética; y el sistema solo funciona si todas las piezas funcionan.', como: 'Primero se responden las preguntas de forma individual y después se integra la reflexión del equipo con una mejora concreta para el Parcial 3.', ejemplo: 'Colaboración: cada integrante aporta su parte. Responsabilidad compartida. Impacto social: sesión, contraseñas cifradas y datos de prueba.' },
+    act: act(11, 'Reflexión del impacto social', ['Individualmente, responde las tres preguntas de la reflexión.', 'Describe un reto del parcial y cómo lo resolviste.', 'Nombra una acción concreta con la que cuidaste los datos.', 'En equipo, compartan sus respuestas sin interrumpir.', 'Identifiquen lo que mejor funcionó del trabajo en equipo.', 'Acuerden una mejora para el Parcial 3.', 'Integren la reflexión en 08_reflexion.docx.', 'Entreguen el documento en el portafolio de evidencias.']),
+    ps: [
+      P('Práctica', { type: 'form', title: 'Tu reflexión del impacto social', intro: 'Escribe con tus palabras. No hay una sola respuesta correcta, pero sí debe ser concreta.', fields: [], gen: (K) => {
+        const s = K.pick(['la secretaria de control escolar', 'el orientador del grupo', 'un padre de familia']);
+        return { lead: `<p>Imagina que <b>${s}</b> va a usar el sistema que construyó tu equipo.</p>`, fields: [
+          { label: `¿Qué aporta el sistema de control escolar a ${s} y a la comunidad del plantel?`, rows: 3, min: 60 },
+          { label: '¿Con qué acción concreta cuidó tu equipo los datos de los alumnos? (sesión, contraseñas, datos de prueba…)', rows: 3, min: 50 },
+          { label: 'Describe un reto del parcial y cómo lo resolviste.', rows: 3, min: 60 },
+          { label: 'Una mejora concreta para el Parcial 3.', rows: 2, min: 30 },
+        ] }; } }),
+    ] },
+] }];
+})();
+
 /* segundo parcial (A-E) antes del tercero (F-J); el avance guardado del tercer parcial se traslada */
 (() => { const G = window.GRADE; const P3 = G.modules; const P2 = window.P2 || [];
   P2.forEach((m) => { m.parcial = 2; ((window.P2S2 || {})[m.name] || []).forEach((t) => m.temas.push(t)); }); P3.forEach((m) => { m.parcial = 3; });
+  /* bloque inicial del tercer parcial: actividades pendientes de las presentaciones del segundo parcial */
+  const P3N = window.P3NEW || []; P3N.forEach((m) => { m.parcial = 3; m.inicio = true; });
   const X = window.P2_MIG || { from: 0, ver: G.id + '-p2p3' };
-  const map = {}; P3.forEach((m, i) => m.temas.forEach((t, ti) => { map[`m${i + 1 + X.from}t${ti + 1}`] = `m${i + 1 + P2.length}t${ti + 1}`; }));
-  G.modules = P2.concat(P3); const BK = window.BANK || {}; G.modules.forEach((m) => m.temas.forEach((t) => t.ps.forEach((p) => { if ((p.type === 'quiz' || p.type === 'classify') && BK[p.title]) p.bank = BK[p.title]; }))); G.migrate = { ver: X.ver, map, drop: X.drop };
+  const map = {}; P3.forEach((m, i) => m.temas.forEach((t, ti) => { map[`m${i + 1 + X.from}t${ti + 1}`] = `m${i + 1 + P2.length + P3N.length}t${ti + 1}`; }));
+  G.modules = P2.concat(P3N, P3); const BK = window.BANK || {}; G.modules.forEach((m) => m.temas.forEach((t) => t.ps.forEach((p) => { if ((p.type === 'quiz' || p.type === 'classify') && BK[p.title]) p.bank = BK[p.title]; }))); G.migrate = { ver: X.ver, map, drop: X.drop };
   let n = 0; P3.forEach((m) => m.temas.forEach((t) => { const x = (window.P3X || {})[t.t]; if (x) { t.exp = x.exp; t.act = Object.assign({ n: ++n }, x.act); } }));
   /* tercer parcial: ejercicios «Razona» con datos por alumno, retos paso a paso y tiempo límite */
   const GN = window.P3GEN || {}, RT = window.P3RETO || {};

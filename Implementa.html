@@ -1348,7 +1348,7 @@ window.GRADE = {
   title: 'Implementa aplicaciones web · Segundo y tercer parcial',
   subtitle: 'Submódulo 2 · Programación · Grupo 502',
   heroTitle: 'Prácticas del tercer parcial: Implementa aplicaciones web',
-  heroText: 'Cada columna es una semana del tercer parcial (semanas 12 a 16) y cada celda es un tema de la planeación: entorno productivo y pruebas, corrección de errores, mantenimiento evolutivo, manuales y entrega del Sistema AquaLink.',
+  heroText: 'La primera columna del tercer parcial retoma las actividades que quedaron pendientes del segundo parcial (sistema de control escolar). Después, cada columna es una semana del tercer parcial (semanas 12 a 16) y cada celda es un tema de la planeación: entorno productivo y pruebas, corrección de errores, mantenimiento evolutivo, manuales y entrega del Sistema AquaLink.',
   docente: 'Dra. María Guadalupe Guerrero Ordoñez', plantel: 'CECyTEM · Plantel Metepec II', carrera: 'Técnico en Programación',
   materia: 'Implementa aplicaciones web', submodulo: 'Submódulo 2', horasSemana: 5,
   modules: [
@@ -1489,7 +1489,7 @@ def ⟪promedio_tiempos⟫(tiempos):
         'Registrar la solución y cerrar el issue',
       ] }], { label: 'Comprueba' }),
     ] },
-    reto('Demostración de correcciones', 'En el tema H se evalúa la demostración en vivo de las correcciones en tu código local. La maestra elige tres defectos de tu matriz y te pide explicar cómo los resolviste.', QZ('', 'Elige la mejor opción.', [
+    reto('Demostración de correcciones', 'En el tema I se evalúa la demostración en vivo de las correcciones en tu código local. La maestra elige tres defectos de tu matriz y te pide explicar cómo los resolviste.', QZ('', 'Elige la mejor opción.', [
       Q('¿Cómo demuestras que el error 500 ya se corrigió?', 'Repito en vivo los pasos de la matriz y muestro que la asistencia se guarda', ['Digo que ya quedó', 'Muestro el código sin ejecutarlo', 'Muestro una captura de otro equipo'], 'La evidencia es la prueba repetida.'),
       Q('¿Qué escribes en el mensaje del commit?', '«Corrige ERR-07: error 500 al registrar asistencia sin carril»', ['«cambios»', '«ya jala»', '«asdf»'], 'El mensaje dice qué se corrigió.'),
       Q('Al corregir un defecto apareció otro en el pasaporte. ¿Qué haces?', 'Lo registro como defecto nuevo en la matriz y lo pruebo de nuevo', ['Lo oculto', 'Deshago todos los cambios del proyecto', 'Lo dejo para después de la feria'], 'Toda falla se registra.'),
@@ -1692,13 +1692,13 @@ def grafica_tiempos(request, pk):
         { label: '¿Qué cuidados tuviste con los datos personales de los nadadores?', min: 60 },
       ], { label: 'Práctica guiada' }),
     ] },
-    reto('Evaluación del tercer parcial', 'Último repaso del tercer parcial de Implementa aplicaciones web: verificación final, guía de uso y entrega del Sistema AquaLink.', QZ('', 'Responde cada pregunta. Repasa los temas G a J si lo necesitas.', [
-      Q('¿Qué comando revisa la configuración de seguridad antes de desplegar?', 'python manage.py check --deploy', ['python manage.py runserver', 'pip install', 'git status'], 'Tema G.'),
-      Q('¿Qué requisito comprueba que no se pueda entrar sin sesión?', 'RNF2', ['RNF1', 'RNF5', 'RF7'], 'Tema G.'),
-      Q('¿Qué severidad tiene un defecto que expone datos personales?', 'Crítico', ['Bajo', 'Medio', 'Ninguna'], 'Tema G.'),
-      Q('Según PEP 8, ¿cómo se llama bien esta función?', 'registrar_asistencia', ['RegistrarAsistencia', 'registrarAsistencia', 'REGISTRAR_ASISTENCIA'], 'Tema H.'),
-      Q('¿Qué filtro de plantilla pasa datos de Django a JavaScript de forma segura?', 'json_script', ['safe', 'upper', 'date'], 'Tema I.'),
-      Q('¿A quién va dirigido el manual de usuario?', 'Al personal de la escuela que usa el sistema', ['Al próximo programador', 'Al servidor', 'A MySQL'], 'Tema J.'),
+    reto('Evaluación del tercer parcial', 'Último repaso del tercer parcial de Implementa aplicaciones web: verificación final, guía de uso y entrega del Sistema AquaLink.', QZ('', 'Responde cada pregunta. Repasa los temas H a K si lo necesitas.', [
+      Q('¿Qué comando revisa la configuración de seguridad antes de desplegar?', 'python manage.py check --deploy', ['python manage.py runserver', 'pip install', 'git status'], 'Tema H.'),
+      Q('¿Qué requisito comprueba que no se pueda entrar sin sesión?', 'RNF2', ['RNF1', 'RNF5', 'RF7'], 'Tema H.'),
+      Q('¿Qué severidad tiene un defecto que expone datos personales?', 'Crítico', ['Bajo', 'Medio', 'Ninguna'], 'Tema H.'),
+      Q('Según PEP 8, ¿cómo se llama bien esta función?', 'registrar_asistencia', ['RegistrarAsistencia', 'registrarAsistencia', 'REGISTRAR_ASISTENCIA'], 'Tema I.'),
+      Q('¿Qué filtro de plantilla pasa datos de Django a JavaScript de forma segura?', 'json_script', ['safe', 'upper', 'date'], 'Tema J.'),
+      Q('¿A quién va dirigido el manual de usuario?', 'Al personal de la escuela que usa el sistema', ['Al próximo programador', 'Al servidor', 'A MySQL'], 'Tema K.'),
     ])),
   ] },
   ],
@@ -2428,12 +2428,124 @@ window.P3RETO = {
 };
 })();
 
+/* Tercer parcial · Implementa: BLOQUE INICIAL con las actividades 9 y 10 de la presentación del segundo parcial
+   (sistema de control escolar). Son los primeros ejercicios del tercer parcial. Práctica real con datos por alumno. */
+(() => {
+const rx = (t) => String(t).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const NOM = ['Ana', 'Luis', 'Sofía', 'Diego', 'Valeria', 'Mateo', 'Camila', 'Iker', 'Regina', 'Emiliano', 'Ximena', 'Santiago'];
+const APE = ['López', 'Hernández', 'Martínez', 'García', 'Pérez', 'Ramírez', 'Torres', 'Flores', 'Cruz', 'Morales'];
+const persona = (K) => `${K.pick(NOM)} ${K.pick(APE)}`;
+const P = (label, ex) => Object.assign({ label }, ex);
+const ENT = {
+  9: ['flake8 sin observaciones, incidencias verificadas y demostración en vivo.', ['Código sin observaciones de flake8', 'Corrección probada con los pasos del reporte', 'Prueba de regresión realizada', 'Incidencia verificada por otro integrante']],
+  10: ['Tabla reto – emoción – estrategia – resultado y acuerdo del equipo.', ['Identifica tres retos', 'Nombra la emoción de cada uno', 'Describe la estrategia', 'Valora el resultado y propone mejoras']],
+};
+const act = (n, t, pasos) => ({ n: `${n} · del 2.º parcial`, t, pasos, entregable: ENT[n][0], evalua: ENT[n][1] });
+const ACT9 = ['Instala el analizador de estilo: pip install flake8.', 'Ejecuta flake8 alumnos/ y anota cuántas observaciones aparecen.', 'Corrige las observaciones de PEP 8: sangría, espacios, líneas largas e importaciones sin usar.', 'Toma la incidencia de mayor prioridad y muévela a «En corrección».', 'Localiza el archivo, corrige el código y vuelve a probar los pasos del reporte.', 'Revisa que la corrección no rompa otras funciones (prueba de regresión).', 'Mueve la incidencia a «Corregido»; otro integrante la verifica y la pasa a «Verificado».', 'Demuestra en vivo al docente una corrección completa.'];
+const EXP9 = { que: 'Mantenimiento correctivo: encontrar la causa de un defecto, cambiar el código para eliminarla y escribirlo con las reglas de estilo del lenguaje (PEP 8 y las convenciones de Django).', porque: 'Corregir sin entender la causa suele crear errores nuevos. Un código ordenado y uniforme se lee, revisa y mantiene con más facilidad cuando varias personas trabajan en él.', como: 'Se lee el traceback para hallar archivo y línea, se corrige, se repiten los pasos del reporte, se ejecuta flake8 para revisar el estilo y se hace una prueba de regresión antes de pasar a «Verificado».', ejemplo: 'La lista muestra NoReverseMatch en la línea 9 de alumnos/lista.html: usa {% url \'detalle\' %}, pero la ruta se llama \'detalle_alumno\'. Se corrige, se prueban también el alta y la búsqueda, y flake8 ya no marca nada.' };
+
+window.P3NEW = [{ name: 'Control escolar: corrección y reflexión', hilo: 'codigo', temas: [
+  /* ===== Actividad 9 (parte 1) · flake8 y PEP 8 ===== */
+  { t: 'Código limpio con flake8', exp: EXP9, act: act(9, 'Corrige defectos con convenciones', ACT9),
+    ps: [
+      P('Práctica', { type: 'term', title: 'Instala y ejecuta flake8', intro: 'Escribe cada comando y presiona Enter. La app de tu proyecto tiene un nombre distinto.', tasks: [], shell: 'Terminal de VS Code', gen: (K) => {
+        const app = K.pick(['alumnos', 'grupos', 'calificaciones']), n = K.int(4, 9);
+        return { lead: `<p>Tu proyecto <b>escuela</b> tiene la app <b><code>${app}</code></b>. El entorno virtual ya está activo.</p>`, prompt: '(venv) C:\\proyectos\\escuela>', tasks: [
+          { t: 'Instala el analizador de estilo.', sol: 'pip install flake8', ok: [/^(python -m )?pip3? install flake8$/i], out: 'Successfully installed flake8-7.1.1 pycodestyle-2.12.1 pyflakes-3.2.0', hint: 'pip install …' },
+          { t: `Revisa el estilo de la app ${app}.`, sol: `flake8 ${app}/`, ok: [new RegExp(`^flake8 ${app}/?$`, 'i')], out: `${app}/views.py:1:1: F401 'os' imported but unused\n${app}/views.py:4:3: E111 indentation is not a multiple of 4\n${app}/views.py:5:4: E225 missing whitespace around operator\n${app}/views.py:9:80: E501 line too long (91 > 79 characters)\n… ${n} observaciones en total`, hint: 'flake8 carpeta/', err: (c) => /^flake8/i.test(c) ? `Revisa el nombre de la app: es ${app}.` : `"${c.split(' ')[0]}" no se reconoce como un comando.` },
+        ] }; } }),
+      P('Práctica', { type: 'code', title: 'Corrige la vista con PEP 8', intro: 'Corrige el archivo y presiona ▶ Ejecutar para correr flake8 y la prueba de la lista. Repite hasta que no marque nada.', starter: '', rules: [], gen: (K) => {
+        const q = K.pick(['q', 'buscar']), mal = K.pick(['ListaAlumnos', 'listaAlumnos']);
+        const starter = `import os\nfrom django.shortcuts import render\nfrom .models import Alumno\n\n\ndef ${mal}(request):\n  ${q}=request.GET.get("${q}","")\n  x=Alumno.objects.filter(nombre__icontains=${q}).order_by("apellidos")\n  return render(request,"lista.html",{"x":x})\n`;
+        return { file: 'alumnos/views.py', lead: `<p>En urls.py la vista se usa como <code>views.lista_alumnos</code>, la plantilla está en <code>templates/alumnos/lista.html</code> y recorre la variable <code>alumnos</code>.</p>`, starter,
+          ok: '(venv) > flake8 alumnos/\n(sin mensajes)\nGET /alumnos/  200 OK · la lista muestra a los alumnos\n✓ Código limpio y funcionando.',
+          sol: `from django.shortcuts import render\nfrom .models import Alumno\n\n\ndef lista_alumnos(request):\n    ${q} = request.GET.get('${q}', '')\n    alumnos = (Alumno.objects\n               .filter(nombre__icontains=${q})\n               .order_by('apellidos'))\n    return render(request, 'alumnos/lista.html',\n                  {'alumnos': alumnos})`,
+          rules: [
+            { t: 'Sin importaciones sin usar', not: /^import os\s*$/m, err: "alumnos/views.py:1:1: F401 'os' imported but unused" },
+            { t: 'La vista se llama lista_alumnos', re: /def\s+lista_alumnos\s*\(\s*request\s*\)/, err: `AttributeError: module 'alumnos.views' has no attribute 'lista_alumnos'\n(y N802 function name '${mal}' should be lowercase)` },
+            { t: 'Sangría de 4 espacios', fn: (c) => { const b = c.split('\n').filter((l) => /^\s+\S/.test(l)); return b.length > 0 && b.every((l) => /^( {4})+\S|^ {4,}[.'{]/.test(l)); }, err: 'alumnos/views.py:7:3: E111 indentation is not a multiple of 4' },
+            { t: 'Espacios alrededor de =', not: /^\s*\w+=[^=]/m, err: 'alumnos/views.py:7:4: E225 missing whitespace around operator' },
+            { t: 'La variable se llama alumnos, no x', fn: (c) => /\balumnos\s*=\s*\(?\s*Alumno\.objects/.test(c) && !/\bx\s*=/.test(c), err: 'Convención: la variable debe decir qué guarda (alumnos, no x).\nLa plantilla recorre {% for a in alumnos %} y sale vacía.' },
+            { t: "Usa la plantilla 'alumnos/lista.html' con la variable alumnos", re: /render\(\s*request\s*,\s*['"]alumnos\/lista\.html['"]\s*,\s*\{\s*['"]alumnos['"]\s*:\s*alumnos\s*\}\s*\)/, err: 'TemplateDoesNotExist: lista.html\n(La plantilla está en templates/alumnos/lista.html y espera la variable alumnos.)' },
+            { t: 'Líneas de menos de 80 caracteres', fn: (c) => c.split('\n').every((l) => l.length < 80), err: 'alumnos/views.py:8:80: E501 line too long' },
+          ] }; } }),
+    ] },
+  /* ===== Actividad 9 (parte 2) · Flujo de corrección y regresión ===== */
+  { t: 'Flujo de corrección y prueba de regresión', exp: EXP9, act: act(9, 'Corrige defectos con convenciones', ACT9),
+    ps: [
+      P('Práctica', { type: 'order', title: 'Ordena el flujo de una corrección', intro: 'Ordena lo que hace tu equipo con la incidencia, desde que se toma hasta que queda verificada.', sets: [], gen: (K) => {
+        const n = K.int(2, 30), a = persona(K).split(' ')[0], b = persona(K).split(' ')[0];
+        return { sets: [{ prompt: `Incidencia #${n} (de arriba hacia abajo)`, items: [`Tomar la incidencia #${n}, la de mayor prioridad en la matriz`, `${a} la mueve a «En corrección»`, 'Leer el traceback y localizar el archivo y la línea', 'Corregir el código', 'Repetir los pasos del reporte: el defecto ya no aparece', 'Ejecutar flake8 hasta que no marque nada', 'Prueba de regresión: repetir las demás pruebas', 'Mover la incidencia a «Corregido»', `${b} la verifica y la pasa a «Verificado»`] }] }; } }),
+      P('Práctica', { type: 'classify', title: '¿Qué pruebas hacer después de corregir?', intro: 'Corregiste el defecto que te tocó. Clasifica cada prueba: ¿confirma la corrección o es de regresión?', cats: ['Confirma la corrección', 'Prueba de regresión', 'No hace falta'], items: [], gen: (K) => {
+        const D = K.pick([
+          { d: 'la búsqueda no encontraba apellidos con acento', c: 'Buscar «Ramírez» y «Muñoz»', r: ['Abrir la lista sin buscar nada', 'Dar de alta un alumno nuevo', 'Abrir el detalle de un alumno'] },
+          { d: 'el formulario aceptaba fechas de nacimiento futuras', c: 'Capturar un alumno con fecha 2031-01-01', r: ['Capturar un alumno con datos correctos', 'Buscar al alumno recién capturado', 'Editar un alumno existente'] },
+          { d: 'la lista mostraba NoReverseMatch', c: 'Abrir /alumnos/ y ver la lista completa', r: ['Dar clic en el enlace de detalle de un alumno', 'Buscar por apellido', 'Dar de alta un alumno nuevo'] },
+        ]);
+        return { lead: `<p>Defecto corregido: <b>${D.d}</b>.</p>`, items: K.mix([
+          { t: D.c, c: 0, why: 'Repite los pasos del reporte: confirma que el defecto ya no aparece.' },
+          ...D.r.map((x) => ({ t: x, c: 1, why: 'Ya funcionaba antes: se repite para comprobar que la corrección no lo rompió.' })),
+          { t: 'Cambiar el color de los botones', c: 2, why: 'No tiene relación con la corrección ni con lo que ya funcionaba.' },
+        ]) }; } }),
+    ] },
+  /* ===== Actividad 9 (parte 3) · Corrección en vivo ===== */
+  { t: 'Corrección completa en vivo', exp: EXP9, act: act(9, 'Corrige defectos con convenciones', ACT9),
+    ps: [
+      P('Práctica', { type: 'code', title: 'Corrige desde el traceback', intro: 'Esta es la corrección que demostrarás al docente. Presiona ▶ Ejecutar para recargar la página, lee el error y corrige.', starter: '', rules: [], gen: (K) => {
+        const ruta = K.pick(['detalle_alumno', 'alumno_detalle']), mal = K.pick(['detalle', 'ver_alumno']), tpl = K.pick(['alumnos/form.html', 'alumnos/formulario.html']), msg = K.pick(['Alumno registrado', 'Alumno guardado']);
+        const starter = `@login_required\ndef nuevo_alumno(request):\n    if request.method == 'POST':\n        form = AlumnoForm(request.POST)\n        if form.is_valid():\n            alumno = form.save()\n            messages.success(request, '${msg}')\n            return redirect('${mal}', pk=alumno.pk)\n    else:\n        form = AlumnoForm()\n    return render(request, 'form.html', {'form': form})\n`;
+        return { file: 'alumnos/views.py', lead: `<p>Después de guardar, el sistema debe ir al detalle del alumno nuevo. En urls.py esa ruta se llama <b><code>${ruta}</code></b>. La plantilla del formulario está en <b><code>templates/${tpl}</code></b>.</p>`, starter,
+          ok: `GET  /alumnos/nuevo/  200 OK\nPOST /alumnos/nuevo/  302 → /alumnos/41/  «${msg}»\n✓ La corrección funciona.`,
+          sol: `            return redirect('${ruta}', pk=alumno.pk)\n    ...\n    return render(request, '${tpl}', {'form': form})`,
+          rules: [
+            { t: `render usa la plantilla ${tpl}`, re: new RegExp(`render\\(\\s*request\\s*,\\s*['"]${rx(tpl)}['"]`), err: `TemplateDoesNotExist at /alumnos/nuevo/\nform.html\nTemplate-loader postmortem: templates/form.html (Source does not exist)\nFile "alumnos/views.py", line 11, in nuevo_alumno` },
+            { t: `redirect usa la ruta ${ruta}`, re: new RegExp(`redirect\\(\\s*['"]${ruta}['"]\\s*,\\s*pk\\s*=\\s*alumno\\.pk\\s*\\)`), err: `NoReverseMatch at /alumnos/nuevo/\nReverse for '${mal}' not found. '${mal}' is not a valid view function or pattern name.\nFile "alumnos/views.py", line 8, in nuevo_alumno` },
+          ] }; } }),
+      P('Práctica', { type: 'form', title: 'Registra la corrección en la tabla de errores', intro: 'Llena la fila de la tabla de errores con lo que leíste en el traceback (los datos son solo tuyos).', fields: [], gen: (K) => {
+        const ln = K.int(6, 30), mal = K.pick(['detalle', 'ver_alumno', 'alumno']), bien = K.pick(['detalle_alumno', 'alumno_detalle']);
+        return { lead: `<pre class="code">NoReverseMatch at /alumnos/\nReverse for '${mal}' not found. '${mal}' is not a valid view function or pattern name.\n...\nIn template alumnos/lista.html, error at line ${ln}</pre><p>En urls.py la ruta se llama <code>${bien}</code>.</p>`, fields: [
+          { label: 'Error (tipo de excepción)', rows: 1, min: 10, need: ['NoReverseMatch'] },
+          { label: 'Archivo y línea', rows: 1, min: 10, need: ['lista.html', String(ln)] },
+          { label: 'Causa', rows: 2, min: 30, need: [mal] },
+          { label: 'Corrección y cómo la comprobaste (incluye la prueba de regresión)', rows: 3, min: 50, need: [bien] },
+        ], sol: `NoReverseMatch · alumnos/lista.html, línea ${ln} · la plantilla usa '${mal}' y la ruta se llama '${bien}' · se cambia por {% url '${bien}' … %}, se recarga la lista y se prueban también el alta y la búsqueda.` }; } }),
+    ] },
+  /* ===== Actividad 10 · Reflexión: reto, emoción y estrategia ===== */
+  { t: 'Reflexión: reto, emoción y estrategia',
+    exp: { que: 'Detenerse a reconocer qué sentimos ante los retos técnicos (un error que no sale, una prueba que falla, un desacuerdo) y qué estrategias usamos para seguir adelante.', porque: 'Programar implica equivocarse muchas veces. Quien maneja la frustración y se comunica con respeto resuelve mejor los problemas y trabaja mejor en equipo.', como: 'Con la tabla reto – emoción – estrategia – resultado: se describe el momento difícil, se nombra la emoción, se explica qué se hizo y se valora si funcionó.', ejemplo: 'Reto: la corrección rompió la búsqueda. Emoción: desánimo. Estrategia: revisar el cambio con calma y hacer la prueba de regresión. Resultado: el equipo acordó probar todo antes de mover la tarjeta.' },
+    act: act(10, 'Reflexión: reto, emoción y estrategia', ['Individualmente, elige tres momentos difíciles del parcial (un error, una prueba fallida, un desacuerdo).', 'Para cada uno, escribe el reto en una oración.', 'Nombra la emoción que sentiste (frustración, nervios, desánimo, enojo, satisfacción).', 'Describe la estrategia que usaste para enfrentarlo.', 'Escribe el resultado: ¿funcionó?, ¿qué harías distinto?', 'En equipo, compartan una situación cada uno y escuchen sin interrumpir.', 'Acuerden una estrategia de equipo para el Parcial 3.', 'Entreguen la tabla individual y el acuerdo del equipo.']),
+    ps: [
+      P('Práctica', { type: 'classify', title: '¿Qué habilidad se muestra?', intro: 'Cada situación pasó en un equipo distinto. Clasifica la habilidad que muestra.', cats: ['Tolerancia a la frustración', 'Resiliencia', 'Comunicación asertiva'], items: [], gen: (K) => {
+        const n = K.int(2, 30), a = persona(K).split(' ')[0];
+        const I = [
+          { t: '«Could not send request» salió tres veces; se leyó el mensaje con calma y se revisó el servidor', c: 0, why: 'El error se toma como información, no como fracaso.' },
+          { t: 'flake8 seguía marcando errores; se corrigieron uno por uno sin desesperarse', c: 0, why: 'Se mantiene la calma ante el error repetido.' },
+          { t: 'Después de una demostración fallida, el equipo analizó qué pasó y preparó otro guion', c: 1, why: 'Recuperarse y volver a intentar con otra estrategia.' },
+          { t: 'La corrección rompió la búsqueda; el equipo acordó hacer siempre la prueba de regresión', c: 1, why: 'El error se convirtió en un acuerdo para mejorar.' },
+          { t: `«En la incidencia #${n}: al guardar con fecha futura, el formulario acepta el dato; adjunto la captura»`, c: 2, why: 'Describe el defecto con hechos y evidencia, sin atacar a la persona.' },
+          { t: `${a} propuso revisar juntos la tabla de niveles cuando el otro equipo no estuvo de acuerdo`, c: 2, why: 'Expresa su punto con respeto y busca un acuerdo.' },
+        ];
+        return { items: K.mix([...K.some(I.filter((x) => x.c === 0), 1), ...K.some(I.filter((x) => x.c === 1), 1), ...K.some(I.filter((x) => x.c === 2), 2)]) }; } }),
+      P('Práctica', { type: 'form', title: 'Tu tabla reto – emoción – estrategia – resultado', intro: 'Escribe sobre tres momentos difíciles reales del parcial. Debe ser concreto: qué pasó, qué sentiste, qué hiciste y qué resultó.', fields: [], gen: (K) => {
+        const e = K.pick(['frustración', 'nervios', 'desánimo', 'enojo']);
+        return { lead: `<p>Al menos en uno de tus tres momentos, describe cuándo sentiste <b>${e}</b>.</p>`, fields: [
+          { label: 'Momento 1 · Reto, emoción, estrategia y resultado', rows: 3, min: 60, need: [e] },
+          { label: 'Momento 2 · Reto, emoción, estrategia y resultado', rows: 3, min: 60 },
+          { label: 'Momento 3 · Reto, emoción, estrategia y resultado', rows: 3, min: 60 },
+          { label: 'Acuerdo de tu equipo para el Parcial 3', rows: 2, min: 30 },
+        ] }; } }),
+    ] },
+] }];
+})();
+
 /* segundo parcial (A-E) antes del tercero (F-J); el avance guardado del tercer parcial se traslada */
 (() => { const G = window.GRADE; const P3 = G.modules; const P2 = window.P2 || [];
   P2.forEach((m) => { m.parcial = 2; ((window.P2S2 || {})[m.name] || []).forEach((t) => m.temas.push(t)); }); P3.forEach((m) => { m.parcial = 3; });
+  /* bloque inicial del tercer parcial: actividades pendientes de las presentaciones del segundo parcial */
+  const P3N = window.P3NEW || []; P3N.forEach((m) => { m.parcial = 3; m.inicio = true; });
   const X = window.P2_MIG || { from: 0, ver: G.id + '-p2p3' };
-  const map = {}; P3.forEach((m, i) => m.temas.forEach((t, ti) => { map[`m${i + 1 + X.from}t${ti + 1}`] = `m${i + 1 + P2.length}t${ti + 1}`; }));
-  G.modules = P2.concat(P3); const BK = window.BANK || {}; G.modules.forEach((m) => m.temas.forEach((t) => t.ps.forEach((p) => { if ((p.type === 'quiz' || p.type === 'classify') && BK[p.title]) p.bank = BK[p.title]; }))); G.migrate = { ver: X.ver, map, drop: X.drop };
+  const map = {}; P3.forEach((m, i) => m.temas.forEach((t, ti) => { map[`m${i + 1 + X.from}t${ti + 1}`] = `m${i + 1 + P2.length + P3N.length}t${ti + 1}`; }));
+  G.modules = P2.concat(P3N, P3); const BK = window.BANK || {}; G.modules.forEach((m) => m.temas.forEach((t) => t.ps.forEach((p) => { if ((p.type === 'quiz' || p.type === 'classify') && BK[p.title]) p.bank = BK[p.title]; }))); G.migrate = { ver: X.ver, map, drop: X.drop };
   let n = 0; P3.forEach((m) => m.temas.forEach((t) => { const x = (window.P3X || {})[t.t]; if (x) { t.exp = x.exp; t.act = Object.assign({ n: ++n }, x.act); } }));
   /* tercer parcial: ejercicios «Razona» con datos por alumno, retos paso a paso y tiempo límite */
   const GN = window.P3GEN || {}, RT = window.P3RETO || {};
