@@ -2426,7 +2426,7 @@ const ENT = {
 };
 const act = (n, t, pasos) => ({ n: `${n} · del 2.º parcial`, t, pasos, entregable: ENT[n][0], evalua: ENT[n][1] });
 
-window.P3NEW = [{ name: 'Control escolar: del 2.º parcial al 3.º', hilo: 'datos', temas: [
+window.P3NEW = [{ name: 'Prácticas de tercer parcial', hilo: 'datos', temas: [
   /* ===== Actividad 4 · Conecta Django con MySQL ===== */
   { t: 'Conecta Django con MySQL',
     exp: { que: 'Configurar DATABASES en settings.py e instalar el conector mysqlclient para que el proyecto escuela guarde y lea sus datos en MySQL de XAMPP.', porque: 'Si la conexión falla, nada de lo que capture el sistema llega a la base. Leer el mensaje de error dice qué falta: el servidor, el conector, el usuario o el nombre de la base.', como: 'Con el entorno activo: pip install mysqlclient, se edita DATABASES (ENGINE mysql, NAME escuela, USER root, PASSWORD vacío, HOST localhost, PORT 3306), se ejecuta migrate y luego runserver.', ejemplo: '«Can\'t connect to MySQL server on \'localhost\'» no es un error del código: MySQL está apagado. Se inicia en XAMPP y migrate termina con «OK».' },
