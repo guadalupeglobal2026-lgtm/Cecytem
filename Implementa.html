@@ -577,6 +577,19 @@ body.show-cert #print{display:block; position:fixed; inset:0; background:var(--b
 @media (max-width:900px){.top-r{flex-wrap:wrap}.who{flex-direction:column;align-items:flex-start;gap:2px}.who.wp input,.who.wn input{width:8rem}}
 .who .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .who.wp input,.who.wn input{width:9.5rem}
+.blank select{font:inherit; line-height:1.3; color:#FFFFFF; background:#24314A; border:1px solid #4A5D80; border-radius:4px; padding:0 .2rem; max-width:none}
+.blank select:focus{outline:2px solid #7AA7FF; outline-offset:1px}
+.blank.ok select{border-color:#4CC48A; background:#173A2A}
+.blank.bad select{border-color:#FF7A85; background:#3D1A21}
+.fill-bank{margin:0 0 12px; padding:12px 16px; border:1px dashed #9AA8C0; border-radius:10px; background:rgba(122,167,255,.08)}
+.fill-bank-t{margin:0 0 6px; font-weight:600}
+.fill-bank code{display:inline-block; margin:3px 4px 3px 0; padding:2px 8px; border-radius:6px; background:#24314A; color:#FFFFFF}
+.fill-bar{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin:0 0 6px}
+.fill-bar .fill-file{margin:0}
+.fill-tools{display:flex; gap:8px; flex-wrap:wrap}
+.fill-tip{margin:6px 0 10px; padding:10px 14px; border-radius:10px; background:#FFF6DB; border:1px solid #F2D27A; color:#3A2E05}
+.blank.flash{animation:blflash 1.2s ease-out}
+@keyframes blflash{0%{box-shadow:0 0 0 4px #FFD54F}100%{box-shadow:0 0 0 0 transparent}}
 </style>
 </head>
 <body>
@@ -1541,45 +1554,26 @@ def grafica_tiempos(request, pk):
       ]),
     ] },
     { t: 'Gráfica en vivo con Chart.js', ps: [
-      { type: 'html', label: 'Práctica guiada', title: 'Dibuja la gráfica',
-        intro: 'Escribe el código de Chart.js para la nadadora <b>Ana López</b>. La vista previa se actualiza mientras escribes (necesita internet para cargar Chart.js).',
-        starter: `<!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"><\/script>
-  <style>body { font-family: Arial, sans-serif; padding: 12px; }</style>
-</head>
-<body>
-  <h2>Ana López · 50 m libre</h2>
-  <canvas id="grafica"></canvas>
-  <script>
-    const etiquetas = ['05/09', '19/09', '03/10', '17/10', '31/10'];
-    const valores = [48.2, 46.9, 45.5, 45.8, 44.1];
+      { type: 'fill', label: 'Práctica guiada', title: 'Dibuja la gráfica',
+        intro: 'Completa el código de Chart.js para la nadadora <b>Ana López</b>, eligiendo de la lista la palabra que falta en cada espacio. Las fechas están en <code>etiquetas</code> y los segundos en <code>valores</code>.',
+        file: 'templates/nadadores/grafica.html',
+        extra: ['bar', 'pie', 'canvas', 'false', 'legend', 'Chart.js'],
+        code: `<canvas id="grafica"></canvas>
+<script>
+  const etiquetas = ['05/09', '19/09', '03/10', '17/10', '31/10'];
+  const valores = [48.2, 46.9, 45.5, 45.8, 44.1];
 
-    // Escribe aquí tu gráfica: new Chart(...)
-
-  <\/script>
-</body>
-</html>`,
-        checks: [
-          { t: 'Crea la gráfica con new Chart en el canvas «grafica»', f: (doc, code) => /new\s+Chart\s*\(\s*document\.getElementById\(\s*['"]grafica['"]\s*\)/.test(code) },
-          { t: "Es una gráfica de líneas (type: 'line')", f: (doc, code) => /type\s*:\s*['"]line['"]/.test(code) },
-          { t: 'Usa etiquetas como labels', f: (doc, code) => /labels\s*:\s*etiquetas\b/.test(code) },
-          { t: 'Usa valores como data del dataset', f: (doc, code) => /data\s*:\s*valores\b/.test(code) },
-          { t: 'El dataset tiene un label que dice qué se mide', f: (doc, code) => /datasets\s*:\s*\[\s*\{[\s\S]*?label\s*:\s*['"][^'"]{3,}['"]/.test(code) },
-          { t: 'La gráfica tiene título visible (plugins: { title: { display: true, text: ... } })', f: (doc, code) => /title\s*:\s*\{[\s\S]*?display\s*:\s*true/.test(code) && /title\s*:\s*\{[\s\S]*?text\s*:/.test(code) },
-        ],
-        tip: `new Chart(document.getElementById('grafica'), {
-  type: 'line',
-  data: {
-    labels: etiquetas,
-    datasets: [{ label: 'Segundos', data: valores }],
-  },
-  options: {
-    plugins: { title: { display: true, text: 'Evolución de tiempos' } },
-  },
-});` },
+  ⟪new⟫ Chart(document.getElementById('⟪grafica⟫'), {
+    type: '⟪line⟫',
+    data: {
+      labels: ⟪etiquetas⟫,
+      datasets: [{ label: 'Segundos', data: ⟪valores⟫ }],
+    },
+    options: {
+      plugins: { ⟪title⟫: { display: ⟪true⟫, text: 'Evolución de tiempos' } },
+    },
+  });
+<\/script>` },
       QZ('Lee la gráfica', 'Con los datos de Ana López: 05/09 → 48.2 s, 19/09 → 46.9 s, 03/10 → 45.5 s, 17/10 → 45.8 s, 31/10 → 44.1 s.', [
         Q('¿Cuál fue su mejor tiempo?', '44.1 s el 31/10', ['48.2 s el 05/09', '45.8 s el 17/10', '46.9 s el 19/09'], 'El menor número de segundos.'),
         Q('¿Cuántos segundos mejoró del primer al último registro?', '4.1 segundos', ['1.3 segundos', '44.1 segundos', '0.3 segundos'], '48.2 − 44.1 = 4.1'),
@@ -2440,6 +2434,7 @@ const rx = (t) => String(t).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const NOM = ['Ana', 'Luis', 'Sofía', 'Diego', 'Valeria', 'Mateo', 'Camila', 'Iker', 'Regina', 'Emiliano', 'Ximena', 'Santiago'];
 const APE = ['López', 'Hernández', 'Martínez', 'García', 'Pérez', 'Ramírez', 'Torres', 'Flores', 'Cruz', 'Morales'];
 const persona = (K) => `${K.pick(NOM)} ${K.pick(APE)}`;
+const escH = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 const P = (label, ex) => Object.assign({ label }, ex);
 const ENT = {
   9: ['flake8 sin observaciones, incidencias verificadas y demostración en vivo.', ['Código sin observaciones de flake8', 'Corrección probada con los pasos del reporte', 'Prueba de regresión realizada', 'Incidencia verificada por otro integrante']],
@@ -2459,21 +2454,12 @@ window.P3NEW = [{ name: 'Código limpio y corrección de errores con flake8', hi
           { t: 'Instala el analizador de estilo.', sol: 'pip install flake8', ok: [/^(python -m )?pip3? install flake8$/i], out: 'Successfully installed flake8-7.1.1 pycodestyle-2.12.1 pyflakes-3.2.0', hint: 'pip install …' },
           { t: `Revisa el estilo de la app ${app}.`, sol: `flake8 ${app}/`, ok: [new RegExp(`^flake8 ${app}/?$`, 'i')], out: `${app}/views.py:1:1: F401 'os' imported but unused\n${app}/views.py:4:3: E111 indentation is not a multiple of 4\n${app}/views.py:5:4: E225 missing whitespace around operator\n${app}/views.py:9:80: E501 line too long (91 > 79 characters)\n… ${n} observaciones en total`, hint: 'flake8 carpeta/', err: (c) => /^flake8/i.test(c) ? `Revisa el nombre de la app: es ${app}.` : `"${c.split(' ')[0]}" no se reconoce como un comando.` },
         ] }; } }),
-      P('Práctica', { type: 'code', title: 'Corrige la vista con PEP 8', intro: 'Corrige el archivo y presiona ▶ Ejecutar para correr flake8 y la prueba de la lista. Repite hasta que no marque nada.', starter: '', rules: [], gen: (K) => {
+      P('Práctica', { type: 'fill', title: 'Corrige la vista con PEP 8', intro: 'Lee el código original con errores y completa la versión corregida eligiendo de la lista la palabra que falta en cada espacio.', code: '', gen: (K) => {
         const q = K.pick(['q', 'buscar']), mal = K.pick(['ListaAlumnos', 'listaAlumnos']);
-        const starter = `import os\nfrom django.shortcuts import render\nfrom .models import Alumno\n\n\ndef ${mal}(request):\n  ${q}=request.GET.get("${q}","")\n  x=Alumno.objects.filter(nombre__icontains=${q}).order_by("apellidos")\n  return render(request,"lista.html",{"x":x})\n`;
-        return { file: 'alumnos/views.py', lead: `<p>En urls.py la vista se usa como <code>views.lista_alumnos</code>, la plantilla está en <code>templates/alumnos/lista.html</code> y recorre la variable <code>alumnos</code>.</p>`, starter,
-          ok: '(venv) > flake8 alumnos/\n(sin mensajes)\nGET /alumnos/  200 OK · la lista muestra a los alumnos\n✓ Código limpio y funcionando.',
-          sol: `from django.shortcuts import render\nfrom .models import Alumno\n\n\ndef lista_alumnos(request):\n    ${q} = request.GET.get('${q}', '')\n    alumnos = (Alumno.objects\n               .filter(nombre__icontains=${q})\n               .order_by('apellidos'))\n    return render(request, 'alumnos/lista.html',\n                  {'alumnos': alumnos})`,
-          rules: [
-            { t: 'Sin importaciones sin usar', not: /^import os\s*$/m, err: "alumnos/views.py:1:1: F401 'os' imported but unused" },
-            { t: 'La vista se llama lista_alumnos', re: /def\s+lista_alumnos\s*\(\s*request\s*\)/, err: `AttributeError: module 'alumnos.views' has no attribute 'lista_alumnos'\n(y N802 function name '${mal}' should be lowercase)` },
-            { t: 'Sangría de 4 espacios', fn: (c) => { const b = c.split('\n').filter((l) => /^\s+\S/.test(l)); return b.length > 0 && b.every((l) => /^( {4})+\S|^ {4,}[.'{]/.test(l)); }, err: 'alumnos/views.py:7:3: E111 indentation is not a multiple of 4' },
-            { t: 'Espacios alrededor de =', not: /^\s*\w+=[^=]/m, err: 'alumnos/views.py:7:4: E225 missing whitespace around operator' },
-            { t: 'La variable se llama alumnos, no x', fn: (c) => /\balumnos\s*=\s*\(?\s*Alumno\.objects/.test(c) && !/\bx\s*=/.test(c), err: 'Convención: la variable debe decir qué guarda (alumnos, no x).\nLa plantilla recorre {% for a in alumnos %} y sale vacía.' },
-            { t: "Usa la plantilla 'alumnos/lista.html' con la variable alumnos", re: /render\(\s*request\s*,\s*['"]alumnos\/lista\.html['"]\s*,\s*\{\s*['"]alumnos['"]\s*:\s*alumnos\s*\}\s*\)/, err: 'TemplateDoesNotExist: lista.html\n(La plantilla está en templates/alumnos/lista.html y espera la variable alumnos.)' },
-            { t: 'Líneas de menos de 80 caracteres', fn: (c) => c.split('\n').every((l) => l.length < 80), err: 'alumnos/views.py:8:80: E501 line too long' },
-          ] }; } }),
+        const orig = `import os\nfrom django.shortcuts import render\nfrom .models import Alumno\n\n\ndef ${mal}(request):\n  ${q}=request.GET.get("${q}","")\n  x=Alumno.objects.filter(nombre__icontains=${q}).order_by("apellidos")\n  return render(request,"lista.html",{"x":x})`;
+        return { file: 'alumnos/views.py (corregido)', lead: `<p>En urls.py la vista se usa como <code>views.lista_alumnos</code>, la plantilla está en <code>templates/alumnos/lista.html</code> y recorre la variable <code>alumnos</code>. Este es el código original que marca flake8:</p><pre class="code">${escH(orig)}</pre>`,
+          extra: [mal, 'x', 'lista.html', 'E111', 'E501', 'import sys'],
+          code: `# Línea que se elimina porque no se usa: ⟪import os⟫\n# Código de flake8 para esa línea: ⟪F401⟫\n# Espacios de sangría según PEP 8: ⟪4⟫\n\nfrom django.shortcuts import render\nfrom .models import Alumno\n\n\ndef ⟪lista_alumnos⟫(request):\n    ${q} = request.GET.get('${q}', '')\n    ⟪alumnos⟫ = (Alumno.objects\n               .filter(nombre__icontains=${q})\n               .order_by('apellidos'))\n    return render(request, '⟪alumnos/lista.html⟫',\n                  {'alumnos': ⟪alumnos⟫})` }; } }),
     ] },
   /* ===== Actividad 9 (parte 2) · Flujo de corrección y regresión ===== */
   { t: 'Flujo de corrección y prueba de regresión', exp: EXP9, act: act(9, 'Corrige defectos con convenciones', ACT9),
@@ -2496,16 +2482,13 @@ window.P3NEW = [{ name: 'Código limpio y corrección de errores con flake8', hi
   /* ===== Actividad 9 (parte 3) · Corrección en vivo ===== */
   { t: 'Corrección completa en vivo', exp: EXP9, act: act(9, 'Corrige defectos con convenciones', ACT9),
     ps: [
-      P('Práctica', { type: 'code', title: 'Corrige desde el traceback', intro: 'Esta es la corrección que demostrarás al docente. Presiona ▶ Ejecutar para recargar la página, lee el error y corrige.', starter: '', rules: [], gen: (K) => {
+      P('Práctica', { type: 'fill', title: 'Corrige desde el traceback', intro: 'Lee el código y los errores, y completa la corrección eligiendo de la lista la palabra que falta en cada espacio.', code: '', gen: (K) => {
         const ruta = K.pick(['detalle_alumno', 'alumno_detalle']), mal = K.pick(['detalle', 'ver_alumno']), tpl = K.pick(['alumnos/form.html', 'alumnos/formulario.html']), msg = K.pick(['Alumno registrado', 'Alumno guardado']);
-        const starter = `@login_required\ndef nuevo_alumno(request):\n    if request.method == 'POST':\n        form = AlumnoForm(request.POST)\n        if form.is_valid():\n            alumno = form.save()\n            messages.success(request, '${msg}')\n            return redirect('${mal}', pk=alumno.pk)\n    else:\n        form = AlumnoForm()\n    return render(request, 'form.html', {'form': form})\n`;
-        return { file: 'alumnos/views.py', lead: `<p>Después de guardar, el sistema debe ir al detalle del alumno nuevo. En urls.py esa ruta se llama <b><code>${ruta}</code></b>. La plantilla del formulario está en <b><code>templates/${tpl}</code></b>.</p>`, starter,
-          ok: `GET  /alumnos/nuevo/  200 OK\nPOST /alumnos/nuevo/  302 → /alumnos/41/  «${msg}»\n✓ La corrección funciona.`,
-          sol: `            return redirect('${ruta}', pk=alumno.pk)\n    ...\n    return render(request, '${tpl}', {'form': form})`,
-          rules: [
-            { t: `render usa la plantilla ${tpl}`, re: new RegExp(`render\\(\\s*request\\s*,\\s*['"]${rx(tpl)}['"]`), err: `TemplateDoesNotExist at /alumnos/nuevo/\nform.html\nTemplate-loader postmortem: templates/form.html (Source does not exist)\nFile "alumnos/views.py", line 11, in nuevo_alumno` },
-            { t: `redirect usa la ruta ${ruta}`, re: new RegExp(`redirect\\(\\s*['"]${ruta}['"]\\s*,\\s*pk\\s*=\\s*alumno\\.pk\\s*\\)`), err: `NoReverseMatch at /alumnos/nuevo/\nReverse for '${mal}' not found. '${mal}' is not a valid view function or pattern name.\nFile "alumnos/views.py", line 8, in nuevo_alumno` },
-          ] }; } }),
+        const orig = `@login_required\ndef nuevo_alumno(request):\n    if request.method == 'POST':\n        form = AlumnoForm(request.POST)\n        if form.is_valid():\n            alumno = form.save()\n            messages.success(request, '${msg}')\n            return redirect('${mal}', pk=alumno.pk)\n    else:\n        form = AlumnoForm()\n    return render(request, 'form.html', {'form': form})`;
+        const errs = `NoReverseMatch at /alumnos/nuevo/\nReverse for '${mal}' not found.\nFile "alumnos/views.py", line 8, in nuevo_alumno\n\nTemplateDoesNotExist at /alumnos/nuevo/\nform.html\nFile "alumnos/views.py", line 11, in nuevo_alumno`;
+        return { file: 'alumnos/views.py (líneas corregidas)', lead: `<p>Después de guardar, el sistema debe ir al detalle del alumno nuevo. En urls.py esa ruta se llama <b><code>${ruta}</code></b>. La plantilla del formulario está en <b><code>templates/${tpl}</code></b>.</p><pre class="code">${escH(orig)}</pre><pre class="code">${escH(errs)}</pre>`,
+          extra: [mal, 'form.html', ruta === 'detalle_alumno' ? 'alumno_detalle' : 'detalle_alumno', tpl === 'alumnos/form.html' ? 'alumnos/formulario.html' : 'alumnos/form.html', 'FieldError', 'IntegrityError'],
+          code: `# El error de la línea 8 es: ⟪NoReverseMatch⟫\n            return redirect('⟪${ruta}⟫', pk=alumno.pk)\n\n# El error de la línea 11 es: ⟪TemplateDoesNotExist⟫\n    return render(request, '⟪${tpl}⟫', {'form': form})` }; } }),
       P('Práctica', { type: 'form', title: 'Registra la corrección en la tabla de errores', intro: 'Llena la fila de la tabla de errores con lo que leíste en el traceback (los datos son solo tuyos).', fields: [], gen: (K) => {
         const ln = K.int(6, 30), mal = K.pick(['detalle', 'ver_alumno', 'alumno']), bien = K.pick(['detalle_alumno', 'alumno_detalle']);
         return { lead: `<pre class="code">NoReverseMatch at /alumnos/\nReverse for '${mal}' not found. '${mal}' is not a valid view function or pattern name.\n...\nIn template alumnos/lista.html, error at line ${ln}</pre><p>En urls.py la ruta se llama <code>${bien}</code>.</p>`, fields: [
@@ -3527,23 +3510,53 @@ window.P3NEW = [{ name: 'Código limpio y corrección de errores con flake8', hi
   E.fill = (host, d, api) => {
     const parts = d.code.split(/⟪([^⟫]*)⟫/);
     const slots = []; for (let i = 1; i < parts.length; i += 2) slots.push(parts[i].split('|'));
-    const st = api.load() || { ans: slots.map(() => '') };
+    let st = api.load();
+    if (!st || !Array.isArray(st.ans) || st.ans.length !== slots.length) st = { ans: slots.map(() => '') };
     const sq = (x) => String(x ?? '').replace(/\s+/g, '').replace(/"/g, "'").toLowerCase();
+    /* con banco de palabras (d.bank), cada espacio se elige de una lista: las respuestas y algunas palabras extra */
+    /* los espacios numéricos (resultados que el alumno calcula) se siguen escribiendo; los demás se eligen de la lista */
+    const num = (a) => /^-?\d+([.,]\d+)?$/.test(String(a[0]).trim());
+    const bank = d.bank !== false && slots.some((a) => !num(a)) ? [...new Set(slots.filter((a) => !num(a)).map((a) => a[0]).concat(d.extra || []))].sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' })) : null;
     let k = -1;
     const html = parts.map((p, i) => {
       if (i % 2 === 0) return esc(p);
       k++; const w = Math.max(4, ...slots[k].map((a) => a.length)) + 2;
+      if (bank && !num(slots[k])) return `<span class="blank" data-k="${k}"><span class="bl-n" aria-hidden="true">${k + 1}</span><select aria-label="Espacio ${k + 1}"><option value="">— elige —</option>${bank.map((x) => `<option value="${esc(x)}"${x === st.ans[k] ? ' selected' : ''}>${esc(x)}</option>`).join('')}</select></span>`;
       return `<span class="blank" data-k="${k}"><span class="bl-n" aria-hidden="true">${k + 1}</span><span class="sr">Espacio ${k + 1}</span><input type="text" value="${esc(st.ans[k])}" style="width:${w}ch" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Espacio ${k + 1}"></span>`;
     }).join('');
-    host.innerHTML = `${d.lead ? `<div class="lead-card">${d.lead}</div>` : ''}${d.file ? `<p class="fill-file">📄 <code>${esc(d.file)}</code></p>` : ''}<pre class="code fillcode">${html}</pre><p class="muted small">Hay <b>${slots.length}</b> espacios por completar. Escribe solo lo que falta en cada uno.</p>`;
+    const bankHtml = bank ? `<div class="fill-bank"><p class="fill-bank-t">Palabras para completar (algunas no se usan y otras pueden repetirse):</p><p>${bank.map((x) => `<code>${esc(x)}</code>`).join(' ')}</p></div>` : '';
+    host.innerHTML = `${d.lead ? `<div class="lead-card">${d.lead}</div>` : ''}${bankHtml}<div class="fill-bar">${d.file ? `<p class="fill-file">📄 <code>${esc(d.file)}</code></p>` : '<span></span>'}<span class="fill-tools"><button type="button" class="btn sm ghost fill-hint">💡 Pista</button><button type="button" class="btn sm ghost fill-rst">↺ Restaurar espacios</button></span></div><div class="fill-msg" aria-live="polite"></div><pre class="code fillcode">${html}</pre><p class="muted small">Hay <b>${slots.length}</b> espacios por completar. ${bank ? (slots.some(num) ? 'Elige de la lista la palabra de cada espacio; los resultados numéricos se escriben.' : 'En cada espacio elige la palabra correcta de la lista.') : 'Escribe solo lo que falta en cada uno.'}</p>`;
     host.addEventListener('input', (e) => { const b = e.target.closest('.blank'); if (!b) return; st.ans[+b.dataset.k] = e.target.value; b.classList.remove('ok', 'bad'); api.save(st); });
-    host.addEventListener('keydown', (e) => { if (e.key !== 'Enter') return; const b = e.target.closest('.blank'); if (!b) return; e.preventDefault(); const nx = $(`.blank[data-k="${+b.dataset.k + 1}"] input`, host); if (nx) nx.focus(); });
+    host.addEventListener('change', (e) => { const b = e.target.closest('.blank'); if (!b || e.target.tagName !== 'SELECT') return; st.ans[+b.dataset.k] = e.target.value; b.classList.remove('ok', 'bad'); api.save(st); });
+    host.addEventListener('keydown', (e) => { if (e.key !== 'Enter') return; const b = e.target.closest('.blank'); if (!b) return; e.preventDefault(); const nx = $(`.blank[data-k="${+b.dataset.k + 1}"] input, .blank[data-k="${+b.dataset.k + 1}"] select`, host); if (nx) nx.focus(); });
+    /* pistas: sin dar la respuesta completa; primero la letra inicial, después la mitad de la palabra */
+    if (!st.h) st.h = {};
+    const fmsg = $('.fill-msg', host);
+    const hintFor = (i, lvl) => { const a = String(slots[i][0]); if (num(slots[i])) return `es un número que debes calcular con los datos de arriba${lvl > 1 ? ` (tiene ${a.replace(/\D/g, '').length} cifras)` : ''}.`;
+      if (!/[A-Za-z0-9áéíóúñÁÉÍÓÚÑ]/.test(a)) return 'es un símbolo, no una palabra.';
+      const n = lvl > 1 ? Math.max(2, Math.ceil(a.length / 2)) : 1; return `empieza con «${a.slice(0, n)}…» y tiene ${a.length} caracteres.`; };
+    const putHint = (b, i) => { b.querySelectorAll('.bl-hint').forEach((x) => x.remove()); const lvl = st.h[i] || 0; if (!lvl) return; b.insertAdjacentHTML('beforeend', `<span class="tk-t" hidden>Espacio ${i + 1}</span><span class="q-fb bl-hint" hidden>Pista: ${esc(hintFor(i, lvl))}</span>`); b.title = `Pista: ${hintFor(i, lvl)}`; };
+    $('.fill-hint', host).addEventListener('click', () => {
+      const bad = $$('.blank.bad', host).map((b) => +b.dataset.k); const empty = slots.map((_, i) => i).filter((i) => !sq(st.ans[i]));
+      const i = bad.length ? bad.find((x) => (st.h[x] || 0) < 2) ?? bad[0] : empty.find((x) => (st.h[x] || 0) < 2) ?? empty[0];
+      if (i == null) { fmsg.innerHTML = '<p class="fill-tip">💡 Ya llenaste todos los espacios. Presiona <b>Revisar</b>: los que estén mal se marcarán en rojo y aquí podrás pedir una pista para cada uno.</p>'; return; }
+      st.h[i] = Math.min(2, (st.h[i] || 0) + 1); api.save(st);
+      const b = $(`.blank[data-k="${i}"]`, host); putHint(b, i); b.scrollIntoView({ behavior: 'smooth', block: 'center' }); b.classList.remove('flash'); void b.offsetWidth; b.classList.add('flash');
+      const f = b.querySelector('select,input'); if (f) f.focus({ preventScroll: true });
+      fmsg.innerHTML = `<p class="fill-tip">💡 <b>Espacio ${i + 1}:</b> ${esc(hintFor(i, st.h[i]))}${st.h[i] < 2 ? ' <span class="muted">(otra vez 💡 Pista para ver más)</span>' : ''}</p>`; });
+    $('.fill-rst', host).addEventListener('click', (e) => { const btn = e.currentTarget;
+      if (!btn.dataset.sure) { btn.dataset.sure = '1'; btn.textContent = '¿Vaciar todos los espacios?'; clearTimeout(btn._t); btn._t = setTimeout(() => { delete btn.dataset.sure; btn.textContent = '↺ Restaurar espacios'; }, 4000); return; }
+      delete btn.dataset.sure; btn.textContent = '↺ Restaurar espacios';
+      st.ans = slots.map(() => ''); st.h = {}; api.save(st);
+      $$('.blank', host).forEach((b) => { b.classList.remove('ok', 'bad'); b.removeAttribute('title'); b.querySelectorAll('.bl-hint, .tk-t').forEach((x) => x.remove()); const f = b.querySelector('select,input'); if (f) f.value = ''; });
+      fmsg.innerHTML = '<p class="fill-tip">↺ Se vaciaron los espacios. Tus intentos y tu calificación más alta no cambian.</p>'; });
+    slots.forEach((_, i) => { if (st.h[i]) putHint($(`.blank[data-k="${i}"]`, host), i); });
     api.save(st);
     return {
       check() {
         let ok = 0, miss = 0;
         slots.forEach((alts, i) => { const b = $(`.blank[data-k="${i}"]`, host); const a = sq(st.ans[i]); b.classList.remove('ok', 'bad'); if (!a) { miss++; return; }
-          if (alts.some((x) => sq(x) === a)) { ok++; b.classList.add('ok'); } else b.classList.add('bad'); });
+          if (alts.some((x) => sq(x) === a)) { ok++; b.classList.add('ok'); } else { b.classList.add('bad'); if (!st.h[i]) { st.h[i] = 1; api.save(st); } putHint(b, i); } });
         return { score: ok / slots.length, incomplete: miss > 0, msg: miss ? `Te faltan ${miss} espacio(s) por completar.` : `${ok} de ${slots.length} espacios correctos.` };
       }
     };
@@ -3709,7 +3722,7 @@ window.P3NEW = [{ name: 'Código limpio y corrección de errores con flake8', hi
   };
   /* ================= INTERFAZ ================= */
   const HELP = {
-    fill: 'Lee todo el código. Escribe en cada recuadro numerado solo la palabra o expresión que falta (respeta mayúsculas cuando sea código). Con <b>Enter</b> pasas al siguiente espacio. Al terminar presiona <b>Revisar</b>.',
+    fill: 'Lee todo el código y la lista de palabras. En cada espacio numerado abre la lista y elige la palabra que falta (algunas palabras de la lista no se usan). Si un espacio es un resultado numérico, escríbelo. Al terminar presiona <b>Revisar</b>.',
     term: 'Lee cada instrucción y escribe el comando completo después del indicador (prompt), como lo harías en la terminal real. Presiona <b>Enter</b> para ejecutarlo: verás lo que responde la terminal o el error si algo está mal (ejecutar no gasta intentos). Cuando todos funcionen, presiona <b>Revisar</b>.',
     code: 'Es código real del proyecto con errores o partes por escribir. <b>Edítalo</b> y presiona <b>▶ Ejecutar</b> para ver qué pasaría (el error o el resultado). Ejecutar no gasta intentos: corrige según el mensaje y vuelve a ejecutar las veces que necesites. Cuando funcione, presiona <b>Revisar</b>. Los nombres y datos son distintos para cada alumno.',
     steps: 'Es un reto <b>paso a paso</b>: lee el contexto de cada paso (código, mensaje o tabla), elige qué harías y por qué, y presiona <b>Comprobar este paso</b>. Solo cuentan los pasos que resuelves al primer intento; si fallas dos veces, se muestra la respuesta y sigues. Cada paso tiene tiempo límite. Al terminar todos, presiona <b>Revisar</b>.',
